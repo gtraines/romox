@@ -60,134 +60,142 @@ function lib.isOfEnumType(value, enum)
 	end
 end
 
-local Color3Value = Instance.new('Color3Value')
-function lib.isAColor3(value)
-	-- Returns whether 'value' is a Color3 value.
-	return pcall(set, Color3Value, 'Value', value) == true
-end
 
-local CFrameValue = Instance.new('CFrameValue')
-function lib.isACoordinateFrame(value)
-	-- Returns whether 'value' is a CFrame value.
-	return pcall(set, CFrameValue, 'Value', value) == true
-end
+-- function lib.isAColor3(value)
+-- 	-- Returns whether 'value' is a Color3 value.
+-- 	--local Color3Value = Instance.new('Color3Value')
+-- 	-- return pcall(set, Color3Value, 'Value', value) == true
+-- 	local toHSVMethod = value['toHSV']
+-- 	if toHSVMethod ~= nil then
+-- 		return true
+-- 	end
+-- 	return false
+-- end
 
-local BrickColor3Value = Instance.new('BrickColorValue')
-function lib.isABrickColor(value)
-	-- Returns whether 'value' is a BrickColor value.
-	return pcall(set, BrickColor3Value, 'Value', value) == true
-end
 
-local RayValue = Instance.new('RayValue')
-function lib.isARay(value)
-	-- Returns whether 'value' is a Ray value.
-	return pcall(set, RayValue, 'Value', value) == true
-end
+-- -- function lib.isACoordinateFrame(value)
+-- -- 	-- Returns whether 'value' is a CFrame value.
+-- -- 	-- local CFrameValue = Instance.new('CFrameValue')
+-- -- 	-- return pcall(set, CFrameValue, 'Value', value) == true
 
-local Vector3Value = Instance.new('Vector3Value')
-function lib.isAVector3(value)
-	-- Returns whether 'value' is a Vector3 value.
-	return pcall(set, Vector3Value, 'Value', value) == true
-end
+-- -- end
 
-function lib.isAVector2(value)
-	-- Returns whether 'value' is a Vector2 value.
-	return pcall(function() return Vector2.new() + value end) == true
-end
+-- -- local BrickColor3Value = Instance.new('BrickColorValue')
+-- -- function lib.isABrickColor(value)
+-- -- 	-- Returns whether 'value' is a BrickColor value.
+-- -- 	return pcall(set, BrickColor3Value, 'Value', value) == true
+-- -- end
 
-local FrameValue = Instance.new('Frame')
-function lib.isAUdim2(value)
-	-- Returns whether 'value' is a UDim2 value.
-	return pcall(set, FrameValue, 'Position', value) == true
-end
+-- local RayValue = Instance.new('RayValue')
+-- function lib.isARay(value)
+-- 	-- Returns whether 'value' is a Ray value.
+-- 	return pcall(set, RayValue, 'Value', value) == true
+-- end
 
-function lib.isAUDim(value)
-	-- Returns whether 'value' is a UDim value.
-	return pcall(function() return UDim.new() + value end) == true
-end
+-- local Vector3Value = Instance.new('Vector3Value')
+-- function lib.isAVector3(value)
+-- 	-- Returns whether 'value' is a Vector3 value.
+-- 	return pcall(set, Vector3Value, 'Value', value) == true
+-- end
 
-local ArcHandleValue = Instance.new('ArcHandles')
-function lib.isAAxis(value)
-	-- Returns whether 'value' is an Axes value.
-	return pcall(set, ArcHandleValue, 'Axes', value) == true
-end
+-- function lib.isAVector2(value)
+-- 	-- Returns whether 'value' is a Vector2 value.
+-- 	return pcall(function() return Vector2.new() + value end) == true
+-- end
 
-local FaceValue = Instance.new('Handles')
-function lib.isAFace(value)
-	-- Returns whether 'value' is a Faces value.
-	return pcall(set, FaceValue, 'Faces', value) == true
-end
+-- local FrameValue = Instance.new('Frame')
+-- function lib.isAUdim2(value)
+-- 	-- Returns whether 'value' is a UDim2 value.
+-- 	return pcall(set, FrameValue, 'Position', value) == true
+-- end
 
-function lib.isASignal(value)
-	-- Returns whether 'value' is a RBXScriptSignal.
-	local success, connection = pcall(function() return Game.AllowedGearTypeChanged.connect(value) end)
-	if success and connection then
-		connection:disconnect()
-		return true
-	end
-end
+-- function lib.isAUDim(value)
+-- 	-- Returns whether 'value' is a UDim value.
+-- 	return pcall(function() return UDim.new() + value end) == true
+-- end
+
+-- local ArcHandleValue = Instance.new('ArcHandles')
+-- function lib.isAAxis(value)
+-- 	-- Returns whether 'value' is an Axes value.
+-- 	return pcall(set, ArcHandleValue, 'Axes', value) == true
+-- end
+
+-- local FaceValue = Instance.new('Handles')
+-- function lib.isAFace(value)
+-- 	-- Returns whether 'value' is a Faces value.
+-- 	return pcall(set, FaceValue, 'Faces', value) == true
+-- end
+
+-- function lib.isASignal(value)
+-- 	-- Returns whether 'value' is a RBXScriptSignal.
+-- 	local success, connection = pcall(function() return Game.AllowedGearTypeChanged.connect(value) end)
+-- 	if success and connection then
+-- 		connection:disconnect()
+-- 		return true
+-- 	end
+-- end
 
 	
-function lib.getType(value)
-	-- Returns the most specific obtainable type of a value it can.
-	-- Useful for error messages or anything that is meant to be shown to the user.
+-- function lib.getType(value)
+-- 	-- Returns the most specific obtainable type of a value it can.
+-- 	-- Useful for error messages or anything that is meant to be shown to the user.
 
-	local valueType = type(value)
+-- 	local valueType = type(value)
 
-	if valueType == 'userdata' then
-		if lib.isAnInstance(value) then return value.ClassName
-		elseif lib.isAColor3(value) then return 'Color3'
-		elseif lib.isACoordinateFrame(value) then return 'CFrame'
-		elseif lib.isABrickColor(value) then return 'BrickColor'
-		elseif lib.isAUDim2(value) then return 'UDim2'
-		elseif lib.isAUDim(value) then return 'UDim'
-		elseif lib.isAVector3(value) then return 'Vector3'
-		elseif lib.isAVector2(value) then return 'Vector2'
-		elseif lib.isARay(value) then return 'Ray'
-		elseif lib.isAnEnum(value) then return 'Enum'
-		elseif lib.isASignal(value) then return 'RBXScriptSignal'
-		elseif lib.isALibrary(value) then return 'RbxLibrary'
-		elseif lib.isAAxis(value) then return 'Axes'
-		elseif lib.isAFace(value) then return 'Faces'
-		end
-	else
-		return valueType;
-	end
-end
+-- 	if valueType == 'userdata' then
+-- 		if lib.isAnInstance(value) then return value.ClassName
+-- 		elseif lib.isAColor3(value) then return 'Color3'
+-- 		elseif lib.isACoordinateFrame(value) then return 'CFrame'
+-- 		elseif lib.isABrickColor(value) then return 'BrickColor'
+-- 		elseif lib.isAUDim2(value) then return 'UDim2'
+-- 		elseif lib.isAUDim(value) then return 'UDim'
+-- 		elseif lib.isAVector3(value) then return 'Vector3'
+-- 		elseif lib.isAVector2(value) then return 'Vector2'
+-- 		elseif lib.isARay(value) then return 'Ray'
+-- 		elseif lib.isAnEnum(value) then return 'Enum'
+-- 		elseif lib.isASignal(value) then return 'RBXScriptSignal'
+-- 		elseif lib.isALibrary(value) then return 'RbxLibrary'
+-- 		elseif lib.isAAxis(value) then return 'Axes'
+-- 		elseif lib.isAFace(value) then return 'Faces'
+-- 		end
+-- 	else
+-- 		return valueType;
+-- 	end
+-- end
 
-function lib.isAnInt(value)
-	-- Returns whether 'value' is an interger or not
-	return type(value) == "number" and value % 1 == 1;
-end
-
-
-function lib.isPositiveInt(number)
-	-- Returns whether 'value' is a positive interger or not.  
-	-- Useful for money transactions, and is used in the method isAnArray ( )
-	return type(value) == "number" and number > 0 and math.floor(number) == number
-end
+-- function lib.isAnInt(value)
+-- 	-- Returns whether 'value' is an interger or not
+-- 	return type(value) == "number" and value % 1 == 1;
+-- end
 
 
-function lib.isAnArray(value)
-	-- Returns if 'value' is an array or not
+-- function lib.isPositiveInt(number)
+-- 	-- Returns whether 'value' is a positive interger or not.  
+-- 	-- Useful for money transactions, and is used in the method isAnArray ( )
+-- 	return type(value) == "number" and number > 0 and math.floor(number) == number
+-- end
 
-	if type(value) == "table" then
-		local maxNumber = 0;
-		local totalCount = 0;
 
-		for index, _ in next, value do
-			if lib.isPositiveInt(index) then
-				maxNumber = math.max(maxNumber, index)
-				totalCount = totalCount + 1
-			else
-				return false;
-			end
-		end
+-- function lib.isAnArray(value)
+-- 	-- Returns if 'value' is an array or not
 
-		return maxNumber == totalCount;
-	else
-		return false;
-	end
-end
+-- 	if type(value) == "table" then
+-- 		local maxNumber = 0;
+-- 		local totalCount = 0;
+
+-- 		for index, _ in next, value do
+-- 			if lib.isPositiveInt(index) then
+-- 				maxNumber = math.max(maxNumber, index)
+-- 				totalCount = totalCount + 1
+-- 			else
+-- 				return false;
+-- 			end
+-- 		end
+
+-- 		return maxNumber == totalCount;
+-- 	else
+-- 		return false;
+-- 	end
+-- end
 
 return lib
