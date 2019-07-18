@@ -13,7 +13,7 @@
 
       Examples: 
       - Have any brick tagged 'KillBrick' kill the player
-      - Payers w/ VIP game pass could have their Humanoid tagged w/ "VIP" and be allowed through VIP-only doors
+      - Players w/ VIP game pass could have their Humanoid tagged w/ "VIP" and be allowed through VIP-only doors
       - Use a LocalScript to listen for the "Frozen" tag applied to player's Humanoid obj and create client-side
         visual effects
 ]]
