@@ -1,0 +1,527 @@
+
+Saving Player Data
+Jul 15 2019, 2:07 PM PST
+15 min
+Roblox allows data to be saved on its servers. The primary purpose of this feature is to store player data between sessions, keeping their stats, inventory, and other data intact. In this tutorial, we’ll create a system that automatically stores a player’s money and experience so that it can be retrieved when they play the game again.
+
+If you want to explore the Roblox data storage system in more depth before you begin, please see the Data Stores article.
+API access must be active in order to access and test data stores in Roblox Studio. See the Data Stores article for instructions on enabling API access.
+Creating a Data Module
+Before we dive into data storage, let’s set up the system which keeps track of a player’s money and experience during a game session. We’ll start by creating a ModuleScript, a special type of script that can be referenced from other scripts. An ideal place for this ModuleScript is within ServerStorage.
+
+EXPAND 
+-- Set up table to return to any script that requires this module script
+local PlayerStatManager = {}
+ 
+-- Table to hold player information for the current session
+local sessionData = {}
+ 
+local AUTOSAVE_INTERVAL = 60
+ 
+-- Function that other scripts can call to change a player's stats
+function PlayerStatManager:ChangeStat(player, statName, value)
+	assert(typeof(sessionData[playerUserId][statName]) == typeof(value), "ChangeStat error: types do not match")
+	local playerUserId = "Player_" .. player.UserId
+	if typeof(sessionData[playerUserId][statName]) == "number" then
+		sessionData[playerUserId][statName] = sessionData[playerUserId][statName] + value
+	else
+		sessionData[playerUserId][statName] = value
+	end
+end
+ 
+-- Function to add player to the 'sessionData' table
+local function setupPlayerData(player)
+	local playerUserId = "Player_" .. player.UserId
+	sessionData[playerUserId] = {Money=0, Experience=0}
+end
+ 
+-- Connect 'setupPlayerData()' function to 'PlayerAdded' event
+game.Players.PlayerAdded:Connect(setupPlayerData)
+ 
+return PlayerStatManager
+ COPY CODE
+LIGHT THEME 
+Note that the PlayerStatManager:ChangeStat() function handles either numeric or non-numeric changes. This means you can safely call the function with either a number (positive or negative) or string value as the value parameter.
+Saving Player Data
+Now let’s start storing actual information using data stores.
+
+Initialize the Data Store
+First we’ll add a new variable for the data store in the same ModuleScript and call GetDataStore() to open a new PlayerData data store.
+
+EXPAND 
+-- Set up table to return to any script that requires this module script
+local PlayerStatManager = {}
+ 
+local DataStoreService = game:GetService("DataStoreService")
+local playerData = DataStoreService:GetDataStore("PlayerData")
+ 
+-- Table to hold player information for the current session
+local sessionData = {}
+ 
+local AUTOSAVE_INTERVAL = 60
+ COPY CODE
+LIGHT THEME 
+You can name your data store whatever is convenient. Data stores are shared between all places in a game, so if your game has multiple places, they can all access the same data store by its name.
+Read/Write Initial Data
+Next, let’s change how the setupPlayerData() function works. Currently, it just creates new data for a player when they join the game, but that data isn’t saved anywhere! Now, with access to the playerData data store, we can call GetAsync() to check if it’s holding any information for the player. If that call returns valid data, we save it to the sessionData table; otherwise we save new player data to the sessionData table.
+
+EXPAND 
+-- Function to add player to the 'sessionData' table
+local function setupPlayerData(player)
+	local playerUserId = "Player_" .. player.UserId
+	local data = playerData:GetAsync(playerUserId)
+	if data then
+		-- Data exists for this player
+		sessionData[playerUserId] = data
+	else
+		-- Data store is working, but no current data for this player
+		sessionData[playerUserId] = {Money=0, Experience=0}
+	end
+end
+ 
+-- Connect 'setupPlayerData()' function to 'PlayerAdded' event
+game.Players.PlayerAdded:Connect(setupPlayerData)
+ COPY CODE
+LIGHT THEME 
+Save Data on Exit
+It’s good practice to save a player’s data when they exit the game. This can be done with a new savePlayerData() function bound to the PlayerRemoving event.
+
+EXPAND 
+-- Function to save player's data
+local function savePlayerData(playerUserId)
+	if sessionData[playerUserId] then
+		playerData:SetAsync(playerUserId, sessionData[playerUserId])
+	end
+end
+ 
+-- Function to save player data on exit
+local function saveOnExit(player)
+	local playerUserId = "Player_" .. player.UserId
+	savePlayerData(playerUserId)
+end
+ 
+-- Connect 'setupPlayerData()' function to 'PlayerAdded' event
+game.Players.PlayerAdded:Connect(setupPlayerData)
+ 
+-- Connect 'saveOnExit()' function to 'PlayerRemoving' event
+game.Players.PlayerRemoving:Connect(saveOnExit)
+ COPY CODE
+LIGHT THEME 
+Auto-Save
+Lastly, it’s useful to make the system handle unexpected events like game crashes. We can do this with a function that waits for AUTOSAVE_INTERVAL seconds (60), loops through all of the players in the sessionData table, and uses the savePlayerData() function to save the current information. Note that this function is initially run in a coroutine using the spawn() function.
+
+EXPAND 
+-- Function to periodically save player data
+local function autoSave()
+	while wait(AUTOSAVE_INTERVAL) do
+		for playerUserId, data in pairs(sessionData) do
+			savePlayerData(playerUserId)
+		end
+	end
+end
+ 
+-- Start running 'autoSave()' function in the background
+spawn(autoSave)
+ 
+-- Connect 'setupPlayerData()' function to 'PlayerAdded' event
+game.Players.PlayerAdded:Connect(setupPlayerData)
+ COPY CODE
+LIGHT THEME 
+With all of the above implemented, we now have a simple stat saving system that automatically saves the players’ data.
+
+Handling Data Store Failures
+Requests to data stores, like all network calls, may occasionally fail due to poor connectivity or other issues. As you learned in the Data Stores article, these calls should be wrapped in pcall() to catch and handle errors. Let’s apply this practice to the current script:
+
+EXPAND 
+-- Set up table to return to any script that requires this module script
+local PlayerStatManager = {}
+ 
+local DataStoreService = game:GetService("DataStoreService")
+local playerData = DataStoreService:GetDataStore("PlayerData")
+ 
+-- Table to hold player information for the current session
+local sessionData = {}
+ 
+local AUTOSAVE_INTERVAL = 60
+ 
+-- Function that other scripts can call to change a player's stats
+function PlayerStatManager:ChangeStat(player, statName, value)
+	assert(typeof(sessionData[playerUserId][statName]) == typeof(value), "ChangeStat error: types do not match")
+	local playerUserId = "Player_" .. player.UserId
+	if typeof(sessionData[playerUserId][statName]) == "number" then
+		sessionData[playerUserId][statName] = sessionData[playerUserId][statName] + value
+	else
+		sessionData[playerUserId][statName] = value
+	end
+end
+ 
+-- Function to add player to the 'sessionData' table
+local function setupPlayerData(player)
+	local playerUserId = "Player_" .. player.UserId
+	local success, data = pcall(function()
+		return playerData:GetAsync(playerUserId)
+	end)
+	if success then
+		if data then
+			-- Data exists for this player
+			sessionData[playerUserId] = data
+		else
+			-- Data store is working, but no current data for this player
+			sessionData[playerUserId] = {Money=0, Experience=0}
+		end
+	else
+		warn("Cannot access data store for player!")
+	end
+end
+ 
+-- Function to save player's data
+local function savePlayerData(playerUserId)
+	if sessionData[playerUserId] then
+		local success, err = pcall(function()
+			playerData:SetAsync(playerUserId, sessionData[playerUserId])
+		end)
+		if not success then
+			warn("Cannot save data for player!")
+		end
+	end
+end
+ 
+-- Function to save player data on exit
+local function saveOnExit(player)
+	local playerUserId = "Player_" .. player.UserId
+	savePlayerData(playerUserId)
+end
+ 
+-- Function to periodically save player data
+local function autoSave()
+	while wait(AUTOSAVE_INTERVAL) do
+		for playerUserId, data in pairs(sessionData) do
+			savePlayerData(playerUserId)
+		end
+	end
+end
+ 
+-- Start running 'autoSave()' function in the background
+spawn(autoSave)
+ 
+-- Connect 'setupPlayerData()' function to 'PlayerAdded' event
+game.Players.PlayerAdded:Connect(setupPlayerData)
+ 
+-- Connect 'saveOnExit()' function to 'PlayerRemoving' event
+game.Players.PlayerRemoving:Connect(saveOnExit)
+ 
+return PlayerStatManager
+ COPY CODE
+LIGHT THEME 
+Data Store Retries
+As a final measure of reliability, it can be useful to retry data saves if the first attempt fails. This functionality can be added to the existing script with a simple repeat loop in the savePlayerData() function:
+
+EXPAND 
+-- Function to save player's data
+local function savePlayerData(playerUserId)
+	if sessionData[playerUserId] then
+		local tries = 0	
+		local success
+		repeat
+			tries = tries + 1
+			success = pcall(function()
+				playerData:SetAsync(playerUserId, sessionData[playerUserId])
+			end)
+			if not success then wait(1) end
+		until tries == 3 or success
+		if not success then
+			warn("Cannot save data for player!")
+		end
+	end
+end
+
+Data Stores
+Jun 14 2019, 2:12 PM PST
+15 min
+Data stores are a storage feature for Roblox games. They can be used to save data which should persist between game sessions, including items in a player’s inventory, experience points, or almost anything else.
+
+Data stores are shared per game, so any place in a game, including places in different servers, can access and change the same data.
+
+Structure
+A data store is essentially a dictionary, like a Lua table. Each value in the data store can be indexed by a unique key which includes the player’s UserId, for instance:
+
+Key	Value
+Player_1234	50
+Player_2345	20
+Player_7462	78000
+Player_8934	1200
+Player_10345	0
+Data Store Access
+Data stores are managed by DataStoreService, so your scripts must get the service before doing much else.
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+ COPY CODE
+LIGHT THEME 
+Once you’ve included DataStoreService in your script, a data store can be accessed by name using the GetDataStore() function. For example:
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local experienceStore = DataStoreService:GetDataStore("PlayerExperience")
+ COPY CODE
+LIGHT THEME 
+Data stores can only be accessed by the server through Scripts. Attempting client-side access in a LocalScript will cause an error.
+Managing a Data Store
+Setting Data
+SetAsync() sets the value of a new data store entry. This function requires the key name of the entry and the value to set.
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local experienceStore = DataStoreService:GetDataStore("PlayerExperience")
+ 
+local success, err = pcall(function()
+	experienceStore:SetAsync("Player_1234", 50)
+end)
+ 
+if success then
+	print("Success!")
+end
+ COPY CODE
+LIGHT THEME 
+Functions like SetAsync() that access a data store's contents are network calls that may occasionally fail. It's recommended that these calls be wrapped in pcall() to catch and handle errors.
+SetAsync() can be hazardous since it overwrites any value currently in the entry. If you're updating an existing entry, UpdateAsync() is recommended because it considers the old value before making changes.
+Reading Data
+The GetAsync() function reads the value of a data store entry. It requires just the key name of the entry.
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local experienceStore = DataStoreService:GetDataStore("PlayerExperience")
+ 
+local success, currentExperience = pcall(function()
+	return experienceStore:GetAsync("Player_1234")
+end)
+ 
+if success then
+	print("Current Experience:", currentExperience)
+end
+ COPY CODE
+LIGHT THEME 
+Incrementing Data
+IncrementAsync() changes a numerical value in a data store. This function requires the key name of the entry and a number indicating how much to change the value.
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local experienceStore = DataStoreService:GetDataStore("PlayerExperience")
+ 
+local success, newExperience = pcall(function()
+	return experienceStore:IncrementAsync("Player_1234", 1)
+end)
+ 
+if success then
+	print("New Experience:", newExperience)
+end
+ COPY CODE
+LIGHT THEME 
+Updating Data
+UpdateAsync() changes any stored value in a data store. This function requires the key name of the entry plus a function which defines how the entry should be updated. This function takes the current value and returns the new value, based on whatever logic you define.
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local nicknameStore = DataStoreService:GetDataStore("Nicknames")
+ 
+local function makeNameUpper(currentName)
+	local newName = string.upper(currentName)
+	return newName
+end
+ 
+local success, newName = pcall(function()
+	return nicknameStore:UpdateAsync("Player_1234", makeNameUpper)
+end)
+ 
+if success then
+	print("Uppercase Name:", newName)
+end
+ COPY CODE
+LIGHT THEME 
+The function passed into UpdateAsync() is not permitted to yield, so it cannot contain any yielding function like wait().
+Removing Data
+RemoveAsync() removes an entry and returns the value that was associated with the key.
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local nicknameStore = DataStoreService:GetDataStore("Nicknames")
+ 
+local success, nickname = pcall(function()
+	return nicknameStore:RemoveAsync("Player_1234")
+end)
+ 
+if success then
+	print("Removed Nickname:", nickname)
+end
+ COPY CODE
+LIGHT THEME 
+Data Store Events
+Each key in a data store can fire an event when its value changes. This can be connected to a custom function by OnUpdate() which requires the key name of the entry plus the function to call when the event occurs.
+
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local levelStore = DataStoreService:GetDataStore("PlayerLevel")
+ 
+local connection
+ 
+local function onLevelUpdate(newLevel)
+	if newLevel == 50 then
+		print("Player has reached max level!")
+		-- Disconnect connection when player reaches max level
+		connection:Disconnect()
+	end
+end
+ 
+connection = experienceStore:OnUpdate("Player_1234", onLevelUpdate)
+ 
+local success, err = pcall(function()
+	levelStore:IncrementAsync("Player_1234", 1)
+end)
+ COPY CODE
+LIGHT THEME 
+As shown in this example, it's recommended that you disconnect connections when they're no longer needed, as there's a request limit associated with OnUpdate() events.
+Ordered Data Stores
+Regular data stores do not sort their content. This isn’t a concern for many games, but sometimes it’s useful to get data in an ordered fashion, like leaderboard stats.
+
+An OrderedDataStore is a special type of data store that can:
+
+Easily return its content in a sorted order.
+Return multiple records in one request (versus a regular data store where you can only request one entry at a time).
+An ordered data store uses the same functions as a regular data store including GetAsync(), SetAsync(), UpdateAsync(), etc. In addition, it provides the GetSortedAsync() function which accepts parameters for the “page size” of the returned DataStorePages object, the sort order, and minimum/maximum values.
+
+Consider an ordered data store populated with five characters and their ages. This example sorts the data into pages with 3 entries each, in descending order, then loops through the pages and outputs each character’s name/age.
+
+CODE SAMPLE
+EXPECTED OUTPUT
+EXPAND 
+local DataStoreService = game:GetService("DataStoreService")
+local characterAgeStore = DataStoreService:GetOrderedDataStore("CharacterAges")
+ 
+-- Populate ordered data store
+characterAgeStore:SetAsync("Mars", 19)
+characterAgeStore:SetAsync("Janus", 20)
+characterAgeStore:SetAsync("Diana", 18)
+characterAgeStore:SetAsync("Venus", 25)
+characterAgeStore:SetAsync("Neptune", 62)
+ 
+-- Sort data into pages of three entries (descending order)
+local pages = characterAgeStore:GetSortedAsync(false, 3)
+ 
+while true do
+	-- Get the current (first) page
+	local data = pages:GetCurrentPage()
+	-- Iterate through all key-value pairs on page
+	for _, entry in pairs(data) do
+		print(entry.key .. ":" .. tostring(entry.value))
+	end
+	-- Check if last page has been reached
+	if pages.IsFinished then
+		break
+	else
+		print("----------------")
+		-- Advance to next page
+		pages:AdvanceToNextPageAsync()
+	end
+end
+ COPY CODE
+LIGHT THEME 
+Error Handling / Limits
+Requests to data stores, like all network calls, may occasionally fail due to poor connectivity or other issues. As you’ve seen throughout this article, it’s important to wrap data store commands in pcall() and handle any resulting errors. Every error message contains an error code that you can cross-reference in the Data Store Errors and Limits tables.
+
+In addition, there are limits applied to the data store model. If a game exceeds these limits, the Roblox engine will automatically throttle the game’s data store usage, causing data requests to take longer.
+
+Using Data Stores in Studio
+By default, places simulated in Studio do not have access to data stores, so any request function like SetAsync() or GetAsync() will cause an error if called from Studio.
+
+If desired, data stores can be enabled in Studio as follows:
+
+Go to the Create menu on the Roblox site.
+Select Configure Game for the desired game.
+
+A OrderedDataStore is essentially a GlobalDataStore with the exception that stored values must be positive integers. It exposes a method GetSortedAsync() which allows inspection of the entries in sorted order using a DataStorePages object.
+
+See the Data Stores article for an overview on using ordered data stores.
+
+Properties
+Functions
+Instance 
+GetSortedAsync ( bool isAscending , int pageSize , Variant minValue , Variant maxValue )
+ [yields]
+Returns a DataStorePages object.
+
+***********************
+*** GlobalDataStore ***
+***********************
+
+A GlobalDataStore exposes functions for saving and loading data for the DataStoreService.
+
+See the Data Stores article for an in-depth guide on data structure, management, error handling, etc.
+
+Properties
+Functions
+Variant 
+GetAsync ( string key )
+ [yields]
+Returns the value of the entry in the data store with the given key
+
+Variant 
+IncrementAsync ( string key , int delta )
+ [yields]
+Increments the value of a particular key and returns the incremented value
+
+RBXScriptConnection 
+OnUpdate ( string key , Function callback )
+Sets callback as a function to be executed any time the value associated with key is changed
+
+Variant 
+RemoveAsync ( string key )
+ [yields]
+Removes the given key from the data store and returns the value associated with that key
+
+void 
+SetAsync ( string key , Variant value )
+ [yields]
+Sets the value of the key. This overwrites any existing data stored in the key.
+
+Tuple 
+UpdateAsync ( string key , Function transformFunction )
+ [yields]
+Retrieves the value of a key from a data store and updates it with a new value
+
+************************
+**  DataStoreService  **
+************************
+
+DataStoreService exposes methods for getting GlobalDataStore and OrderedDataStore objects. 
+Data stores can only be accessed by game servers, so you can only use DataStoreService within a Script or a ModuleScript that is used by a Script.
+
+Using Data Stores in Studio
+DataStoreService cannot be used in Studio if a game is not configured to allow access to API services. See the Data Stores article for instructions.
+
+Request Limits
+There are limits applied to the data store model. Please see Data Store Errors and Limits for details.
+
+Properties
+bool 
+AutomaticRetry
+ [notreplicated]
+Sets whether data store functions will automatically retry or not.
+
+Functions
+Instance 
+GetDataStore ( string name , string scope )
+Get a GlobalDataStore given a name and optional scope
+
+Instance 
+GetGlobalDataStore ( )
+Returns the default data store
+
+Instance 
+GetOrderedDataStore ( string name , string scope )
+Get an OrderedDataStore given a name and optional scope
+
+int 
+GetRequestBudgetForRequestType ( DataStoreRequestType requestType )
+Returns the number of requests that can be made by the given request type.
+
+Events

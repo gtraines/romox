@@ -1,0 +1,47 @@
+Model
+Show deprecated  
+Models are container objects, meaning they hold objects and group objects together. They are best used to hold collections of BaseParts and have a number of functions that extend their functionality.
+
+At their most basic level, Models allow developers to group selections of BaseParts together. This is particularly useful when building environments in Roblox Studio as it means the grouped parts can be moved and rotated together. When not storing collections of BaseParts it is recommended that developers use the Folder object, as they will not benefit from the additional functionality Models provide.
+
+To access some of the extended functionality Models provide, the Model.PrimaryPart property needs to be set. This property points to the BasePart within the Model that is to be used when moving or otherwise manipulating the model.
+
+Models have a wide range of applications, including being used for Roblox Player Characters. They also have a number of unique behaviors that are important to keep in mind when using them:
+
+When a Humanoid and a Part named “Head” are parented under a model, a name-tag GUI will appear with the name of the model.
+
+If a Part's position on the Y axis hits the Workspace.FallenPartsDestroyHeight value, and it was the last object inside of a Model, the Model will be destroyed as well.
+
+Properties
+BasePart 
+PrimaryPart
+Points to the Model's primary part. The part is the BasePart that is used as a basis when positioning the model using the Model:MoveTo and Model:SetPrimaryPartCFrame functions.
+
+Functions
+void 
+BreakJoints ( )
+Breaks connections between BaseParts, including surface connections with any adjacent parts, WeldConstraints and all Welds and other JointInstances.
+
+Vector3 
+GetExtentsSize ( )
+Returns the size of the smallest bounding box that contains all of the BaseParts in the Model, aligned with the Model.PrimaryPart if it is set.
+
+CFrame 
+GetPrimaryPartCFrame ( )
+Returns the CFrame of the Model's Model.PrimaryPart. This function will throw an error if no primary part exists for the Model.
+
+void 
+MakeJoints ( )
+Goes through all BaseParts in the Model. If any part’s side has a SurfaceType that can make a joint it will create a joint with any adjacent parts.
+
+void 
+MoveTo ( Vector3 position )
+Moves the Model.PrimaryPart to the given position. If a primary part has not been specified then the root part of the model will be used.
+
+void 
+SetPrimaryPartCFrame ( CFrame cframe )
+Sets the BasePart.CFrame of the Model's Model.PrimaryPart. All other parts in the model will also be moved and will maintain their orientation and offset respective to the Model.PrimaryPart. This function will throw an error if no Model.PrimaryPart exists for the model.
+
+void 
+TranslateBy ( Vector3 delta )
+Shifts a Model by the given Vector3 offset, preserving the Model's orientation. If another BasePart or Terrain already exists at the new position then the Model will overlap said object.

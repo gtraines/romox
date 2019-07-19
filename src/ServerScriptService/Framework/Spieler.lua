@@ -21,7 +21,6 @@ function spieler:AddOnJoinedHandler(handlerFunc)
     return
 end
 
-
 --- AddOnDisconnectingHandler adds a handler to the list of funcs fired when the player begins to disconnect
 -- @param [function] handlerFunc a function which receives the [Instance] player as an arg when the event fires
 function spieler:AddOnDisconnectingHandler(handlerFunc)
@@ -33,14 +32,20 @@ function spieler:AddOnLeavingGameHandler(handlerFunc)
     self.__playersSvc.PlayerRemoving:Connect(handlerFunc)
 end
 
+-- Note that the Humanoid and its body parts (head, torso and limbs) will exist when this event fires, 
+-- but clothing items like Hats and Shirts, Pants may take a few seconds to be added to the character 
+-- (connect Instance.ChildAdded on the added character to detect these).
 -- @param [function] handlerFunc a function which receives the CHARACTER as an arg when the event fires
-function spieler:AddOnSpawningHandler(handlerFunc)
-    self.__playersSvc.CharacterAdded:Connect(handlerFunc)
+function spieler:AddOnCharacterHandler( playerInstance, handlerFunc )
+    playerInstance.CharacterAdded:Connect(handlerFunc)
 end
 
+-- Note that the Humanoid and its body parts (head, torso and limbs) will exist when this event fires, 
+-- but clothing items like Hats and Shirts, Pants may take a few seconds to be added to the character 
+-- (connect Instance.ChildAdded on the added character to detect these).
 -- @param [function] handlerFunc a function which receives the CHARACTER as an arg when the event fires
-function spieler:AddOnPlayerDiedHandler(handlerFunc)
-    self.__playersSvc.CharacterRemoving:Connect(handlerFunc)
+function spieler:AddOnCharacterDiedHandler( playerInstance, handlerFunc )
+    playerInstance.CharacterRemoving:Connect(handlerFunc)
 end
 
 function spieler:GetPlayerFromPart( part )

@@ -1,0 +1,387 @@
+
+****************************
+****   Players Service  ****
+****************************
+The Players game service contains only Player objects for presently connected clients to a Roblox game server. It also contains information about a place’s configuration (such as bubble chat or classic chat). It can fetch information about players not connected to the server, such as character appearances, friends and avatar thumbnail.
+
+Properties
+bool 
+BubbleChat
+ [readonly]  [notreplicated]
+Indicates whether or not bubble chat is enabled. It is set with the Players:SetChatStyle method.
+
+bool 
+CharacterAutoLoads
+ [notreplicated]
+Indicates whether Characters will respawn automatically.
+
+bool 
+ClassicChat
+ [readonly]  [notreplicated]
+Indicates whether or not classic chat is enabled; set by the Players:SetChatStyle method.
+
+Instance 
+LocalPlayer
+ [readonly]  [notreplicated]
+The Player that the LocalScript is running for.
+
+int 
+MaxPlayers
+ [readonly]  [notreplicated]
+The maximum amount of players that can be in this server.
+
+int 
+MaxPlayersInternal
+Players.MaxPlayers for internal use.
+
+int 
+PreferredPlayers
+ [readonly]  [notreplicated]
+The preferred amount of players for this server.
+
+int 
+PreferredPlayersInternal
+Players.PreferredPlayers for internal use.
+
+float 
+RespawnTime
+Controls the amount of time taken for a players character to respawn
+
+Functions
+void 
+Chat ( string message )
+Makes the local player chat the given message
+
+Instance 
+CreateLocalPlayer ( )
+Used by the game to create the Player/LocalPlayer
+
+Instance 
+GetCharacterAppearanceAsync ( int64 userId )
+ [yields]
+Returns a Model containing the assets which the player is wearing, excluding gear
+
+Dictionary 
+GetCharacterAppearanceInfoAsync ( int64 userId )
+ [yields]
+Returns information about the character appearance of a given user
+
+Instance 
+GetFriendsAsync ( int64 userId )
+ [yields]
+Returns a FriendPages object which contains information for all of the given player’s friends
+
+Instance 
+GetHumanoidDescriptionFromOutfitId ( int64 outfitId )
+ [yields]
+Instance 
+GetHumanoidDescriptionFromUserId ( int64 userId )
+ [yields]
+string 
+GetNameFromUserIdAsync ( int64 userId )
+ [yields]
+Sends a query to the Roblox website for the username of an account with a given UserId
+
+Instance 
+GetPlayerByUserId ( int64 userId )
+Returns the Player with the given UserId if they are in-game
+
+Instance 
+GetPlayerFromCharacter ( Instance character )
+Returns the Player whose Character matches the given instance, or nil if one cannot be found
+
+Objects 
+GetPlayers ( )
+Returns a table of all presently connected Player objects
+
+int64 
+GetUserIdFromNameAsync ( string userName )
+ [yields]
+Sends a query to the Roblox website for the userId of an account with a given username
+
+Tuple 
+GetUserThumbnailAsync ( int64 userId , ThumbnailType thumbnailType , ThumbnailSize thumbnailSize )
+[yields]
+Returns the content URL of a player thumbnail given the size and type (avatar, bust, headshot), and a bool describing if the image is ready to be used
+
+void 
+ReportAbuse ( Instance player , string reason , string optionalMessage )
+Attempts to report the given player for the given reason
+
+void 
+SetChatStyle ( ChatStyle style )
+Sets whether BubbleChat and ClassicChat are being used, and tells TeamChat and Chat what to do.
+
+void 
+TeamChat ( string message )
+Makes the LocalPlayer chat the given message, which will only be viewable by users on the same team
+
+void 
+WhisperChat ( string message , Instance player )
+Delivers the given message to a recipient without anyone else seeing
+
+Events
+RBXScriptSignal 
+PlayerAdded ( Instance player )
+Fires when a player enters the game.
+
+RBXScriptSignal
+PlayerChatted ( PlayerChatType chatType , Instance player , string message , Instance targetPlayer )
+Fired when a player chats.
+
+RBXScriptSignal 
+PlayerConnecting ( Instance player )
+Fired when a player is connecting to the game.
+
+RBXScriptSignal 
+PlayerDisconnecting ( Instance player )
+Fired when a player is disconnecting from the game.
+
+RBXScriptSignal 
+PlayerRejoining ( Instance player )
+Fired when a player rejoins a game session after having disconnected prior.
+
+RBXScriptSignal 
+PlayerRemoving ( Instance player )
+Fires when a player is about to leave the game.
+
+
+
+********************
+****   Player  *****
+********************
+
+Show deprecated  
+A Player object a client that is currently connected. These objects are added to the Players service when a new player connects, then removed when they eventually disconnect from the server.
+
+The Instance.Name property reflects the player’s username. When saving information about a player, you should use their Player.UserId since it is possible that a player can change their username.
+
+There are several similar methods in the Players for working with Player objects. Use these over their respective Instance methods:
+
+You can get a table of current Player objects using Players:GetPlayers; again, use this instead of Instance:GetChildren.
+To detect the addition of Player objects, it is recommended to use the Players.PlayerAdded event (instead of Instance.ChildAdded on the Players service).
+Similarly, you can detect the removal of Player objects using Players.PlayerRemoving, which fires just before the Player is removed (instead of Instance.ChildRemoved which fires after). This is important if you are saving information about the player that might be removed or cleaned up on-removal.
+Properties
+int 
+AccountAge
+ [readonly]  [notreplicated]
+Describes the player’s account age in days.
+
+bool 
+AutoJumpEnabled
+Determines whether the character of a player using a mobile device will automatically jump upon hitting an obstacle.
+
+float 
+CameraMaxZoomDistance
+The maximum distance the player’s camera is allowed to zoom out.
+
+float 
+CameraMinZoomDistance
+The minimum distance the player’s camera is allowed to zoom in.
+
+CameraMode 
+CameraMode
+Changes the camera’s mode to either first or third person.
+
+bool 
+CanLoadCharacterAppearance
+Determines whether the character’s appearance will be loaded when the player spawns. If false, the player will spawn with a default appearance.
+
+Model 
+Character
+A Model controlled by the player that contains a Humanoid, body parts, scripts and other objects.
+
+int64 
+CharacterAppearanceId
+Determines the user ID of the account whose character appearance is used for a player’s character
+
+DevCameraOcclusionMode 
+DevCameraOcclusionMode
+Sets how the default camera handles objects between the camera and the player.
+
+DevComputerCameraMovementMode 
+DevComputerCameraMode
+Determines player’s camera movement mode when using a desktop version of Roblox.
+
+DevComputerMovementMode 
+DevComputerMovementMode
+Determines player’s character movement mode when using a desktop version of Roblox.
+
+bool 
+DevEnableMouseLock
+Determines if the player can toggle mouse lock
+
+DevTouchCameraMovementMode 
+DevTouchCameraMode
+Determines player’s camera movement mode when using a touch device.
+
+DevTouchMovementMode 
+DevTouchMovementMode
+Determines player’s character movement mode when using a touch device.
+
+int64 
+FollowUserId
+ [readonly]  [notreplicated]
+Describes the user ID of the player who was followed into a game by a player.
+
+bool 
+GameplayPaused
+float 
+HealthDisplayDistance
+Sets the distance at which this player will see other Humanoid’s health bars. If set to 0, the health bars will not be displayed.
+
+string 
+LocaleId
+ [hidden]  [readonly]  [notreplicated]
+This property shows the locale id that the local player has set for their Roblox account.
+
+float 
+MaximumSimulationRadius
+ [notreplicated]
+The maximum value a Player’s Player.SimulationRadius can grow to.
+
+MembershipType 
+MembershipType
+ [readonly]  [notreplicated]
+Describes the account’s membership type (NBC, BC, TBC or OBC).
+
+float 
+NameDisplayDistance
+Sets the distance at which this player will see other Humanoid’s names. If set to 0, names are hidden.
+
+bool 
+Neutral
+Determines whether the player is on a specific team.
+
+Instance 
+ReplicationFocus
+Sets the part to focus replication around.
+
+SpawnLocation 
+RespawnLocation
+If set, the player will respawn at the given SpawnLocation
+
+float 
+SimulationRadius
+The simulation radius of a Player’s Player.Character.
+
+Team 
+Team
+ [notreplicated]
+Determines the Team with which a Player is associated.
+
+BrickColor 
+TeamColor
+Determines the Team with which a Player is associated.
+
+int64 
+UserId
+A unique identifying integer assigned to all user accounts
+
+Functions
+void 
+ClearCharacterAppearance ( )
+Removes all accessories and other character appearance objects from a player’s Character.
+
+float 
+DistanceFromCharacter ( Vector3 point )
+Returns the distance between the character’s head and the given Vector3 point. Returns 0 if the player has no character.
+
+Array 
+GetFriendsOnline ( int maxFriends )
+ [yields]
+Return a dictionary of online friends, specified by maxFriends.
+
+Dictionary 
+GetJoinData ( )
+Returns a dictionary containing information on how the Player joined the game
+
+Instance 
+GetMouse ( )
+Returns the mouse being used by the client.
+
+int 
+GetRankInGroup ( int64 groupId )
+ [yields]
+Returns the player’s rank in the group as an integer between 0 and 255, where 0 is a non-member and 255 is the group’s owner.
+
+string 
+GetRoleInGroup ( int64 groupId )
+ [yields]
+Returns the player’s role in the group as a string, or “Guest” if the player isn’t part of the group.
+
+bool 
+HasAppearanceLoaded ( )
+Returns whether or not the appearance of the player’s character has loaded.
+
+bool 
+IsFriendsWith ( int64 userId )
+ [yields]
+Checks whether a player is a friend of the user with the given Player.UserId
+
+bool 
+IsInGroup ( int64 groupId )
+ [yields]
+Checks whether a player is a member of a group with the given ID.
+
+void 
+Kick ( string message )
+Forcibly disconnect a player from the game, optionally providing a message.
+
+void 
+LoadCharacter ( )
+ [yields]
+Creates a new character for the player, removing the old one. Also clears the player’s Backpack and PlayerGui.
+
+void 
+LoadCharacterBlocking ( )
+ [yields]
+Functions similar to Player:LoadCharacter, but the request is processed synchronously instead of asynchronously.
+
+void 
+LoadCharacterWithHumanoidDescription ( Instance humanoidDescription )
+ [yields]
+void 
+Move ( Vector3 walkDirection , bool relativeToCamera )
+Causes the player’s character to walk in the given direction until stopped, or interrupted by the player (by using their controls).
+
+void 
+RemoveCharacter ( )
+Removes the player’s character.
+
+void 
+SetAccountAge ( int accountAge )
+Sets the AccountAge of the player.
+
+void 
+SetSuperSafeChat ( bool value )
+Sets whether or not the player sees filtered chats, rather than normal chats.
+
+Events
+RBXScriptSignal 
+CharacterAdded ( Instance character )
+Fired when a player’s character spawns or respawns.
+
+RBXScriptSignal 
+CharacterAppearanceLoaded ( Instance character )
+Fires when the the full appearance of a Player's Player.Character has been inserted
+
+RBXScriptSignal 
+CharacterRemoving ( Instance character )
+Fired right before a player’s character is removed.
+
+RBXScriptSignal 
+Chatted ( string message , Instance recipient )
+Fires when a player chats in-game using Roblox’s provided chat bar.
+
+RBXScriptSignal 
+Idled ( double time )
+Usually fired two minutes after the game engine classes the player as idle. Time is the amount of seconds since this point.
+
+RBXScriptSignal 
+OnTeleport ( TeleportState teleportState , int64 placeId , string spawnName )
+Fired when the TeleportState of a player changes.
+
+RBXScriptSignal 
+SimulationRadiusChanged ( float radius )
+Fired when the Player's Player.SimulationRadius is changed.

@@ -1,0 +1,67 @@
+BillboardGui
+Show deprecated  
+BillboardGuis are containers for GUI objects that appear in the 3D space. A BillboardGui’s position is determined by the position of it’s BillboardGui.Adornee. If the adornee is set to Part then the BasePart.Position will be used. If it is set to Attachment then the Attachment.WorldPosition will be used. BillboardGui always faces the camera, and can change its size with distance or remain the same size on the screen. Unlike the text that appears above models with Humanoids’ heads, this does not disappear with distance.
+
+
+
+Properties
+bool 
+Active
+Whether or not mouse events will be passed to objects layered below.
+
+Instance 
+Adornee
+Sets the part or attachment that the BillboardGui is adorned too.
+
+bool 
+AlwaysOnTop
+Determines whether the BillboardGui will always be rendered on top of other objects.
+
+bool 
+ClipsDescendants
+When set to true, portions of GuiObjects that fall outside of the BillboardGui’s canvas borders will not be drawn.
+
+float 
+CurrentDistance
+ [readonly]  [notreplicated]
+float 
+DistanceLowerLimit
+float 
+DistanceStep
+float 
+DistanceUpperLimit
+Vector3 
+ExtentsOffset
+A Vector3 (x,y,z) defined in studs that will offset the GUI from the extents of the 3D object it is rendering from.
+
+Vector3 
+ExtentsOffsetWorldSpace
+Offsets the BillboardGui relative to it’s BillboardGui.Adornee's orientation and size.
+
+float 
+LightInfluence
+Controls how much the BillboardGui is influenced by the lighting in the game world.
+
+float 
+MaxDistance
+Sets the maximum distance a billboard can be from the camera and still be drawn.
+
+Instance 
+PlayerToHideFrom
+Allows you to define a player who is unable to see the BillboardGui.
+
+UDim2 
+Size
+Sets the size of the BillboardGui as it’ll appear in the Roblox “world”.
+
+Vector2 
+SizeOffset
+Offsets the BillboardGui relative to it’s AbsoluteSize.
+
+Vector3 
+StudsOffset
+The offset of the BillboardGui in studs, relative to the Camera's orientation.
+
+Vector3 
+StudsOffsetWorldSpace
+Offsets the BillboardGui relative to it’s BillboardGui.Adornee's orientation, in studs.

@@ -1,0 +1,314 @@
+Show deprecated  
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+NotBrowsable
+This item is not shown in Roblox Studio’s Object Browser.
+
+BasePart is an abstract base class for in-world objects that render and are physically simulated while in the Workspace. There are several implementations of BasePart, the most common is Part, a simple 6-face rectangular prism. Others include SpawnLocation, WedgePart and the singleton Terrain object within the Workspace. Most of the time, when documentation refers to a part, most BasePart implementations will work and not just Part.
+
+There are many different objects that interact with BasePart:
+
+They may be grouped within a Model, which allows several BasePart to be moved at the same time using SetPrimaryPartCFrame.
+A Decal applies a stretched image texture to the faces of a part, though the exact mapping depends on the type of part.
+A Texture applies a tiled image texture to the faces of a part much like a Decal.
+A SurfaceGui renders GuiObjects on the face of a part.
+An Attachment can be added to specify a CFrames relative to a parent BasePart. These are often used by physics Constraint objects, such as RopeConstraint and HingeConstraint.
+ParticleEmitter emit particles uniformly in the volume of the BasePart to which they are parented.
+Light objects like PointLight emit light from the center of a BasePart.
+When played, a Sound parented to a BasePart will be physically located at the part’s position.
+BodyMover objects like BodyVelocity exert forces on the BasePart to which they are parented.
+As a sibling of a Humanoid, they can be used as limbs of a character and also animated when joined using Motor6D. If not a sibling of a Humanoid, BasePart can still be animated using an AnimationController.
+In Studio, you can use most implementations of BaseParts with solid modelling.
+If parented to a Tool and given the name “Handle”, a BasePart can be held by characters.
+You can make BasePart interactive by adding a ClickDetector
+You can a mesh like a BlockMesh or SpecialMesh to change how a BasePart looks without change how it physically behaves.
+Properties
+bool 
+Anchored
+Determines whether a part is immovable by physics
+
+float 
+BackParamA
+Determines the first parameter for the SurfaceType on the Back face of a part (-Z direction)
+
+float 
+BackParamB
+Determines the second parameter for the SurfaceType on the Back face of a part (-Z direction)
+
+SurfaceType 
+BackSurface
+Determines the type of surface for the Back face of a part (+Z direction)
+
+InputType 
+BackSurfaceInput
+Determines the kind of input for the Back face of a part (+Z direction)
+
+float 
+BottomParamA
+Determines the first parameter for the SurfaceType on the Bottom face of a part (-Y direction)
+
+float 
+BottomParamB
+Determines the second parameter for the SurfaceType on the Bottom face of a part (-Y direction)
+
+SurfaceType 
+BottomSurface
+Determines the type of surface for the Bottom face of a part (-Y direction)
+
+InputType 
+BottomSurfaceInput
+Determines the kind of input for the Bottom face of a part (-Y direction)
+
+BrickColor 
+BrickColor
+ [notreplicated]
+Determines the color of a part.
+
+CFrame 
+CFrame
+Determines the position and rotation of a part in the world
+
+bool 
+CanCollide
+Determines whether a part may collide with other parts.
+
+bool 
+CastShadow
+Determines whether or not a part casts a shadow
+
+Vector3 
+CenterOfMass
+ [readonly]  [notreplicated]
+Describes the world position in which a part’s center of mass is located.
+
+int 
+CollisionGroupId
+Describes the automatically-set ID number of a part’s collision group
+
+Color3 
+Color
+ [notreplicated]
+Determines the color of a part.
+
+PhysicalProperties 
+CustomPhysicalProperties
+Determines several physical properties of a part
+
+float 
+FrontParamA
+Determines the first parameter for the SurfaceType on the Front face of a part (-Z direction)
+
+float 
+FrontParamB
+Determines the second parameter for the SurfaceType on the Front face of a part (-Z direction)
+
+SurfaceType 
+FrontSurface
+Determines the type of surface for the Front face of a part (-Z direction)
+
+InputType 
+FrontSurfaceInput
+Determines the kind of input for the Front face of a part (-Z direction)
+
+float 
+LeftParamA
+Determines the first parameter for the SurfaceType on the Left face of a part (-Z direction)
+
+float 
+LeftParamB
+Determines the second parameter for the SurfaceType on the Left face of a part (-Z direction)
+
+SurfaceType 
+LeftSurface
+Determines the type of surface for the Left face of a part (-X direction)
+
+InputType 
+LeftSurfaceInput
+Determines the kind of input for the Left face of a part (+X direction)
+
+float 
+LocalTransparencyModifier
+ [hidden]  [notreplicated]
+Determines a multiplier for BasePart.Transparency that is only visible to the local client
+
+bool 
+Locked
+Determines whether a part is selectable in Studio.
+
+bool 
+Massless
+Determines whether the part contributes to the total mass or inertia of its rigid body
+
+Material 
+Material
+Determines the texture and default physical properties of a part
+
+Vector3 
+Orientation
+ [notreplicated]
+Describes the position of the part in the world.
+
+Vector3 
+Position
+ [notreplicated]
+Describes the position of the part in the world.
+
+float 
+ReceiveAge
+ [hidden]  [readonly]  [notreplicated]
+Time since last recorded physics update
+
+float 
+Reflectance
+Determines how much a part reflects the skybox.
+
+int 
+ResizeIncrement
+ [readonly]  [notreplicated]
+Describes the smallest change in size allowable by the Resize method
+
+Faces 
+ResizeableFaces
+ [readonly]  [notreplicated]
+Describes the faces on which a part may be resized
+
+float 
+RightParamA
+Determines the first parameter for the SurfaceType on the Right face of a part (-X direction)
+
+float 
+RightParamB
+Determines the second parameter for the SurfaceType on the Right face of a part (-X direction)
+
+SurfaceType 
+RightSurface
+Determines the type of surface for the Right face of a part (+X direction)
+
+InputType 
+RightSurfaceInput
+Determines the kind of input for the Right face of a part (-X direction)
+
+int 
+RootPriority
+The main rule in determining the root part of an assembly
+
+Vector3 
+RotVelocity
+Determines a part’s change in orientation over time
+
+Vector3 
+Rotation
+ [notreplicated]
+The rotation of the part in degrees for the three axes.
+
+Vector3 
+Size
+ [notreplicated]
+Determines the dimensions of a part (length, width, height)
+
+float 
+TopParamA
+Determines the first parameter for the SurfaceType on the Top face of a part (+Y direction)
+
+float 
+TopParamB
+Determines the second parameter for the SurfaceType on the Top face of a part (+Y direction)
+
+SurfaceType 
+TopSurface
+Determines the type of surface for the Top face of a part (+Y direction)
+
+InputType 
+TopSurfaceInput
+Determines the kind of input for the Top face of a part (+Y direction)
+
+float 
+Transparency
+Determines how much a part can be seen through (the inverse of part opacity)
+
+Vector3 
+Velocity
+Determines a part’s change in position over time
+
+Functions
+void 
+BreakJoints ( )
+Breaks any surface connection with any adjacent part, including Weld and other JointInstance.
+
+bool 
+CanCollideWith ( Instance part )
+Returns whether the parts can collide with each other.
+
+Tuple 
+CanSetNetworkOwnership ( )
+Checks whether you can set a part's network ownership
+
+Objects 
+GetConnectedParts ( bool recursive )
+Returns a table of parts connected to the the object by any kind of rigid joint.
+
+Objects 
+GetJoints ( )
+Return all Joints or Constraints that is connected to this Part.
+
+float 
+GetMass ( )
+ [customluastate]
+Returns the part’s mass based on the part’s material and size
+
+Instance 
+GetNetworkOwner ( )
+Returns the current player who is the network owner of this part, or nil in case of the server.
+
+bool 
+GetNetworkOwnershipAuto ( )
+Returns true if the game engine automatically decides the network owner for this part.
+
+Instance 
+GetRootPart ( )
+Returns the base part of an assembly of parts.
+
+Objects 
+GetTouchingParts ( )
+Returns a table of all CanCollide true parts that intersect with this part.
+
+bool 
+IsGrounded ( )
+Returns true if the object is connected to a part that will hold it in place (eg an BasePart.Anchored part), otherwise returns false.
+
+void 
+MakeJoints ( )
+Creates a joint on any side of the object that has a surface ID that can make a joint.
+
+bool 
+Resize ( NormalId normalId , int deltaAmount )
+Changes the size of an object just like using the Studio resize tool.
+
+void 
+SetNetworkOwner ( Instance playerInstance )
+Sets the given player as network owner for this and all connected parts
+
+void 
+SetNetworkOwnershipAuto ( )
+Lets the game engine dynamically decide who will handle the part’s physics (one of the clients or the server).
+
+Instance 
+SubtractAsync ( Objects parts , CollisionFidelity collisionfidelity , RenderFidelity renderFidelity )
+[yields]
+Performs a subtraction Union operation on the calling BasePart and the list of parts passed in as the first parameter
+
+Instance 
+UnionAsync ( Objects parts , CollisionFidelity collisionfidelity , RenderFidelity renderFidelity )
+ [yields]
+Performs a Union operation on the calling BasePart and the list of parts passed in as the first parameter
+
+Events
+RBXScriptSignal 
+TouchEnded ( Instance otherPart )
+Fired when a part stops touching another part.
+
+RBXScriptSignal 
+Touched ( Instance otherPart )
+Fired when a part comes in contact with another part
+

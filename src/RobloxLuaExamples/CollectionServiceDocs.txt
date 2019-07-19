@@ -1,0 +1,66 @@
+AddTag
+Function of:
+
+CollectionService
+
+Description:
+
+AddTag will apply a tag to an object. This method will not throw an error if the object already had the tag. Successfully adding a tag will fire a signal created by CollectionService:GetInstanceAddedSignal with the given tag.
+
+Warning: When tagging an object, it is common that some resources are used to give the tag its functionality, e.g. event connections or tables. To prevent memory leaks, it is a good idea to clean these up (disconnect, set to nil, etc) when no longer needed for a tag. Do this when calling CollectionService:RemoveTag, calling Instance:Destroy or in a function connected to a signal returned by CollectionService:GetInstanceRemovedSignal.
+
+Parameters
+Name	Type	Default	Description
+instance
+Instance
+tag
+string
+
+CollectionService
+Show deprecated  
+Service
+This class is a Service! It is a top-level singleton which can be retrieved using the GetService function.
+
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+The CollectionService manages groups (collections) of instances with tags. Tags are sets of strings applied to objects that replicate from the server to the client and in Team Create. They are also serialized when places are saved. At the moment, tags are not visible within Roblox Studio except with the use of a tag-editing plugin.
+
+The primary use of CollectionService is to add flags and/or behaviors to Roblox objects. If you find yourself adding the same script to many different objects, perhaps a script that uses CollectionService would be better. Here are a couple examples:
+
+In an obstacle course with many bricks that kill players, don’t paste the same script in all your kill bricks! Instead, tag them with “KIllBrick”. Then, have any brick tagged as such kill the player.
+Payers with a VIP game pass could have their Humanoid tagged “VIP”, and be allowed through doors that only allow VIPs.
+When creating a freeze-tag game, you could tag frozen players’ Humanoid objects with a “Frozen” tag. Then, use a LocalScript to listen for the “Frozen” tag and create client-side visual effects to reduce the number of objects replicated from server to client.
+When working with collections and tags, it’s a good idea to use an object-oriented programming style. In almost all situations, tagged objects have their own identity, state and behavior. The pattern goes like this: when a tag is found (CollectionService:GetTagged and CollectionService:GetInstanceAddedSignal), create a Lua object with the Roblox instance. When it is removed (CollectionService:GetInstanceRemovedSignal), call a cleanup/destroy method within the Lua object. See the code samples for a better idea of how this can be done.
+
+When tags replicate, all tags on an object replicate at the same time. Therefore, if you set a tag on an object from the client then add/remove a different tag on the same object from the server, the client’s local tags on the object are overwritten.
+
+Properties
+Functions
+void 
+AddTag ( Instance instance , string tag )
+Assign a tag to an object
+
+RBXScriptSignal 
+GetInstanceAddedSignal ( string tag )
+Get a signal that fires when a given tag is added to an object
+
+RBXScriptSignal 
+GetInstanceRemovedSignal ( string tag )
+Get a signal that fires when a given tag is removed from an object
+
+Objects 
+GetTagged ( string tag )
+Returns a table of objects in the game with a given tag
+
+Array 
+GetTags ( Instance instance )
+Get all tags applied to a given object
+
+bool 
+HasTag ( Instance instance , string tag )
+Check whether an object has a given tag
+
+void 
+RemoveTag ( Instance instance , string tag )
+Remove a tag from an object

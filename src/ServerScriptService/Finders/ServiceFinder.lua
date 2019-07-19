@@ -1,7 +1,3 @@
--- 
--- 
--- 
-
 --[[
     Usage example: 
     	local svcFinder = require(game
@@ -17,7 +13,6 @@ local allChildFolders = ServerScriptService:GetChildren()
         
 local dedupedModules = {}
 
-dedupedModules["Points"] = game:GetService("PointsService")
 
 for _, folder in pairs(allChildFolders) do
     local registrationModuleScript = folder:FindFirstChild("_registerModules", false)

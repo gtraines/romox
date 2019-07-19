@@ -44,7 +44,6 @@ function module.AttachedCharacterOrNil( part )
 	if attachedHumanoid ~= nil then
 		local character = attachedHumanoid.Parent
 		if character ~= nil then
-			
 			return character
 		end
 	end

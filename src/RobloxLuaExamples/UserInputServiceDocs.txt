@@ -1,0 +1,282 @@
+UserInputService
+Show deprecated  
+Service
+This class is a Service! It is a top-level singleton which can be retrieved using the GetService function.
+
+NotReplicated
+This item is not replicated across Roblox’s server/client boundary.
+
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+The UserInputService is a service used to detect and capture the different types of input available on a user’s device.
+
+The primary purpose of this service is to allow for games to cooperate with multiple forms of available input - such as gamepads, touch screens, and keyboards. It allows a LocalScript to perform different actions depending on the device, and in turn, helps developers provide the best experience for the end user.
+
+Some usages of this service include detecting user input when they interact with GUIs, tools, and other game instances. In order to detect user input, the service must look for a service event. For example, the service can detect events such as when the user touches the screen of a mobile device using UserInputService.TouchStarted, or connects a gamepad such as an Xbox controller to their device using UserInputService.GamepadConnected.
+
+Since this service is client-side only, it will only work when used in a LocalScript or a ModuleScript required by a LocalScript. As UserInputService is client-side only, users in the game can only detect their own input - and not the input of others.
+
+See also
+ContextActionService, a service which allows you to bind functions to multiple user inputs
+Properties
+bool 
+AccelerometerEnabled
+ [readonly]  [notreplicated]
+Describes whether the user’s device has an accelerometer
+
+bool 
+GamepadEnabled
+ [readonly]  [notreplicated]
+Describes whether the device being used by a user has an available gamepad
+
+bool 
+GyroscopeEnabled
+ [readonly]  [notreplicated]
+Describes whether the user’s device has a gyroscope
+
+bool 
+KeyboardEnabled
+ [readonly]  [notreplicated]
+Describes whether the user’s device has a keyboard available
+
+bool 
+ModalEnabled
+Toggles whether Roblox’s mobile controls are hidden on mobile devices
+
+MouseBehavior 
+MouseBehavior
+Determines whether the user’s mouse can be moved freely or is locked
+
+float 
+MouseDeltaSensitivity
+ [notreplicated]
+Scales the delta (change) output of the user’s Mouse
+
+bool 
+MouseEnabled
+ [readonly]  [notreplicated]
+Describes whether the user’s device has a mouse available
+
+bool 
+MouseIconEnabled
+Determines whether the Mouse’s icon is visible
+
+Vector2 
+OnScreenKeyboardPosition
+ [readonly]  [notreplicated]
+Determines the position of the on-screen keyboard
+
+Vector2 
+OnScreenKeyboardSize
+ [readonly]  [notreplicated]
+Determines the size of the on-screen keyboard
+
+bool 
+OnScreenKeyboardVisible
+ [readonly]  [notreplicated]
+Describes whether an on-screen keyboard is currently visible on the user’s screen
+
+bool 
+TouchEnabled
+ [readonly]  [notreplicated]
+Describes whether the user’s current device has a touch-screen available
+
+bool 
+VREnabled
+ [readonly]  [notreplicated]
+Indicates whether the user is using a virtual reality headset
+
+Functions
+bool 
+GamepadSupports ( UserInputType gamepadNum , KeyCode gamepadKeyCode )
+Returns whether the given UserInputType gamepad supports a button corresponding with the given KeyCode
+
+Array 
+GetConnectedGamepads ( )
+Returns an array of UserInputType gamepads currently connected
+
+Instance 
+GetDeviceAcceleration ( )
+Returns an InputObject that describes the device’s current acceleration
+
+Instance 
+GetDeviceGravity ( )
+Returns an InputObject describing the device’s current gravity vector
+
+Tuple 
+GetDeviceRotation ( )
+Returns an InputObject and a CFrame,describing the device’s current rotation vector
+
+Instance 
+GetFocusedTextBox ( )
+Returns the currently TextBox the client is currently focused on
+
+bool 
+GetGamepadConnected ( UserInputType gamepadNum )
+Returns whether a gamepad with the given UserInputType‘‘gamepadNum’’ is connected
+
+Array 
+GetGamepadState ( UserInputType gamepadNum )
+Returns an array of InputObjects for all available inputs on the given gamepad, representing each input’s last input state
+
+Array 
+GetKeysPressed ( )
+Returns an array of InputObjects associated with the keys currently being pressed down
+
+UserInputType 
+GetLastInputType ( )
+Returns the UserInputType associated with the user’s most recent input
+
+Array 
+GetMouseButtonsPressed ( )
+Returns an array of InputObjects corresponding with the mouse buttons currently being held down
+
+Vector2 
+GetMouseDelta ( )
+Returns the change, in pixels, of the position of the player’s Mouse in the last rendered frame. Only works if the mouse is locked
+
+Vector2 
+GetMouseLocation ( )
+Returns the current screen location of the player’s Mouse relative to the top left corner of the screen
+
+Array 
+GetNavigationGamepads ( )
+Returns an array of gamepads connected and enabled for GUI navigation in descending order of priority
+
+string 
+GetStringForKeyCode ( KeyCode keyCode )
+Returns a string representing a key the user should press in order to input a given KeyCode
+
+Array 
+GetSupportedGamepadKeyCodes ( UserInputType gamepadNum )
+Returns an array of KeyCodes that the gamepad associated with the given UserInputType supports
+
+CFrame 
+GetUserCFrame ( UserCFrame type )
+Returns a CFrame describing the position and orientation of a specified virtual reality device
+
+bool 
+IsGamepadButtonDown ( UserInputType gamepadNum , KeyCode gamepadKeyCode )
+Determines whether a particular button is pressed on a particular gamepad
+
+bool 
+IsKeyDown ( KeyCode keyCode )
+Returns whether the given key is currently held down
+
+bool 
+IsMouseButtonPressed ( UserInputType mouseButton )
+Returns whether the given mouse button is currently held down
+
+bool 
+IsNavigationGamepad ( UserInputType gamepadEnum )
+Returns true if the specified UserInputTypeGamepad is allowed to control the navigation GUIs
+
+void 
+RecenterUserHeadCFrame ( )
+Recenters the CFrame of the VR headset to the current orientation of the headset worn by the user
+
+void 
+SetNavigationGamepad ( UserInputType gamepadEnum , bool enabled )
+Sets whether or not the specified Gamepad can move the GUI navigator
+
+Events
+RBXScriptSignal 
+DeviceAccelerationChanged ( Instance acceleration )
+Fired when a user moves a device that has an accelerometer. Used to track real-world device movement within a Roblox game
+
+RBXScriptSignal 
+DeviceGravityChanged ( Instance gravity )
+Fired when the force of gravity changes on a device that has an enabled accelerometer - such as a mobile device
+
+RBXScriptSignal 
+DeviceRotationChanged ( Instance rotation , CFrame cframe )
+Fired when a user rotates a device that has a gyroscope
+
+RBXScriptSignal 
+GamepadConnected ( UserInputType gamepadNum )
+Fires when a gamepad is connected to the client. Passes the ‘‘gamepadNum’’ of the gamepad that was connected
+
+RBXScriptSignal 
+GamepadDisconnected ( UserInputType gamepadNum )
+Fires when a gamepad is disconnected from the client. Passes the UserInputType of the gamepad that was disconnected
+
+RBXScriptSignal 
+InputBegan ( Instance input , bool gameProcessedEvent )
+Fired when a user begins interacting via a Human-Computer Interface device - such as a mouse or gamepad
+
+RBXScriptSignal 
+InputChanged ( Instance input , bool gameProcessedEvent )
+Fired when a user changes how they’re interacting via a Human-Computer Interface device
+
+RBXScriptSignal 
+InputEnded ( Instance input , bool gameProcessedEvent )
+Fires when a user stops interacting via a Human-Computer Interface device
+
+RBXScriptSignal 
+JumpRequest ( )
+Fires whenever the client makes a request for their character to jump
+
+RBXScriptSignal 
+LastInputTypeChanged ( UserInputType lastInputType )
+Fires when the client’s UserInputType is changed
+
+RBXScriptSignal 
+TextBoxFocusReleased ( Instance textboxReleased )
+Fired when the client loses focus on a TextBox
+
+RBXScriptSignal 
+TextBoxFocused ( Instance textboxFocused )
+Fired when the client focuses on a TextBox
+
+RBXScriptSignal 
+TouchEnded ( Instance touch , bool gameProcessedEvent )
+Fired when a user releases their finger from the screen on a TouchEnabled device - such as the screen of a mobile device
+
+RBXScriptSignal 
+TouchLongPress ( Array touchPositions , UserInputState state , bool gameProcessedEvent )
+Fired when a user holds at least one finger for a short amount of time on the same screen position on a TouchEnabled device - such as the screen of a mobile device
+
+RBXScriptSignal 
+TouchMoved ( Instance touch , bool gameProcessedEvent )
+Fired when a user moves their finger on a TouchEnabled device - such as the screen of an Apple iPad or iPhone or a Google Android phone
+
+RBXScriptSignal
+TouchPan ( Array touchPositions , Vector2 totalTranslation , Vector2 velocity , UserInputState state , bool gameProcessedEvent )
+Fired when a user drags at least one finger on a TouchEnabled device - such as the screen of an mobile device
+
+RBXScriptSignal
+TouchPinch ( Array touchPositions , float scale , float velocity , UserInputState state , bool gameProcessedEvent )
+Fired when a user pinches their fingers on a TouchEnabled device - such as the screen of a mobile device
+
+RBXScriptSignal
+TouchRotate ( Array touchPositions , float rotation , float velocity , UserInputState state , bool gameProcessedEvent )
+Fires when a user rotates two fingers on a TouchEnabled device - such as the screen of a mobile device
+
+RBXScriptSignal 
+TouchStarted ( Instance touch , bool gameProcessedEvent )
+Fired when a user places their finger on a TouchEnabled device - such as the screen of an Apple iPad or iPhone or a Google Android phone
+
+RBXScriptSignal
+TouchSwipe ( SwipeDirection swipeDirection , int numberOfTouches , bool gameProcessedEvent )
+Fired when a user swipes their fingers on a TouchEnabled device - such as the screen of a mobile device
+
+RBXScriptSignal 
+TouchTap ( Array touchPositions , bool gameProcessedEvent )
+Fired when a user taps their finger on a TouchEnabled device - such as the screen of a mobile device
+
+RBXScriptSignal 
+TouchTapInWorld ( Vector2 position , bool processedByUI )
+Fires when a user taps the game world on a TouchEnabled device - such as the screen of a mobile device
+
+RBXScriptSignal 
+UserCFrameChanged ( UserCFrame type , CFrame value )
+Fires when the CFrame of a specified Virtual Reality device changes
+
+RBXScriptSignal 
+WindowFocusReleased ( )
+Fires when the window of the Roblox client loses focus on the user’s screen
+
+RBXScriptSignal 
+WindowFocused ( )
+Fires when the window of the Roblox client gains focus on the user’s screen

@@ -1,0 +1,86 @@
+Path
+Show deprecated  
+NotReplicated
+This item is not replicated across Roblox’s server/client boundary.
+
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+Path objects store the result of paths created by PathfindingService:CreatePath().
+
+Once a path object is created, you can call Path:ComputeAsync() with a starting point and ending point. This will attempt to compute a valid path for a character to move along, based on default or custom parameters passed to CreatePath(). If ComputeAsync() successfully finds a path, the Path object will have a Path.Status value of Enum.PathStatus.Success. Otherwise the status will be Enum.PathStatus.NoPath which can occur if there are obstacles between the two points (and no way around) or if the points are inside of solid objects.
+
+In addition to ComputeAsync(), Path objects have the GetWaypoints() method which returns a list of waypoints representing the points a character should follow in sequence to get from the beginning to the end of the path.
+
+Finally, Path objects can be connected to the Path.Blocked event. This event will fire if, at any time during the path’s existence, the path is blocked. Note that this can occur behind a character moving along the path, not just in front of it.
+
+See the Pathfinding guide for details and examples on using pathfinding in Roblox.
+
+Properties
+PathStatus 
+Status
+ [readonly]  [notreplicated]
+The success of the generated Path.
+
+Functions
+Array 
+GetWaypoints ( )
+Returns an array of points in the path.
+
+
+PathfindingService
+Show deprecated  
+Service
+This class is a Service! It is a top-level singleton which can be retrieved using the GetService function.
+
+NotReplicated
+This item is not replicated across Roblox’s server/client boundary.
+
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+PathfindingService is used to find paths between two points. These paths make sure that characters can move between the points without running into walls or other obstacles. Paths can be used for both player-controlled characters and non-player characters.
+
+This service has one function, CreatePath(), which creates a Path object based on various parameters.
+
+See the Pathfinding guide for details and examples on using pathfinding in Roblox.
+
+Navigation Mesh
+PathfindingService generates a “navigation mesh” over all parts in a place while the game is running. Any path that is created with the service will stay within the mesh. If the geometry of the place changes — for example, if a part is created or a part moves — the navigation mesh will be recalculated.
+
+To see the navigation mesh for a place:
+
+Open the place in Studio.
+Navigate to File → Settings….
+In the Studio tab, under Visualization, toggle on the Show Navigation Mesh setting. The mesh will then show up in the 3D view.
+The purple areas show where a character can walk, while the non-colored areas are considered blocked. Studio also displays arrows on top of the mesh which show where a character would have to jump to reach one part of the mesh from another.
+
+
+Properties
+Functions
+Instance 
+CreatePath ( Dictionary agentParameters )
+CreatePath
+Function of:
+
+PathfindingService
+
+Description:
+
+Creates a Path object based on various agent parameters (see below).
+
+Agent Parameters
+Key	Type	Default	Description
+AgentRadius	integer	2	Humanoid radius. Used to determine the minimum separation from obstacles.
+AgentHeight	integer	5	Humanoid height. Empty space smaller than this value will be marked as non-traversable, for instance the space under stairs.
+AgentCanJump	boolean	true	Sets whether off-mesh links for jumping are allowed.
+Parameters
+Name	Type	Default	Description
+agentParameters
+Dictionary
+nil
+Lua table which lets you fine-tune the path for the size of the agent (the humanoid that will move along the path). See Agent Parameters.
+
+Returns
+Return Type	Summary
+Instance

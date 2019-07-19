@@ -1,0 +1,83 @@
+Teams
+Show deprecated  
+Service
+This class is a Service! It is a top-level singleton which can be retrieved using the GetService function.
+
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+The Teams service holds a game’s Team objects. Team objects must be parented to the Teams service.
+
+Teams offer a range of features that are useful to developers. These can broadly be divided into features that work out-of-the-box and features developers can program into their game.
+
+Built-in team behaviour
+The following functionality of Teams exists by default and does not require the developer to program any custom behaviour.
+
+When part of a Team, the name above a Player's character Model will be colored to the Team.TeamColor
+Changing Player.TeamColor will cause Player.Team switch to the Team with the corresponding Team.TeamColor
+When using the default player list users will be grouped and displayed by team
+Setting Player.Neutral to true will cause the Player to be dis-associated with the team, but will not change Player.Team or Player.TeamColor
+When a Player joins a game, they will be allocated to the team with Team.AutoAssignable set to true that has the fewest players. If no auto assignable team is available, Player.Neutral will be set to true
+When SpawnLocation.Neutral is set to false, only players whose Player.TeamColor matches SpawnLocation.TeamColor can spawn on that SpawnLocation
+When SpawnLocation.AllowTeamChangeOnTouch is set to true, a Player's Player.TeamColor will change to SpawnLocation.TeamColor when their character touches the SpawnLocation
+Optional extended team behavior
+Many developers chose to add the following features to teams in their own code.
+
+Implement checks for team in weapon code to prevent team killing
+Implement doors or other features that only certain teams can use
+Periodically reassign teams to maintain team balance
+Properties
+Functions
+Objects 
+GetTeams ( )
+Returns a table containing the game’s Team objects. Will only return Team objects that are parented to the Teams service.
+
+****************************
+*******    Team      *******
+****************************
+
+Show deprecated  
+The Team class represents a faction in a Roblox place. The only valid parent for a Team is in the Teams service. Teams offer a range of features that are useful to developers that can be divided into two rough groups:
+
+Features that work ‘out of the box’
+Features developers can program into their game.
+**Built-in Team Behavior **
+
+The following functionality of Teams exists by default and does not require the developer to program any custom behavior.
+
+When part of a Team, the name above a Player's character Model will be colored to the Team.TeamColor
+Changing Player.TeamColor will cause Player.Team to switch to the Team with the corresponding Team.TeamColor
+When using the default player list users will be grouped and displayed together as a team
+Setting Player.Neutral to true will cause the Player to be disassociated with the team, however, it will not change Player.Team or Player.TeamColor
+When a Player joins a game, they will be allocated to the team with Team.AutoAssignable set to true that has the fewest players. If no auto assignable team is available, Player.Neutral will be set to true
+When SpawnLocation.Neutral is set to false, only players whose Player.TeamColor matches SpawnLocation.TeamColor can spawn on that SpawnLocation
+When SpawnLocation.AllowTeamChangeOnTouch is set to true, a Player's Player.TeamColor will change to SpawnLocation.TeamColor when their character touches the SpawnLocation
+Optional Extended Team Behaviors
+
+Many developers chose to add the following features to teams in their own code.
+
+Implement checks in weapon code to prevent friendly fire.
+Implement checks in doors or other features that allow only certain teams to use them
+Periodically reassign teams to maintain team balance
+Properties
+bool 
+AutoAssignable
+This property determines whether Players will be automatically placed onto the Team when joining. If multiple teams have this property set to true, Roblox will attempt to even the teams out when Players are added.
+
+BrickColor 
+TeamColor
+This property sets the color of the Team. Determines the Player.TeamColor property of players who are a member of the team. Also determines the color displayed on the player list and above player’s heads.
+
+Functions
+Objects 
+GetPlayers ( )
+Returns a list of Players who are assigned to the Team. A Player is considered assigned if their Player.Team property is equal to the Team and Player.Neutral is false.
+
+Events
+RBXScriptSignal 
+PlayerAdded ( Instance player )
+Fires whenever a Player is assigned to the Team. A player is considered assigned if their Player.Team property is equal to the Team and Player.Neutral is false.
+
+RBXScriptSignal 
+PlayerRemoved ( Instance player )
+Fires whenever a Player is removed from a Team. This can be due to the Player leaving the game, Player.Neutral being set to true or the Player joining a different team.

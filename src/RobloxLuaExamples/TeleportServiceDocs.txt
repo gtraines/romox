@@ -1,0 +1,247 @@
+********************************
+**  TeleportToSpawnByName   **
+********************************
+
+TeleportToSpawnByName
+Function of:
+
+TeleportService
+
+Description:
+
+This function behaves the same as TeleportService:Teleport with the exception that it includes a spawnName parameter, 
+causing the Player to spawn at the SpawnLocation of that name at the destination place.
+
+The SpawnLocation must be valid for the Player to spawn on. 
+For example, it must be neutral or set to the same TeamColor as the Team the Player will be assigned to upon joining the game.
+
+The Player will still spawn at the correct SpawnLocation even the teleport is to a place in a different universe. 
+The spawn will also be correct if Players.CharacterAutoLoads is false in the destination place and the Character is loaded manually using LoadCharacter.
+
+The teleportation will only affect the SpawnLocation used initially. 
+If the Player respawns again subsequently it will not necessarily be at this SpawnLocation.
+
+See also
+For more information about teleporting please see TeleportService:Teleport or the Teleporting Between Places tutorial
+Parameters
+Name	Type	Default	Description
+placeId
+int64
+The ID of the place to teleport to
+
+spawnName
+string
+The name of the SpawnLocation to spawn at
+
+player
+Instance
+nil
+The Player to teleport, if this function is being called from the client this defaults to the Players.LocalPlayer
+
+teleportData
+Variant
+Optional data to be passed to the destination place. Can be retrieved using TeleportService:GetLocalPlayerTeleportData
+
+customLoadingScreen
+Instance
+nil
+Optional custom loading screen to be placed in the CoreGui at the destination place. Can be retrieved using TeleportService:GetArrivingTeleportGui
+
+Returns
+Return Type	Summary
+void
+No return
+
+Code Samples
+TeleportService:TeleportToSpawnByName
+This code will teleport a player to Crossroads, and if there is a spawn named “TeleportSpawn” then the player would spawn on it. This assumes it’s being used in a LocalScript.
+
+EXPAND 
+game:GetService('TeleportService'):TeleportToSpawnByName(1818, "TeleportSpawn")
+
+
+********************************
+**  TeleportToPlaceInstance   **
+********************************
+Function of:
+
+TeleportService
+
+Description:
+
+This function teleports a Player to the place instance associated with the given placeId and instanceId. It can only be used to teleport to places in the same game.
+
+The placeId is the DataModel.PlaceId of the server and the instanceId is the JobId.
+
+This function can not be used to teleport Players to servers created using TeleportService:ReserveServer (reserved servers). For this, see TeleportService:TeleportToPrivateServer.
+
+Spawn name
+An optional spawnName parameter can be provided, which will cause the Player to initially spawn at the SpawnLocation of that name in the destination place. The SpawnLocation must be valid for the Player to spawn on. For example, it must be neutral or set to the same TeamColor as the Team the Player will be assigned to upon joining the game.
+
+Teleport data
+A teleportData parameter can be specified. This is data the client will transmit to the destination place and can be retrieved using TeleportService:GetLocalPlayerTeleportData.
+
+The teleportData can take any of the following forms:
+
+A table without mixed keys (all keys are strings or integers)
+A string
+A number
+A bool
+As the teleportData is transmitted by the client it is not secure. For this reason it should only be used for local settings and not sensitive items (such as the users’ score or in-game currency).
+
+If you need teleport data to persist across multiple teleports, you can use TeleportService:SetTeleportSetting and TeleportService:GetTeleportSetting.
+
+Loading screen
+A customLoadingScreen argument can be specified. This is a ScreenGui that is copied (without scripts) into the CoreGui of the destination place.
+
+Note, TeleportService:SetTeleportGui is the preferred alternative to the customLoadingScreen argument as it can be called prior to the teleport.
+
+The loading ScreenGui can be obtained in the destination place using TeleportService:GetArrivingTeleportGui, where developers can parent it to the PlayerGui.
+
+Teleport failure
+In some circumstances a teleport may fail. This can be due to the developer configuring the teleport incorrectly or issues with Roblox’s servers.
+
+If a teleportation request is rejected the TeleportService.TeleportInitFailed event will fire the error message and a TeleportResult enumerator describing the issue
+Teleports can fail ‘in transit’, after the user has left the server, due to issues with Roblox’s servers. In this case the user will be shown an error message and be required to rejoin the game
+See also
+For more information on how to teleport players, see the Teleporting Between Places tutorial.
+Parameters
+Name	Type	Default	Description
+placeId
+int64
+The ID of the place to teleport to
+
+instanceId
+string
+The DataMode/JobId of the server instance to teleport to
+
+player
+Instance
+nil
+The Player to teleport, if this function is being called from the client this defaults to the Players.LocalPlayer
+
+spawnName
+string
+Optional name of the SpawnLocation to spawn at
+
+teleportData
+Variant
+Optional data to be passed to the destination place. Can be retrieved using TeleportService:GetLocalPlayerTeleportData
+
+customLoadingScreen
+Instance
+nil
+Optional custom loading screen to be placed in the CoreGui at the destination place. Can be retrieved using TeleportService:GetArrivingTeleportGui
+
+Returns
+Return Type	Summary
+void
+No return
+
+Code Samples
+Following Another Player
+The code sample below, when placed inside a Script within ServerScriptService, will teleport a player who’s following another player to the associated place/server. Note that this will not work if the player being followed is in a reserved server.
+
+EXPAND 
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+ 
+Players.PlayerAdded:Connect(function(player)
+	-- Is this player following anyone?
+	local followId = player.FollowUserId
+	-- If so, find out where they are
+	if followId and followId ~= 0 then
+		local success, errorMessage, placeId, jobId = pcall(function()
+			return TeleportService:GetPlayerPlaceInstanceAsync(followId)
+		end)
+		if success then
+			-- Teleport player
+			TeleportService:TeleportToPlaceInstance(placeId, jobId, player)
+		end
+	else
+		warn("Player " .. player.UserId .. " is not following another player!")
+	end
+end)
+
+TeleportService
+Show deprecated  
+Service
+This class is a Service! It is a top-level singleton which can be retrieved using the GetService function.
+
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+The TeleportService is responsible for transporting Players between places and servers.
+
+‘Teleporting’ in Roblox, describes the transportation of Players between different places and servers. TeleportService provides a range of functions allowing single or groups of users to be teleported. As Roblox games can contain multiple places, you can use the TeleportService to teleport players between different levels.
+
+Which teleport function should I use?
+A variety of teleportation functions are available and are all suitable for different circumstances:
+
+See also
+Teleport for teleporting a single Player to a place
+TeleportToSpawnByName for teleporting a single Player to a place, spawning at a particular SpawnLocation
+TeleportToPlaceInstance for teleporting a single Player to a specific server instance in a place that is part of the same game
+TeleportService:TeleportPartyAsync for teleporting a group of Players to one server in a place that is part of the same game
+TeleportService:TeleportToPrivateServer for teleporting a group of Players to a reserved server created using TeleportService:ReserveServer
+Properties
+Functions
+Instance 
+GetArrivingTeleportGui ( )
+Returns the customLoadingScreen the LocalPlayer arrived into the place with
+
+Variant 
+GetLocalPlayerTeleportData ( )
+Returns the teleportData the Players.LocalPlayer arrived into the place with
+
+Tuple 
+GetPlayerPlaceInstanceAsync ( int64 userId )
+ [yields]
+Returns the DataModel.PlaceId and DataMode/lJobId of the server the user with the given Player.UserId is in provided it is in the same game as the current place
+
+Variant 
+GetTeleportSetting ( string setting )
+Retrieves a teleport setting saved using TeleportService:SetTeleportSetting using the given key
+
+Tuple 
+ReserveServer ( int64 placeId )
+ [yields]
+Returns an access code that can be used to teleport players to a reserved server, along with the DataModel.PrivateServerId for it
+
+void 
+SetTeleportGui ( Instance gui )
+Sets the custom teleport GUI that will be shown to the local user during teleportation, prior to the teleport being invoked
+
+void 
+SetTeleportSetting ( string setting , Variant value )
+Stores a value under a given key that persists across all teleportations in the same game
+
+void 
+Teleport ( int64 placeId , Instance player , Variant teleportData , Instance customLoadingScreen )
+Teleports a Player to the place associated with the given placeId
+
+string
+TeleportPartyAsync ( int64 placeId , Objects players , Variant teleportData , Instance customLoadingScreen )
+[yields]
+Teleports a group of Players to the same server of the place with the given PlaceId, returning the JobId of the server instance they were teleported to
+
+void
+TeleportToPlaceInstance ( int64 placeId , string instanceId , Instance player , string spawnName , Variant teleportData , Instance customLoadingScreen )
+Teleports a Player to the server instance associated with the given placeId and instanceId
+
+void
+TeleportToPrivateServer ( int64 placeId , string reservedServerAccessCode , Objects players , string spawnName , Variant teleportData , Instance customLoadingScreen )
+Teleport a group of Players to a reserved server created using TeleportService:ReserveServer
+
+void
+TeleportToSpawnByName ( int64 placeId , string spawnName , Instance player , Variant teleportData , Instance customLoadingScreen )
+A variant of TeleportService:Teleport that causes the Player to spawn at a SpawnLocation of the given name at the destination place
+
+Events
+RBXScriptSignal 
+LocalPlayerArrivedFromTeleport ( Instance loadingGui , Variant dataTable )
+Fires when the LocalPlayer enters the place following a teleport. Provides the Player’s teleportData and customLoadingScreen
+
+RBXScriptSignal
+TeleportInitFailed ( Instance player , TeleportResult teleportResult , string errorMessage )
+Fires when a teleport fails to start, leaving the player in their current server
