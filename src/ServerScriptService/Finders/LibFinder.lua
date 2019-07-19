@@ -4,7 +4,7 @@
 	:GetService("ServerScriptService")
 	:WaitForChild("Finders")
 	:WaitForChild("LibFinder"))
-    local rq = svcFinder:FindLib("RQuery")
+    local rq = libFinder:FindLib("RQuery")
 ]]
 
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -13,6 +13,8 @@ local sharedLibs = ServerScriptService:WaitForChild("SharedLibs")
 local registrationModuleScript = sharedLibs:FindFirstChild("_registerLibs", false)
 
 local dedupedModules = {}
+
+
 if registrationModuleScript ~= nil then
     local registrationModule = require(registrationModuleScript)
 
@@ -25,7 +27,7 @@ end
 local module = {}
 module["RegisteredLibs"] = dedupedModules
 
-function module:FindService(libName)
+function module:FindLib(libName)
     if self.RegisteredLibs ~= nil then
         -- First try
         local foundLib = self.RegisteredLibs[libName]
@@ -39,6 +41,12 @@ function module:FindService(libName)
             return foundLib
         end
 
+        -- Last try
+        for libKey, libValue in pairs(self.RegisteredLibs) do
+            if string.lower(libKey) == string.lower(libName) then
+                return libValue
+            end
+        end
         error("Library " .. libName .. " not found")
         return nil
     end

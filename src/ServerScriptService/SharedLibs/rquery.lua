@@ -38,7 +38,18 @@ function module.AttachedHumanoidOrNil(part)
 	end
 end
 
-function module.itWorked(msg) 
-	print(msg)
+function module.AttachedCharacterOrNil( part )
+	-- body
+	local attachedHumanoid = module.AttachedHumanoidOrNil(part)
+	if attachedHumanoid ~= nil then
+		local character = attachedHumanoid.Parent
+		if character ~= nil then
+			
+			return character
+		end
+	end
+
+	return nil
 end
+
 return module

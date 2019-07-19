@@ -6,15 +6,18 @@
     Usage example: 
     	local svcFinder = require(game
 	:GetService("ServerScriptService")
-	:WaitForChild("ServiceFinder")
-	:WaitForChild("Finder"))
-    local rq = svcFinder:FindService("RQuery")
+	:WaitForChild("Finders")
+	:WaitForChild("ServiceFinder"))
+    local pointsSvc = svcFinder:FindService("points")
 ]]
 
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local allChildFolders = ServerScriptService:GetChildren()
+        
 local dedupedModules = {}
+
+dedupedModules["Points"] = game:GetService("PointsService")
 
 for _, folder in pairs(allChildFolders) do
     local registrationModuleScript = folder:FindFirstChild("_registerModules", false)
@@ -45,6 +48,13 @@ function module:FindService(serviceName)
         foundService = self.RegisteredServices[string.lower(serviceName)]
         if foundService ~= nil then
             return foundService
+        end
+
+        -- Last try
+        for svcKey, svcValue in pairs(self.RegisteredServices) do
+            if string.lower(svcKey) == string.lower(serviceName) then
+                return svcValue
+            end
         end
 
         error("Service " .. serviceName .. " not found")
