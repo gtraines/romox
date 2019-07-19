@@ -1,0 +1,26 @@
+{
+  "name": "romox",
+  "servePort": 8000,
+  "partitions": {
+    "AppStart": {
+      "path": "src/ServerScriptService/AppStart",
+      "target": "ServerScriptService.AppStart"
+    },
+    "Finders": {
+      "path": "src/ServerScriptService/Finders",
+      "target": "ServerScriptService.Finders"
+    },
+    "Framework": {
+      "path": "src/ServerScriptService/Framework",
+      "target": "ServerScriptService.Framework"
+    },
+    "SharedLibs": {
+      "path": "src/ServerScriptService/SharedLibs",
+      "target": "ServerScriptService.SharedLibs"
+    },
+    "ThirdPartyLibs": {
+      "path": "src/ServerScriptService/ThirdPartyLibs",
+      "target": "ServerScriptService.ThirdPartyLibs"
+    }
+  }
+}
