@@ -1,23 +1,39 @@
 Remote Functions and Events
 Jun 14 2019, 2:16 PM PST
 15 min
-Remote Events and Functions are used to let Scripts (on the server) and LocalScripts (on clients) to communicate with each other. There are some actions that only the server can perform, and others that only the client can. In some cases, the server or client will want the other to perform one of these actions. For example, data stores are only accessible on the server, but clients may want to access the information they store. In this case, a RemoteEvent or RemoteFunction can be used to both send a request from the client to the server to get information from a Data Stores, and to send a response from the server back to the client.
+Remote Events and Functions are used to let Scripts (on the server) and LocalScripts (on clients) to communicate with each other. 
+There are some actions that only the server can perform, and others that only the client can. 
+In some cases, the server or client will want the other to perform one of these actions. 
+For example, data stores are only accessible on the server, but clients may want to access the information they store. 
+In this case, a RemoteEvent or RemoteFunction can be used to both send a request from the client to the server to get information from a Data Stores, 
+and to send a response from the server back to the client.
 
 Difference between Remote Events and Functions
-While RemoteEvents and RemoteFunctions are similar in that they allow communication between servers and clients, there are a few differences between them that should be known before deciding which to use.
+While RemoteEvents and RemoteFunctions are similar in that they allow communication between servers and clients, 
+there are a few differences between them that should be known before deciding which to use.
 
-The first difference is that RemoteFunctions are designed for two way communication, while RemoteEvents are designed for one way. A RemoteFunction sends a request and then waits for a response, while RemoteEvents just send a request.
+The first difference is that RemoteFunctions are designed for two way communication, while RemoteEvents are designed for one way. 
+A RemoteFunction sends a request and then waits for a response, while RemoteEvents just send a request.
 
-Another major difference between the two is how they are handled. RemoteEvents use the Roblox event system. This means that any number of scripts can listen for the event to fire, and they can each handle that firing in different ways. RemoteFunctions on the other hand use a callback. For every RemoteFunction, only one callback can be defined on the server and only one for each client.
+Another major difference between the two is how they are handled. 
+RemoteEvents use the Roblox event system. 
+This means that any number of scripts can listen for the event to fire, and they can each handle that firing in different ways. 
+RemoteFunctions on the other hand use a callback. For every RemoteFunction, only one callback can be defined on the server and only one for each client.
 
-The last difference is how many different targets remote events and functions can have. For both Remote Events and Functions, a client can contact the server and the server can contact the client. In the case of RemoteEvents, the server can also contact every client at the same time.
+The last difference is how many different targets remote events and functions can have. 
+For both Remote Events and Functions, a client can contact the server and the server can contact the client. 
+In the case of RemoteEvents, the server can also contact every client at the same time.
 
-While all of the above outlines should be considered when deciding which object to use for a specific communication task, the most important factor usually is whether the communication needs to be one or two way. As outlined above, it is recommended to use RemoteFunctions if the code needs a response, otherwise RemoteEvents should be used.
+While all of the above outlines should be considered when deciding which object to use for a specific communication task, 
+the most important factor usually is whether the communication needs to be one or two way. 
+As outlined above, it is recommended to use RemoteFunctions if the code needs a response, otherwise RemoteEvents should be used.
 
 Using RemoteEvents
-Remote Events are designed to provide a one way message between the server and clients. This message can be directed from one client to the server, from the server to a particular client, or from the server to all clients.
+Remote Events are designed to provide a one way message between the server and clients. 
+This message can be directed from one client to the server, from the server to a particular client, or from the server to all clients.
 
-In order for both the server and clients to utilize RemoteEvents, the RemoteEvent object itself must be in a place where both can see it. It is recommended to store RemoteEvents in a folder inside of ReplicatedStorage, although in some cases it is appropriate to store events in the Workspace or in Tools.
+In order for both the server and clients to utilize RemoteEvents, the RemoteEvent object itself must be in a place where both can see it. 
+It is recommended to store RemoteEvents in a folder inside of ReplicatedStorage, although in some cases it is appropriate to store events in the Workspace or in Tools.
 
 Client to Server
 In order for a client to send a message to the server, it needs to fire the RemoteEvent with the function RemoteEvent:FireServer.
@@ -45,9 +61,9 @@ local function onCreatePartFired(player)
 end
  
 createPartEvent.OnServerEvent:Connect(onCreatePartFired)
- COPY CODE
-LIGHT THEME 
-When a client calls the FireServer function, any functions on the server that are connected to OnServerEvent will fire. Note that this is not immediate - the network connection between the client and server will determine how quickly this happens.
+
+When a client calls the FireServer function, any functions on the server that are connected to OnServerEvent will fire. 
+Note that this is not immediate - the network connection between the client and server will determine how quickly this happens.
 
 When firing a RemoteEvent from a client to the server, data can be included in the firing. By default, the functions connected to OnServerEvent will be passed the player who fired the event as the first parameter. If any other arguments are provided in the FireServer function, they will also be included in OnServerEvent after the player argument.
 

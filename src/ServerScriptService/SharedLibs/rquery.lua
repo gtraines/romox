@@ -1,5 +1,11 @@
 local module = {}
 
+function module.CreateFolder( folderName, parentObjectInstance )
+	local folderInst = Instance.new("Folder", parentObjectInstance)
+	folderInst.Name = folderName
+	return folderInst
+end
+
 function module.BreadthFirst(entity, levelsRemaining, funcToRunOnEachEntity)
     -- @param [Instance] entity entity to start search
 	-- @param [Number] levelsRemaining Levels of entities deep to continue searching
@@ -10,7 +16,7 @@ function module.BreadthFirst(entity, levelsRemaining, funcToRunOnEachEntity)
 	
 	local entityChilds = entity:GetChildren()
 	
-	for idx, entitiesChild in pairs(entityChilds) do
+	for _, entitiesChild in pairs(entityChilds) do
 		funcToRunOnEachEntity(entitiesChild)
 		module.BreadthFirst(entitiesChild, levelsRemaining - 1, funcToRunOnEachEntity)
     end
