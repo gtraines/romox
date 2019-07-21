@@ -1,5 +1,3 @@
-
-
 local libFinder = require(game
     :GetService("ServerScriptService")
     :WaitForChild("Finders")
@@ -11,7 +9,8 @@ local svcFinder = require(game
     :WaitForChild("ServiceFinder"))
 
 local spieler = svcFinder:FindService("spieler")
-local rq = libFinder:FindLib("RQuery")
+local exNihilo = svcFinder:FindService("exnihilo")
+
 local wraptor = libFinder:FindLib("Wraptor")
 local linq = libFinder:FindLib("linq")
 
@@ -23,28 +22,32 @@ local function getSpawnerModels()
     return spawnerModels.list()
 end
 
-local function touchedByAHumanoidClosure(spawnerModel, onTouchedByHumanoidDelegate)
+local function touchedByAPlayerClosure(spawnerModel, touchedByPlayerDelegate)
 
-    local touchStone = spawnerModel:FindFirstChild("Touchstone")
-    
+
     local touchHandler = function(part)
-        if rq.AttachedHumanoidOrNil(part) ~= nil then
-            return onTouchedByHumanoidDelegate(part)
+        local playerFromPart = spieler:GetPlayerFromPart(part)
+        if (playerFromPart ~= nil) then
+            return touchedByPlayerDelegate(spawnerModel, playerFromPart)
         end
     end
 
-    return wraptor.WithCoolDown(1, touchHandler)
+    return wraptor.WithCoolDown(5, touchHandler)
 end
 
-local function touchedDelegate(part)
+local function touchedDelegate(spawnerModel, playerFromPart)
     print(
-        "ALERT: " .. rq.AttachedHumanoidOrNil(part).Name .. " just touched me."
+        "ALERT: " .. playerFromPart.Name .. " just touched me."
     )
-    -- get player
+    local prototypeToSpawn = spawnerModel:FindFirstChild("SpawnsPrototypeId").Value
+    local touchStone = spawnerModel:FindFirstChild("SpawnPad")
+    local spawnLocation = CFrame.new(touchStone.Position) + Vector3.new(0, 3, 0)
+    exNihilo.CreateFromServerStorage(prototypeToSpawn, spawnLocation)
+
 end
 
 
 for spwnrMdl in getSpawnerModels() do
     print(spwnrMdl)
-    spwnrMdl:FindFirstChild("Touchstone").Touched:Connect(touchedByAHumanoidClosure(spwnrMdl, touchedDelegate))
+    spwnrMdl:FindFirstChild("Touchstone").Touched:Connect(touchedByAPlayerClosure(spwnrMdl, touchedDelegate))
 end

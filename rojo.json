@@ -18,10 +18,6 @@
       "path": "src/ServerScriptService/SharedLibs",
       "target": "ServerScriptService.SharedLibs"
     },
-    "ThirdPartyLibs": {
-      "path": "src/ServerScriptService/ThirdPartyLibs",
-      "target": "ServerScriptService.ThirdPartyLibs"
-    },
     "GameModules": {
       "path": "src/ServerScriptService/GameModules",
       "target": "ServerScriptService.GameModules"

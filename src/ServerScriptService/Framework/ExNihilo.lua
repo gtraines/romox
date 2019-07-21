@@ -11,6 +11,18 @@ local linq = libFinder:FindLib("linq")
 local serverStorage =  game:GetService("ServerStorage")
 
 local module = {}
+--[[
+    When working with collections and tags, it’s a good idea to use an object-oriented programming style. 
+    In almost all situations, tagged objects have their own identity, state and behavior. 
+    The pattern goes like this: when a tag is found (CollectionService:GetTagged and CollectionService:GetInstanceAddedSignal), create a Lua object with the Roblox instance. 
+    When it is removed (CollectionService:GetInstanceRemovedSignal), call a cleanup/destroy method within the Lua object. 
+    See the code samples for a better idea of how this can be done.
+
+    When tags replicate, all tags on an object replicate at the same time. 
+    Therefore, if you set a tag on an object from the client then add/remove a different tag on the same object from the server, 
+        the client’s local tags on the object are overwritten.
+]]
+
 
 
 -- ExampleSetterFunction = exNihilo.MoveModelToCoordFrame(workspace:WaitForChild("Model"), CFrame.new(0,5,0))
@@ -25,19 +37,41 @@ function module.MoveModelToCoordFrame( modelWithPrimaryPart, newCoordFrame )
             Cache[Desc] = PrimaryCF:toObjectSpace(Desc.CFrame)
         end
     end
-    
+
     Primary.CFrame = newCoordFrame
     for Part, Offset in next, Cache do
         Part.CFrame = newCoordFrame * Offset
+        
     end
 end
 
-function module.CreateFromServerStorage( itemIdentifier, coordsForNewInstance )
-    local foundItem = linq(serverStorage:GetChildren()):single(function( itm )
-        return itm.Name == itemIdentifier
+function module.CreateFromServerStorage( prototypeId, coordsForNewInstance )
+    local foundPrototype = linq(serverStorage:GetChildren()):single(function( itm )
+        local itmPrototypeId = itm.FindFirstChild("PrototypeId")
+        if (itmPrototypeId ~= nil) then
+            return itmPrototypeId.Value == prototypeId
+        end
     end)
+
+    if foundPrototype == nil then
+        foundPrototype = linq(serverStorage:GetChildren()):single(function( itm )
+            return itm.Name == prototypeId
+        end)
+    end
+
+    if foundPrototype == nil then
+        error("Could not find Prototype: " .. prototypeId)
+        return nil
+    end
+
+    spawn(function ()
+        local foundItem = foundPrototype:Clone()
+        foundItem.Parent = game:GetService("Workspace")
     
-    module.MoveModelToCoordFrame(foundItem, coordsForNewInstance)
+        module.MoveModelToCoordFrame(foundItem, coordsForNewInstance)
+    
+    end)
 end
+
 
 return module

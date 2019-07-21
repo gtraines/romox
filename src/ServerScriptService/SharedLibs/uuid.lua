@@ -29,9 +29,18 @@
 -- simultaneously (like nginx does for example).
 
 local M = {}
-local math = require('math')
-local os = require('os')
-local string = require('string')
+if math == nil then
+  math = require("math")
+end
+
+if os == nil then
+  os = require("os")
+end
+
+if string == nil then
+  string = require("string")
+end
+
 
 local bitsize = 32  -- bitsize assumed for Lua VM. See randomseed function below.
 local lua_version = tonumber(_VERSION:match("%d%.*%d*"))  -- grab Lua version used

@@ -1,0 +1,76 @@
+RunService
+Show deprecated  
+Service
+This class is a Service! It is a top-level singleton which can be retrieved using the GetService function.
+
+NotReplicated
+This item is not replicated across Roblox’s server/client boundary.
+
+NotCreatable
+This object cannot be created with the Instance.new constructor function.
+
+The RunService contains methods and events for time-management as well as for managing the context in which a game or script is running. Methods like IsClient, IsServer, IsStudio, can help you determine where Lua code is running. These methods are useful for ModuleScripts that could be required by both the client and server. In addition, you can use IsStudio to add special behavior for in-studio testing.
+
+RunService also provides events that help you manage time. Stepped and Heartbeat can be used for game logic while RenderStepped can be used for visual effects. These events fire with “delta time” values. Stepped also includes the total amount of time passed in a game. Correctly using the change in time values for game logic is important for changing values over time. As a general rule, multiply your change in time by the rate of change to get the amount a value should change in one frame. For example:
+
+LIGHT THEME		    -- Note: delta just means "change in/of"
+    speed = deltaPosition / deltaTime
+    deltaPosition = speed * deltaTime
+Properties
+Functions
+void 
+BindToRenderStep ( string name , int priority , Function function )
+Given a string name of a function and a priority, this method binds the function to RunService.RenderStepped
+
+bool 
+IsClient ( )
+Returns whether the current environment is running on the client
+
+bool 
+IsEdit ( )
+Returns whether the current environment is in Edit mode
+
+bool 
+IsRunMode ( )
+Returns whether the ‘Run’ button has been pressed to run the simulation in Roblox Studio
+
+bool 
+IsRunning ( )
+Returns whether the game is currently running
+
+bool 
+IsServer ( )
+Returns whether the current environment is running on the server
+
+bool 
+IsStudio ( )
+Returns whether the current environment is running in Roblox Studio
+
+void 
+Pause ( )
+Pauses the game’s simulation if it is running, suspending physics and scripts
+
+void 
+Run ( )
+Runs the game’s simulation, running physics and scripts
+
+void 
+Stop ( )
+Ends the game’s simulation if it is running
+
+void 
+UnbindFromRenderStep ( string name )
+Unbinds a function that was bound to the render loop using RunService:BindToRenderStep
+
+Events
+RBXScriptSignal 
+Heartbeat ( double step )
+Fires every frame after the physics simulation has completed
+
+RBXScriptSignal 
+RenderStepped ( double step )
+Fires every frame prior to the frame being rendered
+
+RBXScriptSignal 
+Stepped ( double time , double step )
+Fires every frame prior to the physics simulation

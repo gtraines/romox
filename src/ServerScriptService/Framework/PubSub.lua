@@ -18,8 +18,10 @@ local module = {
 -- Aka remote function?
 
 -- Create topic folder
-function module.CreateFolder(  )
-	-- body
+function module:GetOrCreateClientServerTopicCategory( categoryName )
+	if self.__replicatedStorage:WaitForChild(categoryName, 1) ~= nil then
+		return self.__replicatedStorage.First
+	end
 end
 
 -- Create ClientServer topic in folder

@@ -49,7 +49,7 @@ function spieler:AddOnCharacterDiedHandler( playerInstance, handlerFunc )
 end
 
 function spieler:GetPlayerFromPart( part )
-    local character = rq:AttachedCharacterOrNil(part)
+    local character = rq.AttachedCharacterOrNil(part)
     if character ~= nil then
         return self.__playersSvc:GetPlayerFromCharacter(character)
     end

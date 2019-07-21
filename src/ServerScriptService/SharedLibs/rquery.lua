@@ -1,8 +1,9 @@
 local module = {}
 
 function module.CreateFolder( folderName, parentObjectInstance )
-	local folderInst = Instance.new("Folder", parentObjectInstance)
+	local folderInst = Instance.new("Folder")
 	folderInst.Name = folderName
+	folderInst.Parent = parentObjectInstance
 	return folderInst
 end
 
@@ -33,15 +34,17 @@ function module.FindSiblingNamed( part, siblingName )
 end
 
 function module.AttachedHumanoidOrNil(part)
+	if part == nil then return nil end
+	
 	if module.FindSiblingNamed(part, "Humanoid") ~= nil then
 		return module.FindSiblingNamed(part, "Humanoid")
 	elseif part:FindFirstAncestor("Humanoid") ~= nil then
 		return part:FindFirstAncestor("Humanoid")
 	elseif part:FindFirstChild( "Humanoid", false ) ~= nil then
 		return part:FindFirstChild( "Humanoid", false )
-	else
-		return nil
 	end
+		
+	return nil
 end
 
 function module.AttachedCharacterOrNil( part )
