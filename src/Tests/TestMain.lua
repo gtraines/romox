@@ -8,9 +8,6 @@ local game = habitat.game
 local sharedLibs = habitat:loadFromFs("../ServerScriptService/SharedLibs")
 sharedLibs.Parent = ServerScriptService
 
-local thirdPartyLibs = habitat:loadFromFs("../ServerScriptService/ThirdPartyLibs")
-thirdPartyLibs.Parent = ServerScriptService
-
 local finderFolder = habitat:loadFromFs("../ServerScriptService/Finders")
 finderFolder.Parent = ServerScriptService
 
