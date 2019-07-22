@@ -1,5 +1,6 @@
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 local PlayersService = game:GetService("Players")
 
 local module = {}
@@ -56,6 +57,8 @@ end
 function module.__attachElsGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
     local elsHud = ServerStorage:WaitForChild("UserInterfaces"):WaitForChild("ElsHud"):Clone()
     elsHud.Vehicle.Value = vehicleModel
+    local elsButtons = ServerScriptService:WaitForChild("Equipment", 2):WaitForChild("ElsHudButtons"):Clone()
+    elsButtons.Parent = elsHud
     elsHud.Parent = occupantPlayer.PlayerGui
     elsHud.HudFrame.SubscribeButtons.Disabled = false
 end
