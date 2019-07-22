@@ -8,6 +8,7 @@ local libFinder = require(game:GetService("ServerScriptService")
     :WaitForChild("LibFinder", 5))
 
 local linq = libFinder:FindLib("linq")
+local uuid = libFinder:FindLib("uuid")
 local serverStorage =  game:GetService("ServerStorage")
 
 local module = {}
@@ -45,16 +46,19 @@ function module.MoveModelToCoordFrame( modelWithPrimaryPart, newCoordFrame )
     end
 end
 
-function module.CreateFromServerStorage( prototypeId, coordsForNewInstance )
-    local foundPrototype = linq(serverStorage:GetChildren()):single(function( itm )
-        local itmPrototypeId = itm.FindFirstChild("PrototypeId")
+
+-- createdModelCallback takes the createdModel as its only parameter
+function module.CreateFromServerStorage( prototypeId, coordsForNewInstance, createdModelCallback )
+    local foundPrototype = linq(serverStorage:GetChildren()):first(function( itm )
+        local itmPrototypeId = itm:FindFirstChild("PrototypeId")
         if (itmPrototypeId ~= nil) then
             return itmPrototypeId.Value == prototypeId
         end
+        return false
     end)
 
     if foundPrototype == nil then
-        foundPrototype = linq(serverStorage:GetChildren()):single(function( itm )
+        foundPrototype = linq(serverStorage:GetChildren()):first(function( itm )
             return itm.Name == prototypeId
         end)
     end
@@ -65,11 +69,19 @@ function module.CreateFromServerStorage( prototypeId, coordsForNewInstance )
     end
 
     spawn(function ()
-        local foundItem = foundPrototype:Clone()
-        foundItem.Parent = game:GetService("Workspace")
-    
-        module.MoveModelToCoordFrame(foundItem, coordsForNewInstance)
-    
+        local createdItem = foundPrototype:Clone()
+        local entityIdObj = createdItem:FindFirstChild("EntityId")
+        if entityIdObj == nil then
+            entityIdObj = Instance.new("StringValue")
+            entityIdObj.Parent = createdItem
+        end
+        entityIdObj.Value = uuid()
+        createdItem.Parent = game:GetService("Workspace")
+        
+        module.MoveModelToCoordFrame(createdItem, coordsForNewInstance)
+        if createdModelCallback ~= nil then
+            createdModelCallback(createdItem)
+        end
     end)
 end
 
