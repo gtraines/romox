@@ -60,7 +60,21 @@ function module.__attachElsGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer
     local elsButtons = ServerScriptService:WaitForChild("Equipment", 2):WaitForChild("ElsHudButtons"):Clone()
     elsButtons.Parent = elsHud
     elsHud.Parent = occupantPlayer.PlayerGui
-    elsHud.HudFrame.SubscribeButtons.Disabled = false
+    elsHud.ElsHudButtons.Disabled = false
+end
+
+function module._copyElsScript(vehicleModel)
+    local elsModule = require(ServerScriptService
+        :WaitForChild("Equipment", 2)
+        :WaitForChild("ElsRunner"))
+    
+    
+    local elsModel = vehicleModel:FindFirstChild("Body"):FindFirstChild("ELS")
+    if elsModel == nil then
+        error("Emergency vehicle missing member Body.ELS model")
+    end
+    elsModule.ConnectLights(vehicleModel.EntityId, elsModel)
+    elsModule.Parent = elsModel
 end
 
 function module._attachVehicleSeatHandlers(vehicleModel)
@@ -171,6 +185,7 @@ function module.WireUpVehicleScripts(vehicleModel)
     module._attachVehicleSeatHandlers(vehicleModel)
 
     module._setConstraints(vehicleModel)
+    module._copyElsScript(vehicleModel)
 end
 
 

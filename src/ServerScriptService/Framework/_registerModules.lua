@@ -7,7 +7,6 @@ local module = {}
 module["Spieler"] = spieler
 module["LightManager"] = lightManager
 module["ExNihilo"] = exNihilo
-module["ElsRunner"] = require(script.Parent:WaitForChild("ElsRunner"))
 module["PubSub"] = require(script.Parent:WaitForChild("PubSub"))
 
 return module
