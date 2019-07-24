@@ -57,8 +57,8 @@ local function generateDelegate(entityId, button)
     local topic = getOrCreateClientServerTopicInCategory("ELS", button.Text)
     print(topic.Name)
 	local activatedDelegate = function(sender)
-        local eventData = { entityId = entityId }
-        topic:FireServer(eventData)
+        
+        topic:FireServer(entityId)
 		print("Received click from entity: " .. entityId .. " on button: " .. button.Text)
 	end
 	
