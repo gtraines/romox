@@ -18,12 +18,14 @@ local function getSpawnerModels()
     local wsRoot = game:WaitForChild("Workspace", 5)
     -- Get Spawners
     local spawnersFolder = wsRoot:WaitForChild("Spawners", 20)
-    local spawnerModels = linq(spawnersFolder:GetChildren()):where(function (item) return item:FindFirstChild("Touchstone") ~= nil end)
+    local spawnerModels = linq(spawnersFolder:GetChildren()):where(
+        function (item)
+            return item:FindFirstChild("Touchstone") ~= nil 
+        end)
     return spawnerModels.list()
 end
 
 local function touchedByAPlayerClosure(spawnerModel, touchedByPlayerDelegate)
-
 
     local touchHandler = function(part)
         local playerFromPart = spieler:GetPlayerFromPart(part)
