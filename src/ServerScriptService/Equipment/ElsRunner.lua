@@ -259,8 +259,10 @@ end
 function module._getSiren1ListenerFunc(elsModel)
 	
 	local sirenPart = elsModel:FindFirstChild("Siren")
-
+	local sirenSound = sirenPart:FindFirstChild("Wail")
+	sirenSound.EmitterSize = 10
 	local siren1On = false
+
 	local listenerFunc = function(sender, data)
 		module.__turnOffAllSirens(sirenPart)
 
@@ -278,7 +280,8 @@ end
 function module._getSiren2ListenerFunc(elsModel)
 	
 	local sirenPart = elsModel:FindFirstChild("Siren")
-
+	local sirenSound = sirenPart:FindFirstChild("Yelp")
+	sirenSound.EmitterSize = 10
 	local siren2On = false
 	local listenerFunc = function(sender, data)
 		module.__turnOffAllSirens(sirenPart)
