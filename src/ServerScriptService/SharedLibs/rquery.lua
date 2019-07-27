@@ -60,4 +60,76 @@ function module.AttachedCharacterOrNil( part )
 	return nil
 end
 
+function module.FolderContentsOrNil( folderName, parent )
+	if folderName == nil or parent == nil then return nil end
+
+	local folderCandidate = parent:FindFirstChild(folderName)
+
+	if  folderCandidate ~= nil and folderCandidate:IsA("Folder") then
+		return folderCandidate:GetChildren()
+	end
+
+	return nil
+end
+
+function module.ComponentsFolderOrNil( item )
+	return module.FolderContentsOrNil( "Components", item )
+end
+
+function module.StringValueOrNil( valueName, parent )
+	if valueName == nil or parent == nil then return nil end
+
+	local valueCandidate = parent:FindFirstChild(valueName)
+	if valueCandidate ~= nil and valueCandidate:IsA("StringValue") then
+		return valueCandidate.Value
+	end
+
+	return nil
+end
+
+function module.BoolValueOrNil( valueName, parent )
+	if valueName == nil or parent == nil then return nil end
+
+	local valueCandidate = parent:FindFirstChild(valueName)
+	if valueCandidate ~= nil and valueCandidate:IsA("BoolValue") then
+		return valueCandidate.Value
+	end
+
+	return nil
+end
+
+function module.ObjectValueOrNil( valueName, parent )
+	if valueName == nil or parent == nil then return nil end
+
+	local valueCandidate = parent:FindFirstChild(valueName)
+	if valueCandidate ~= nil and valueCandidate:IsA("ObjectValue") then
+		return valueCandidate.Value
+	end
+
+	return nil
+end
+
+function module.IntValueOrNil( valueName, parent )
+	if valueName == nil or parent == nil then return nil end
+
+	local valueCandidate = parent:FindFirstChild(valueName)
+	if valueCandidate ~= nil and valueCandidate:IsA("ObjectValue") then
+		return valueCandidate.Value
+	end
+
+	return nil
+end
+
+function module.GetOrAddItem( itemName, itemType, parent )
+	if itemName == nil or itemType == nil or parent == nil then return nil end
+
+	local itemCandidate = parent:FindFirstChild(itemName)
+	if itemCandidate == nil then 
+		itemCandidate = Instance.new(itemType)
+		itemCandidate.Name = itemName
+		itemCandidate.Parent = parent
+	end
+	return itemCandidate
+end
+
 return module

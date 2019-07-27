@@ -1,0 +1,123 @@
+Properties
+bool 
+Archivable
+Determines if an Instance can be cloned using Instance:Clone or saved to file.
+
+string 
+ClassName
+ [readonly]  [notreplicated]
+A read-only string representing the class this Instance belongs to
+
+string 
+Name
+A non-unique identifier of the Instance
+
+Instance 
+Parent
+Determines the hierarchical parent of the Instance
+
+bool 
+RobloxLocked
+If true, the Instance and its descendants cannot be indexed or edited by a Script or LocalScript and will throw an error if it is attempted
+
+Functions
+void 
+ClearAllChildren ( )
+This function destroys all of an Instance's children.
+
+Instance 
+Clone ( )
+Create a deep copy of a Roblox instance and descendants where Archivable = true.
+
+void 
+Destroy ( )
+Sets the Instance.Parent property to nil, locks the Instance.Parent property, disconnects all connections and calls Destroy on all children.
+
+Instance 
+FindFirstAncestor ( string name )
+Returns the first ancestor of the Instance whose Instance.Name is equal to the given name.
+
+Instance 
+FindFirstAncestorOfClass ( string className )
+Returns the first ancestor of the Instance whose Instance.ClassName is equal to the given className.
+
+Instance 
+FindFirstAncestorWhichIsA ( string className )
+Returns the first ancestor of the Instance for whom Instance:IsA returns true for the given className.
+
+Instance 
+FindFirstChild ( string name , bool recursive )
+Returns the first child of the Instance found with the given name.
+
+Instance 
+FindFirstChildOfClass ( string className )
+Returns the first child of the Instance whose ClassName is equal to the given className.
+
+Instance 
+FindFirstChildWhichIsA ( string className , bool recursive )
+Returns the first child of the Instance for whom Instance:IsA returns true for the given className.
+
+Objects 
+GetChildren ( )
+Returns an array containing all of the Instance's children.
+
+string 
+GetDebugId ( int scopeLength )
+ [notbrowsable]
+Returns a coded string of the Instances DebugId used internally by Roblox.
+
+Array 
+GetDescendants ( )
+ [customluastate]
+Returns an array containing all of the descendants of the instance
+
+string 
+GetFullName ( )
+Returns a string describing the Instance's ancestry.
+
+RBXScriptSignal 
+GetPropertyChangedSignal ( string property )
+Get an event that fires when a given property of an object changes.
+
+bool 
+IsA ( string className )
+ [customluastate]
+Returns true if an Instance's class matches or inherits from a given class
+
+bool 
+IsAncestorOf ( Instance descendant )
+Returns true if an Instance is an ancestor of the given descendant.
+
+bool 
+IsDescendantOf ( Instance ancestor )
+Returns true if an Instance is a descendant of the given ancestor.
+
+Instance 
+WaitForChild ( string childName , double timeOut )
+ [customluastate]  [canyield]
+Returns the child of the Instance with the given name. If the child does not exist, it will yield the current thread until it does.
+
+Events
+RBXScriptSignal 
+AncestryChanged ( Instance child , Instance parent )
+Fires when the Instance.Parent property of the object or one of its ancestors is changed.
+
+RBXScriptSignal 
+Changed ( string property )
+Fired immediately after a property of an object changes.
+
+RBXScriptSignal 
+ChildAdded ( Instance child )
+Fires when an object is parented to this Instance.
+
+RBXScriptSignal 
+ChildRemoved ( Instance child )
+Fires when a child is removed from this Instance.
+
+RBXScriptSignal 
+DescendantAdded ( Instance descendant )
+Fires when a descendant is added to the Instance
+
+RBXScriptSignal 
+DescendantRemoving ( Instance descendant )
+Fires immediately before a descendant of the Instance is removed.

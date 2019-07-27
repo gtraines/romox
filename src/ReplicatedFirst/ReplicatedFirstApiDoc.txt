@@ -18,9 +18,12 @@ LocalScripts placed within ReplicatedFirst will run. This means code for custom 
 
 There a number of key considerations developers need to remember when running LocalScripts in ReplicatedFirst.
 
-Its contents replicate before anything else in the game, meaning LocalScripts running in ReplicatedFirst will need to wait for any objects they require to replicate using Instance:WaitForChild
-Any objects that are to be used by a LocalScript in ReplicatedFirst should also be parented to ReplicatedFirst. Otherwise, they may replicate to the client late, yielding the script and negating the benefit of ReplicatedFirst.
-ReplicatedFirst also includes the function ReplicatedFirst:RemoveDefaultLoadingScreen, which can be used to immediately remove the default Roblox loading screen. Note if any object has been placed in ReplicatedFirst, the default loading screen will remove after 5 seconds regardless if this function has been called or not.
+* Its contents replicate before anything else in the game, 
+  -- meaning LocalScripts running in ReplicatedFirst will need to wait for any objects they require to replicate using Instance:WaitForChild
+* Any objects that are to be used by a LocalScript in ReplicatedFirst should also be parented to ReplicatedFirst. 
+  -- Otherwise, they may replicate to the client late, yielding the script and negating the benefit of ReplicatedFirst.
+* ReplicatedFirst also includes the function ReplicatedFirst:RemoveDefaultLoadingScreen, which can be used to immediately remove the default Roblox loading screen. 
+  -- Note if any object has been placed in ReplicatedFirst, the default loading screen will remove after 5 seconds regardless if this function has been called or not.
 
 Properties
 Functions
