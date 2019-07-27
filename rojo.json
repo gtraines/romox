@@ -21,6 +21,10 @@
     "GameModules": {
       "path": "src/ServerScriptService/GameModules",
       "target": "ServerScriptService.GameModules"
+    },
+    "Equipment": {
+      "path": "src/ServerScriptService/Equipment",
+      "target": "ServerScriptService.Equipment"
     }
   }
 }

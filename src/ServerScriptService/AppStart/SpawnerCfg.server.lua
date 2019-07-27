@@ -8,6 +8,11 @@ local svcFinder = require(game
     :WaitForChild("Finders")
     :WaitForChild("ServiceFinder"))
 
+local chassisModule = require(
+    game:GetService("ServerScriptService")
+    :WaitForChild("Equipment")
+    :WaitForChild("ChassisMain"))
+
 local spieler = svcFinder:FindService("spieler")
 local exNihilo = svcFinder:FindService("exnihilo")
 
@@ -17,11 +22,11 @@ local linq = libFinder:FindLib("linq")
 local function getSpawnerModels()
     local wsRoot = game:WaitForChild("Workspace", 5)
     -- Get Spawners
-    local spawnersFolder = wsRoot:WaitForChild("Spawners", 20)
-    local spawnerModels = linq(spawnersFolder:GetChildren()):where(
-        function (item)
-            return item:FindFirstChild("Touchstone") ~= nil 
-        end)
+
+    local spawnersFolder = wsRoot:WaitForChild("Spawners")
+    local vehicleSpawners = spawnersFolder:WaitForChild("VehicleSpawners")
+    local spawnerModels = linq(vehicleSpawners:GetChildren()):where(function (item) return item:FindFirstChild("Touchstone") ~= nil end)
+
     return spawnerModels.list()
 end
 
@@ -44,7 +49,14 @@ local function touchedDelegate(spawnerModel, playerFromPart)
     local prototypeToSpawn = spawnerModel:FindFirstChild("SpawnsPrototypeId").Value
     local touchStone = spawnerModel:FindFirstChild("SpawnPad")
     local spawnLocation = CFrame.new(touchStone.Position) + Vector3.new(0, 3, 0)
-    exNihilo.CreateFromServerStorage(prototypeToSpawn, spawnLocation)
+
+    local createdModelCallback = function(createdModel)
+        print(createdModel.Name .. " was created with EntityId: " .. createdModel.EntityId.Value)
+        chassisModule.WireUpVehicleScripts(createdModel)
+        print("Vehicle scripts wired up yo")
+    end
+
+    exNihilo.CreateFromServerStorage(prototypeToSpawn, spawnLocation, createdModelCallback)
 
 end
 

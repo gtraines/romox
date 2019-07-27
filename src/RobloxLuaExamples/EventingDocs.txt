@@ -38,7 +38,7 @@ It is recommended to store RemoteEvents in a folder inside of ReplicatedStorage,
 Client to Server
 In order for a client to send a message to the server, it needs to fire the RemoteEvent with the function RemoteEvent:FireServer.
 
-LIGHT THEME		-- LocalScript
+-- LocalScript
  
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local createPartEvent = ReplicatedStorage:WaitForChild("CreatePartEvent")
@@ -65,7 +65,9 @@ createPartEvent.OnServerEvent:Connect(onCreatePartFired)
 When a client calls the FireServer function, any functions on the server that are connected to OnServerEvent will fire. 
 Note that this is not immediate - the network connection between the client and server will determine how quickly this happens.
 
-When firing a RemoteEvent from a client to the server, data can be included in the firing. By default, the functions connected to OnServerEvent will be passed the player who fired the event as the first parameter. If any other arguments are provided in the FireServer function, they will also be included in OnServerEvent after the player argument.
+When firing a RemoteEvent from a client to the server, data can be included in the firing. 
+By default, the functions connected to OnServerEvent will be passed the player who fired the event as the first parameter. 
+If any other arguments are provided in the FireServer function, they will also be included in OnServerEvent after the player argument.
 
 LIGHT THEME		-- LocalScript
  
@@ -89,8 +91,8 @@ local function onCreatePartFired(player, color, position)
 end
  
 createPartEvent.OnServerEvent:Connect(onCreatePartFired)
- COPY CODE
-LIGHT THEME 
+
+ 
 Server to Client
 The server can send messages to the client through remote events in two ways: it can send a message to an individual client or it can send a message to every client at the same time.
 
