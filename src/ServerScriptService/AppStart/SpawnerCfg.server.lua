@@ -8,8 +8,8 @@ local svcFinder = require(game
     :WaitForChild("Finders")
     :WaitForChild("ServiceFinder"))
 
-local chassisModule = require(
-    game:GetService("ServerScriptService")
+local chassisModule = require(game
+    :GetService("ServerScriptService")
     :WaitForChild("Equipment")
     :WaitForChild("ChassisMain"))
 

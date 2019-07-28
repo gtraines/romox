@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-local module = {}
-
 --- Sugar for creating items out of thin air
 -- @module ExNihilo
 
@@ -49,7 +46,6 @@ function module.MoveModelToCoordFrame( modelWithPrimaryPart, newCoordFrame )
     end
 end
 
-
 -- createdModelCallback takes the createdModel as its only parameter
 function module.CreateFromServerStorage( prototypeId, coordsForNewInstance, createdModelCallback )
     local foundPrototype = linq(serverStorage:GetChildren()):first(function( itm )
@@ -87,7 +83,5 @@ function module.CreateFromServerStorage( prototypeId, coordsForNewInstance, crea
         end
     end)
 end
-
-
 
 return module

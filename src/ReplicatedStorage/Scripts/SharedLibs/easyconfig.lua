@@ -10,7 +10,25 @@ local function Modify(Instance, Values)
 	-- Modifies an Instance by using a table.  
 
 	assert(type(Values) == "table", "Values is not a table");
+	--[[
+		The pairs function, which iterates over all elements in a table, is similar, 
+			except that the iterator function is the "next" function, which is a primitive function in Lua:
 
+    function pairs (t)
+      return next, t, nil
+    end
+	The call next(t, k), where k is a key of the table t, 
+	returns a next key in the table, in an arbitrary order. 
+	(It returns also the value associated with that key, as a second return value.) 
+	The call next(t, nil) returns a first pair. When there are no more pairs, next returns nil.
+	Some people prefer to use next directly, without calling pairs:
+
+    	for k, v in next, t do
+      		...
+    	end
+	Remember that the expression list of the for loop is adjusted to three results, 
+	so Lua gets next, t, and nil, exactly what it gets when it calls pairs(t).
+	]]
 	for Index, Value in next, Values do
 		if type(Index) == "number" then
 			Value.Parent = Instance

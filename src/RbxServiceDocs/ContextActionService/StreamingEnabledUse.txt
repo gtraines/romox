@@ -1,0 +1,78 @@
+In a game like Jailbreak, there are actions around the map for the player to complete. This usually means holding down a button (F/ButtonX/Mobile context button) to trigger the action.
+
+Usually a developer uses a ContextActionService binding in a LocalScript , but when StreamingEnabled is on, this is dangerous because there is no guarantee the part is streamed into the client-side workplace.
+
+This method gets around this danger by dynamically attaching/unattaching the context action event only on parts the player is physically touching. This is one way to use ContextActionService to activate buttons or events around a map, which works with StreamingEnabled.
+
+The beauty of this method is that we only call ContextActionService:BindAction() when the player touches the part, which means we have a high chance of the part being streamed-in when we call BindAction. Traditional methods of using ContextActionService assume the part is streamed-in to the Workspace on CharacterAdded, but this is unreliable in StreamingEnabled games when the ActionPart is across the map. This method overcomes these issues.
+
+We use a LocalScript in StarterCharacterScripts to setup the Touched() and TouchEnded() events on the LocalPlayer’s character’s LeftFoot, RightFoot, and UpperTorso. When the player’s LeftFoot/RightFoot/UpperTorso touches a part named ActionPart, we will call ContextActionService:BindAction() to bind a key to activate that action.
+
+Add a 4x4x4 part to the Workspace, named it “ActionPart” and set Transparency=0.5, Anchored=true, and CanCollide=false.
+Under this new ActionPart, add a NumberValue object named “ActionId” and set its value to 1.
+Duplicate this ActionPart, move it so there is no overlap, and change the new part’s ActionId to 2.
+Add a LocalScript named “ActionDetection” to StarterPlayer>StarterCharacterScripts. Enter the following code.
+–
+
+local ContextActionService = game:GetService( "ContextActionService" )
+local plr = game.Players.LocalPlayer
+
+local function doAction1( actionName, inputState, inputObj )
+	if inputState == Enum.UserInputState.Begin then
+		print( "Action1 was used." )
+	end
+end
+
+local function doAction2( actionName, inputState, inputObj )
+	if inputState == Enum.UserInputState.Begin then
+		print( "Action2 was used." )
+	end
+end
+
+local function performActions( actionName, inputState, inputObj )
+	if actionName == "Action-1" then
+		doAction1( actionName, inputState, inputObj )
+	elseif actionName == "Action-2" then
+		doAction2( actionName, inputState, inputObj )
+	end
+end
+
+local function onTouched( limb )
+	return function ( hit )
+		if hit.Name == "ActionPart" then
+			local actionId = hit:WaitForChild( "ActionId" ).Value
+			ContextActionService:BindAction( ( "Action-%i" ):format( actionId ), performActions, true, Enum.KeyCode.E )
+		end
+	end
+end
+
+local function onTouchEnded( limb )
+	return function ( hit )
+		if hit.Name == "ActionPart" then
+			local actionId = hit:WaitForChild( "ActionId" ).Value
+			ContextActionService:UnbindAction( ( "Action-%i" ):format( actionId ) )
+		end
+	end
+end
+
+local function onCharacterAdded( chr )
+	local hum = chr:FindFirstChild( "Humanoid" )
+	if hum then
+		
+		local leftFoot = plr.Character:FindFirstChild( "LeftFoot" )
+		local rightFoot = plr.Character:FindFirstChild( "RightFoot" )
+		local upperTorso = plr.Character:FindFirstChild( "UpperTorso" )
+		
+		leftFoot.Touched:Connect( onTouched( leftFoot ) )
+		leftFoot.TouchEnded:Connect( onTouchEnded( leftFoot ) )
+		rightFoot.Touched:Connect( onTouched( rightFoot ) )
+		rightFoot.TouchEnded:Connect( onTouchEnded( rightFoot ) )
+		upperTorso.Touched:Connect( onTouched( upperTorso ) )
+		upperTorso.TouchEnded:Connect( onTouchEnded( upperTorso ) )
+	end
+end
+plr.CharacterAdded:Connect( onCharacterAdded )
+
+if plr.Character then
+	onCharacterAdded( plr.Character )
+end

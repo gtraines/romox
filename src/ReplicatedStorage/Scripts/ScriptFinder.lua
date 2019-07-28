@@ -1,15 +1,5 @@
---[[
-    Usage example: 
-    	local libFinder = require(game
-	:GetService("ServerScriptService")
-	:WaitForChild("Finders")
-	:WaitForChild("LibFinder"))
-    local rq = libFinder:FindLib("RQuery")
-]]
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local replicatedLibs = ReplicatedStorage:WaitForChild("Scripts")
-
 local registrationModuleScript = replicatedLibs:FindFirstChild("_registerLibs", false)
 
 local dedupedModules = {}
