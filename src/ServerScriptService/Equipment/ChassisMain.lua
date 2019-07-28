@@ -1,23 +1,15 @@
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
-local PlayersService = game:GetService("Players")
+
+local findersFolder = ServerScriptService:WaitForChild("Finders")
+local libFinder = require(findersFolder:WaitForChild("LibFinder"))
+local svcFinder = require(findersFolder:WaitForChild("ServiceFinder"))
+
+local CarAndDriver = svcFinder:FindService("CarAndDriver")
+local gooey = libFinder:FindLib("gooey")
 
 local module = {}
-
-
-function module.GetPlayerDrivingVehicle(vehicleModel)
-    if vehicleModel ~= nil and
-         vehicleModel:FindFirstChild("VehicleSeat") ~= nil and 
-         vehicleModel:FindFirstChild("VehicleSeat").Occupant ~= nil then
-            local occupantCharacter = vehicleModel:FindFirstChild("VehicleSeat").Occupant.Parent
-            local occupantPlayer = PlayersService:GetPlayerFromCharacter(occupantCharacter)
-            print(occupantPlayer.Name)
-            return occupantPlayer
-         end
-
-    return nil
-end
 
 function module.IsVehicleEmergencyVehicle(vehicleModel)
     if vehicleModel == nil
@@ -38,7 +30,7 @@ function module.__setVehicleNetworkOwnershipToPlayer(vehicleModel, occupantPlaye
 end
 
 function module.__attachGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
-    
+
     if vehicleModel ~= nil and occupantPlayer ~= nil then
         local ChassisLocal = script.Parent.ChassisLocal:Clone()
 
@@ -80,7 +72,7 @@ end
 function module._attachVehicleSeatHandlers(vehicleModel)
     local vehicleSeat = vehicleModel:WaitForChild("VehicleSeat")
     local seatOccupantChangedHandler = function(changedProperty)
-        if changedProperty == "Occupant" and module.GetPlayerDrivingVehicle(vehicleModel) ~= nil then
+        if changedProperty == "Occupant" and CarAndDriver.GetPlayerDrivingVehicle(vehicleModel) ~= nil then
             local occupantPlayer = module.GetPlayerDrivingVehicle(vehicleModel)
             module.__attachGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
 

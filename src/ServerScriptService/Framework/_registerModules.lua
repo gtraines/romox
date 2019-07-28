@@ -8,5 +8,6 @@ module["Spieler"] = spieler
 module["LightManager"] = lightManager
 module["ExNihilo"] = exNihilo
 module["PubSub"] = require(script.Parent:WaitForChild("PubSub"))
+module["CarAndDriver"] = require(script.Parent:WaitForChild("CarAndDriver"))
 
 return module

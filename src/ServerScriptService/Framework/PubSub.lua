@@ -30,7 +30,6 @@ function module:GetOrCreateClientServerTopicCategory( categoryName )
 	end
 
 	return categoryFolder
-		
 end
 
 -- Create ClientServer topic in folder
@@ -56,9 +55,20 @@ function module:SubscribeServerToTopicEvent(categoryName, topicName, serverCallb
 	topic.OnServerEvent:Connect(serverCallback)
 	return topic
 end
--- Subscribe Client to ClientServer event topic
 
--- Create Server side event topic
-
+function module:ConnectEntityListenerFuncToTopic(entityId, categoryName, topic, listenerFunc)
+	local gatekeeperClosure = function(listeningEntityId, wrappedListenerFunc)
+		local wrapperFunc = function(sender, receiverEntityId)
+			if (receiverEntityId ~= nil and receiverEntityId == listeningEntityId) then
+				wrappedListenerFunc(sender, receiverEntityId)
+			end
+		end
+		return wrapperFunc
+	end
+	local subscribedTopic = self:SubscribeServerToTopicEvent(categoryName, 
+		topic,
+		gatekeeperClosure(entityId, listenerFunc))
+	return subscribedTopic
+end
 
 return module

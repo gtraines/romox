@@ -13,5 +13,6 @@ module["RQuery"] = RQuery
 module["Wraptor"] = Wraptor
 module["uuid"] = require(script.Parent:WaitForChild("uuid", 10))
 module["PubSubClient"] = require(script.Parent:WaitForChild("pubsubclient",5))
+module["gooey"] = require(script.Parent:WaitForChild("gooey",5))
 
 return module

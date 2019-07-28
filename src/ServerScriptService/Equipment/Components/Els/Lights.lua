@@ -20,13 +20,7 @@ function module.GetElsModelFromVehicle(vehicleModel)
 end
 
 function module.ConnectListenerFuncToElsTopic(entityId, topic, listenerFunc)
-	local wrapperFunc = function(sender, vehicleEntityId)
-		if (vehicleEntityId ~= nil and vehicleEntityId == entityId) then
-			print(topic .. " was triggered by " .. vehicleEntityId)
-			listenerFunc(sender, vehicleEntityId)
-		end
-	end
-	local elsTopic = pubSub:SubscribeServerToTopicEvent("ELS", topic, wrapperFunc)
+	local elsTopic = pubSub:ConnectEntityListenerFuncToTopic(entityId, "ELS", topic, listenerFunc)
 	return elsTopic
 end
 
