@@ -1,6 +1,7 @@
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local findersFolder = ServerScriptService:WaitForChild("Finders")
 local libFinder = require(findersFolder:WaitForChild("LibFinder"))
@@ -10,16 +11,6 @@ local CarAndDriver = svcFinder:FindService("CarAndDriver")
 local gooey = libFinder:FindLib("gooey")
 
 local module = {}
-
-function module.IsVehicleEmergencyVehicle(vehicleModel)
-    if vehicleModel == nil
-        or not vehicleModel:FindFirstChild("IsEmergencyVehicle")
-        or vehicleModel:FindFirstChild("IsEmergencyVehicle").Value == false then
-        return false
-    end
-    print(vehicleModel.Name .. " is an emergency vehicle")
-    return true
-end
 
 function module.__setVehicleNetworkOwnershipToPlayer(vehicleModel, occupantPlayer)
     for i, v in pairs(vehicleModel:GetDescendants()) do
@@ -32,7 +23,7 @@ end
 function module.__attachGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
 
     if vehicleModel ~= nil and occupantPlayer ~= nil then
-        local ChassisLocal = script.Parent.ChassisLocal:Clone()
+        local ChassisLocal = ReplicatedStorage:WaitForChild("Scripts", 2):WaitForChild("Equipment", 2):WaitForChild("ChassisLocal"):Clone()
 
         if ChassisLocal:FindFirstChild("Object") == nil then
             local objInstance = Instance.new("ObjectValue")
@@ -46,28 +37,6 @@ function module.__attachGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
     end
 end
 
-function module.__attachElsGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
-    local elsHud = ServerStorage:WaitForChild("UserInterfaces"):WaitForChild("ElsHud"):Clone()
-    elsHud.Vehicle.Value = vehicleModel
-    local elsButtons = ServerScriptService:WaitForChild("Equipment", 2):WaitForChild("ElsHudButtons"):Clone()
-    elsButtons.Parent = elsHud
-    elsHud.Parent = occupantPlayer.PlayerGui
-    elsHud.ElsHudButtons.Disabled = false
-end
-
-function module._connectEls(vehicleModel)
-    if module.IsVehicleEmergencyVehicle(vehicleModel) then
-        local elsRunner = require(ServerScriptService
-            :WaitForChild("Equipment", 2)
-            :WaitForChild("ElsRunner"))
-    
-        local elsModel = vehicleModel:FindFirstChild("Body"):FindFirstChild("ELS")
-        if elsModel == nil then
-            error("Emergency vehicle missing member Body.ELS model")
-        end
-        elsRunner.ConnectEls(vehicleModel.EntityId.Value, elsModel)
-    end
-end
 
 function module._attachVehicleSeatHandlers(vehicleModel)
     local vehicleSeat = vehicleModel:WaitForChild("VehicleSeat")
@@ -75,10 +44,6 @@ function module._attachVehicleSeatHandlers(vehicleModel)
         if changedProperty == "Occupant" and CarAndDriver.GetPlayerDrivingVehicle(vehicleModel) ~= nil then
             local occupantPlayer = module.GetPlayerDrivingVehicle(vehicleModel)
             module.__attachGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
-
-            if module.IsVehicleEmergencyVehicle(vehicleModel) then
-                module.__attachElsGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
-            end
 
             module.__setVehicleNetworkOwnershipToPlayer(vehicleModel, occupantPlayer)
         end
@@ -177,7 +142,6 @@ function module.WireUpVehicleScripts(vehicleModel)
     module._attachVehicleSeatHandlers(vehicleModel)
 
     module._setConstraints(vehicleModel)
-    module._connectEls(vehicleModel)
 end
 
 

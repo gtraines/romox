@@ -15,5 +15,6 @@ module["uuid"] = require(script.Parent:WaitForChild("uuid", 10))
 module["PubSubClient"] = require(script.Parent:WaitForChild("pubsubclient",5))
 module["gooey"] = require(script.Parent:WaitForChild("gooey",5))
 module["randumb"] = require(script.Parent:WaitForChild("randumb", 5))
+module["componentbase"] = require(script.Parent:WaitForChild("componentbase", 5))
 
 return module
