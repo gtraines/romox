@@ -5,7 +5,7 @@ local habitat = lemur.Habitat.new()
 local ServerScriptService = habitat.game:GetService("ServerScriptService")
 local game = habitat.game
 
-local sharedLibs = habitat:loadFromFs("../ServerScriptService/SharedLibs")
+local sharedLibs = habitat:loadFromFs("../ReplicatedStorage/SharedLibs")
 sharedLibs.Parent = ServerScriptService
 
 local finderFolder = habitat:loadFromFs("../ServerScriptService/Finders")
