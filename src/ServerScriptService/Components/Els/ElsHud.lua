@@ -1,16 +1,13 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
-print("ELS - Line 4")
+
 local libFinder = require(ServerScriptService:WaitForChild("Finders", 5):WaitForChild("LibFinder", 2))
 
 local rq = libFinder:FindLib("rquery")
 local ComponentBase = libFinder:FindLib("componentbase")
-print("ELS - Line 9")
 local lightsComponent = require(script.Parent:WaitForChild("Lights", 5))
-print("ELS - Line 11")
 local sirenComponent = require(script.Parent:WaitForChild("Sirens", 5))
-print("ELS - Line 13")
 local component = ComponentBase.new("ElsHud", {"elshud"})
 
 function component._attachElsGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
@@ -21,7 +18,7 @@ function component._attachElsGuiToVehicleSeatOccupant(vehicleModel, occupantPlay
     elsHud.Parent = occupantPlayer.PlayerGui
     elsHud.ElsHudButtons.Disabled = false
 end
-print("ELS - Line 22")
+
 function component._attachVehicleSeatHandlers(vehicleModel)
     local vehicleSeat = vehicleModel:WaitForChild("VehicleSeat")
     local seatOccupantChangedHandler = function(changedProperty)
@@ -32,7 +29,7 @@ function component._attachVehicleSeatHandlers(vehicleModel)
     end
     vehicleSeat.Changed:Connect(seatOccupantChangedHandler)
 end
-print("ELS - Line 33")
+
 function component:Execute( gameObject )
     self._attachVehicleSeatHandlers(gameObject)
     lightsComponent:TryExecute(gameObject)

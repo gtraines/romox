@@ -2,17 +2,13 @@
 local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-print("CandD - Line 5")
+
 local libFinder = require(ServerScriptService:WaitForChild("Finders", 5):WaitForChild("LibFinder", 2))
-print("CandD - Line 7")
 local exNihilo = require(script.Parent:WaitForChild("ExNihilo", 2))
-print("CandD - Line 9")
 local rq = libFinder:FindLib("rquery")
 
 local elsComponents = ServerScriptService:WaitForChild("Components", 5):WaitForChild("Els", 2)
-print("CandD - Line 13")
 local elsHud = require(elsComponents:FindFirstChild("ElsHud"))
-print("CandD - Line 15")
 local module = {}
 
 function module.__setVehicleNetworkOwnershipToPlayer(vehicleModel, occupantPlayer)
@@ -22,7 +18,7 @@ function module.__setVehicleNetworkOwnershipToPlayer(vehicleModel, occupantPlaye
         end
     end
 end
-print("CandD - Line 25")
+
 function module.__attachGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
 
     if vehicleModel ~= nil and occupantPlayer ~= nil then
@@ -39,7 +35,7 @@ function module.__attachGuiToVehicleSeatOccupant(vehicleModel, occupantPlayer)
         ChassisLocal.Disabled = false
     end
 end
-print("CandD - Line 42")
+
 function module._attachVehicleSeatHandlers(vehicleModel)
     local vehicleSeat = vehicleModel:WaitForChild("VehicleSeat")
     local seatOccupantChangedHandler = function(changedProperty)
@@ -52,7 +48,7 @@ function module._attachVehicleSeatHandlers(vehicleModel)
     end
     vehicleSeat.Changed:Connect(seatOccupantChangedHandler)
 end
-print("CandD - Line 42")
+
 function module._weldVehicleTogether(vehicleModel)
     local vehicleSeat = vehicleModel:WaitForChild("VehicleSeat")
     local engine = vehicleModel:WaitForChild("Engine")
@@ -105,7 +101,7 @@ function module._weldVehicleTogether(vehicleModel)
     end
 
 end
-print("CandD - Line 108")
+
 function module._setConstraints(vehicleModel)
 
     RunService.Heartbeat:Connect(function()
@@ -138,14 +134,14 @@ function module._setConstraints(vehicleModel)
         end
     end)
 end
-print("CandD - Line 141")
+
 function module.WireUpVehicleScripts(vehicleModel)
     module._weldVehicleTogether(vehicleModel)
     module._attachVehicleSeatHandlers(vehicleModel)
     module._setConstraints(vehicleModel)
     elsHud:TryExecute(vehicleModel)
 end
-print("CandD - Line 148")
+
 function module.CreateVehicleFromServerStorage( prototypeId, creationLocation )
     
     local createdModelCallback = function(createdModel)
@@ -157,6 +153,5 @@ function module.CreateVehicleFromServerStorage( prototypeId, creationLocation )
     return exNihilo.CreateFromServerStorage( "Vehicles", prototypeId, creationLocation, createdModelCallback )
 
 end
-print("CandD - Line 160")
 
 return module

@@ -26,7 +26,7 @@ local function getSpawnerModels(categoryName)
 
     return spawnerModels.list()
 end
-print("Spawner 29")
+
 local function touchedByAPlayerClosure(spawnerModel, touchedByPlayerDelegate)
 
     local touchHandler = function(part)
@@ -38,7 +38,7 @@ local function touchedByAPlayerClosure(spawnerModel, touchedByPlayerDelegate)
 
     return wraptor.WithCoolDown(5, touchHandler)
 end
-print("Spawner 41")
+
 local function touchedDelegate(spawnerModel, playerFromPart)
     print(
         "ALERT: " .. playerFromPart.Name .. " just touched me."
@@ -48,7 +48,7 @@ local function touchedDelegate(spawnerModel, playerFromPart)
     local spawnLocation = CFrame.new(touchStone.Position) + Vector3.new(0, 3, 0)
     return carAndDriver.CreateVehicleFromServerStorage(prototypeToSpawn, spawnLocation)
 end
-print("Spawner 51")
+
 for spwnrMdl in getSpawnerModels("VehicleSpawners") do
     print(spwnrMdl)
     spwnrMdl:FindFirstChild("Touchstone").Touched:Connect(touchedByAPlayerClosure(spwnrMdl, touchedDelegate))
