@@ -11,14 +11,18 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local allChildFolders = ServerScriptService:GetChildren()
 
+print("Line 14")
+
 local dedupedModules = {}
 
 
 for _, folder in pairs(allChildFolders) do
     local registrationModuleScript = folder:FindFirstChild("_registerModules", false)
     if registrationModuleScript ~= nil then
+        print("Line 22")
+        print(registrationModuleScript)
         local registrationModule = require(registrationModuleScript)
-
+        print("Line 24")
         for key,mod in pairs(registrationModule) do
             if dedupedModules[key] == nil then
                 dedupedModules[key] = mod
@@ -28,7 +32,7 @@ for _, folder in pairs(allChildFolders) do
 end
 
 local module = {}
-
+print("Line 34")
 module["RegisteredServices"] = dedupedModules
 
 function module:FindService(serviceName)
@@ -56,5 +60,5 @@ function module:FindService(serviceName)
         return nil
     end
 end
-
+print("Line 62")
 return module

@@ -12,12 +12,12 @@ end
 function module.GetOrCreateClientServerTopicCategory( categoryName )
 	local eventTopicFolder = ReplicatedStorage:FindFirstChild("EventTopics")
 	if eventTopicFolder == nil then
-		eventTopicFolder = module.createFolder("EventTopics", ReplicatedStorage)
+		eventTopicFolder = module.CreateFolder("EventTopics", ReplicatedStorage)
 	end
 
 	local categoryFolder = eventTopicFolder:FindFirstChild(categoryName)
 	if categoryFolder == nil then
-		categoryFolder = module.createFolder(categoryName, eventTopicFolder)
+		categoryFolder = module.CreateFolder(categoryName, eventTopicFolder)
 	end
 
 	return categoryFolder
@@ -25,7 +25,7 @@ end
 
 -- Create ClientServer topic in folder
 function module.GetOrCreateClientServerTopicInCategory(categoryName, topicName)
-	local categoryFolder = module.getOrCreateClientServerTopicCategory(categoryName)
+	local categoryFolder = module.GetOrCreateClientServerTopicCategory(categoryName)
 
 	local topic = categoryFolder:FindFirstChild(topicName)
 	if topic == nil then

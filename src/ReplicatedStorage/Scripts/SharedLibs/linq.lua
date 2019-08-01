@@ -2,7 +2,6 @@ local mt = {}
 local query = {}
 
 function mt.__call(self, source)
-    print("ctor call")
     return (query:new(source)) 
 end
 setmetatable(query, mt)

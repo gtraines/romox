@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local replicatedLibs = ReplicatedStorage:WaitForChild("Scripts")
-local registrationModuleScript = replicatedLibs:FindFirstChild("_registerLibs", false)
+local replicatedLibs = ReplicatedStorage:WaitForChild("Scripts", 5):WaitForChild("SharedLibs", 5)
+local registrationModuleScript = replicatedLibs:FindFirstChild("_registerLibs")
 
 local dedupedModules = {}
 

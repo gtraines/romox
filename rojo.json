@@ -14,17 +14,17 @@
       "path": "src/ServerScriptService/Framework",
       "target": "ServerScriptService.Framework"
     },
-    "SharedLibs": {
-      "path": "src/ServerScriptService/SharedLibs",
-      "target": "ServerScriptService.SharedLibs"
-    },
     "GameModules": {
       "path": "src/ServerScriptService/GameModules",
       "target": "ServerScriptService.GameModules"
     },
-    "Equipment": {
-      "path": "src/ServerScriptService/Equipment",
-      "target": "ServerScriptService.Equipment"
+    "Scripts": {
+      "path": "src/ReplicatedStorage/Scripts",
+      "target": "ReplicatedStorage.Scripts"
+    },
+    "Components": {
+      "path": "src/ServerScriptService/Components",
+      "target": "ServerScriptService.Components"
     }
   }
 }

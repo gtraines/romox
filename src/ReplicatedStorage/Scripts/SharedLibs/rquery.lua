@@ -1,3 +1,5 @@
+local PlayersService = game:GetService("Players")
+
 local module = {}
 
 function module.CreateFolder( folderName, parentObjectInstance )
@@ -31,6 +33,17 @@ function module.FindSiblingNamed( part, siblingName )
 	end
 
 	return nil
+end
+function module.GetPlayerDrivingVehicle(vehicleModel)
+    if vehicleModel ~= nil and
+         vehicleModel:FindFirstChild("VehicleSeat") ~= nil and 
+         vehicleModel:FindFirstChild("VehicleSeat").Occupant ~= nil then
+            local occupantCharacter = vehicleModel:FindFirstChild("VehicleSeat").Occupant.Parent
+            local occupantPlayer = PlayersService:GetPlayerFromCharacter(occupantCharacter)
+            return occupantPlayer
+         end
+
+    return nil
 end
 
 function module.AttachedHumanoidOrNil(part)

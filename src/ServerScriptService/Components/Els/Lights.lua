@@ -1,30 +1,28 @@
-local replicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
-local libFinder = require(game
-	:GetService("ServerScriptService")
+local libFinder = require(ServerScriptService
 	:WaitForChild("Finders")
 	:WaitForChild("LibFinder"))
 
-local svcFinder = require(game
-	:GetService("ServerScriptService")
-	:WaitForChild("Finders")
-	:WaitForChild("ServiceFinder"))
-
 local rq = libFinder:FindLib("RQuery")
-local pubSub = svcFinder:FindService("PubSub")
-local module = {}
+local pubSub = require(ServerScriptService:WaitForChild("Framework", 2):WaitForChild("PubSub", 2))
+local ComponentBase = libFinder:FindLib("componentbase")
 
-function module.GetElsModelFromVehicle(vehicleModel)
+local elsFuncs = {}
+
+function elsFuncs.GetElsModelFromVehicle(vehicleModel)
 	local elsModel = vehicleModel:FindFirstChild("Body"):FindFirstChild("ELS")
 	return elsModel
 end
-
-function module.ConnectListenerFuncToElsTopic(entityId, topic, listenerFunc)
+function elsFuncs.ConnectListenerFuncToElsTopic(entityId, topic, listenerFunc)
 	local elsTopic = pubSub:ConnectEntityListenerFuncToTopic(entityId, "ELS", topic, listenerFunc)
 	return elsTopic
 end
 
-function module.__getLightGroup(lightbar, groupName)
+local lightsFuncs = {
+	ElsFuncs = elsFuncs
+}
+function lightsFuncs.GetLightGroup(lightbar, groupName)
 	if lightbar ~= nil and 
 		lightbar:FindFirstChild(groupName)
 	then
@@ -35,20 +33,20 @@ function module.__getLightGroup(lightbar, groupName)
 	end
 end
 
-function module.__turnOnLightGroup(lightgroup)
+function lightsFuncs.TurnOnLightGroup(lightgroup)
 	for _, value in pairs(lightgroup) do
-		module.__turnOnLight(value)
+		lightsFuncs._turnOnLight(value)
 	end
 end
 
-function module.__turnOffLightGroup(lightgroup)
+function lightsFuncs.TurnOffLightGroup(lightgroup)
 	for _, value in pairs(lightgroup) do
-		module.__turnOffLight(value)
+		lightsFuncs._turnOffLight(value)
 	end
 end
 
 
-function module.__turnOnLight(lightPart)
+function lightsFuncs._turnOnLight(lightPart)
 	if lightPart:FindFirstChild("Point") ~= nil then
 		lightPart.Point.Enabled = true
 	end
@@ -70,7 +68,7 @@ function module.__turnOnLight(lightPart)
 	end
 end
 
-function module.__turnOffLight(lightPart)
+function lightsFuncs._turnOffLight(lightPart)
 	if lightPart:FindFirstChild("Point") ~= nil then
 		lightPart.Point.Enabled = false
 	end
@@ -91,86 +89,67 @@ function module.__turnOffLight(lightPart)
 	end
 end
 
-function module.__turnOffAllLights(lightbar)
-	local group1 = module.__getLightGroup(lightbar, "G1")
-	local group2 = module.__getLightGroup(lightbar, "G2")
-	module.__turnOffLightGroup(group1)
-	module.__turnOffLightGroup(group2)
+function lightsFuncs.TurnOffAllLights(lightbar)
+	local group1 = lightsFuncs.GetLightGroup(lightbar, "G1")
+	local group2 = lightsFuncs.GetLightGroup(lightbar, "G2")
+	lightsFuncs.TurnOffLightGroup(group1)
+	lightsFuncs.TurnOffLightGroup(group2)
 end
 
-function module.__turnOffAllSirens(sirenPart)
-	if sirenPart ~= nil and sirenPart:GetChildren() ~= nil then
-		for _, siren in pairs(sirenPart:GetChildren()) do
-			if siren:FindFirstChild("Stop") ~= nil then
-				print("Stopping " .. siren)
-				siren:Stop()
-			end
-		end
-	end
+function lightsFuncs.ConnectLights(entityId, lightsTopic, elsModel, listenerFunc)
+	print("connecting lights... ")
+
+	local elsTopicLights1 = lightsFuncs.ElsFuncs.ConnectListenerFuncToElsTopic(entityId, lightsTopic, listenerFunc)
+	print(elsTopicLights1.Name .. " HAS RECEIVED A SERVER-SIDE LISTENER!@!!!!")
+
+	return true
 end
 
-function module.__stopSiren(sirenPart, sirenName)
-	if sirenPart ~= nil and sirenPart:FindFirstChild(sirenName) ~= nil then
-		local sirenSound = sirenPart:FindFirstChild(sirenName)
-		sirenSound:Stop()
-	end
-end
-
-function module.__playSiren(sirenPart, sirenName)
-	
-	if sirenPart ~= nil and sirenPart:FindFirstChild(sirenName) ~= nil then
-		local sirenSound = sirenPart:FindFirstChild(sirenName)
-		sirenSound:Play()
-		sirenSound.Volume = 0.5
-		sirenSound.Looped = true
-	end
-end
-	 
-function module.__executeFlashingPattern1(lightGroup1, lightGroup2)
+function lightsFuncs.ExecuteStrobeWigWagPattern(lightGroup1, lightGroup2)
 	
 	for i=1, 6 do
-		module.__turnOffLightGroup(lightGroup2)
 		wait(0.05)
-		module.__turnOnLightGroup(lightGroup1)
+		lightsFuncs.TurnOnLightGroup(lightGroup1)
 		wait(0.05)
-		module.__turnOffLightGroup(lightGroup1)
+		lightsFuncs.TurnOffLightGroup(lightGroup1)
 	end
 
 	for i=1, 6 do
-		module.__turnOffLightGroup(lightGroup1)
 		wait(0.05)
-		module.__turnOnLightGroup(lightGroup2)
+		lightsFuncs.TurnOnLightGroup(lightGroup2)
 		
 		wait(0.05)
-		module.__turnOffLightGroup(lightGroup2)
+		lightsFuncs.TurnOffLightGroup(lightGroup2)
 	end
 	
 end
 	 
-function module.__executeFlashingPattern2(lightGroup1, lightGroup2)
+function lightsFuncs.ExecuteWigWagPattern(lightGroup1, lightGroup2)
 	wait(0.2)
-	module.__turnOnLightGroup(lightGroup1)
-	module.__turnOffLightGroup(lightGroup2)
+	lightsFuncs.TurnOnLightGroup(lightGroup1)
+	lightsFuncs.TurnOffLightGroup(lightGroup2)
 	wait(0.2)
-	module.__turnOffLightGroup(lightGroup1)
-	module.__turnOnLightGroup(lightGroup2)
+	lightsFuncs.TurnOffLightGroup(lightGroup1)
+	lightsFuncs.TurnOnLightGroup(lightGroup2)
 end
 
 	 
-function module.__executeFlashingPattern3(lightGroup1, lightGroup2)
-	module.__turnOffLightGroup(lightGroup1)
-	module.__turnOffLightGroup(lightGroup2)
+function lightsFuncs.ExecuteBlinkBlinkPattern(lightGroup1, lightGroup2)
+	lightsFuncs.TurnOffLightGroup(lightGroup1)
+	lightsFuncs.TurnOffLightGroup(lightGroup2)
 	for i=1, 2 do
 		wait(0.2)
-		module.__turnOnLightGroup(lightGroup1)
-		module.__turnOnLightGroup(lightGroup2)
+		lightsFuncs.TurnOnLightGroup(lightGroup1)
+		lightsFuncs.TurnOnLightGroup(lightGroup2)
 		wait(0.2)
-		module.__turnOffLightGroup(lightGroup1)
-		module.__turnOffLightGroup(lightGroup2)
+		lightsFuncs.TurnOffLightGroup(lightGroup1)
+		lightsFuncs.TurnOffLightGroup(lightGroup2)
 	end
 end
 
-function module._getLights1ListenerFunc(elsModel)
+local lightbar1Component = ComponentBase.new("Lightbar1", { "elshud", "lightbar1" })
+lightbar1Component.LightsFuncs = lightsFuncs
+function lightbar1Component._getLights1ListenerFunc(elsModel)
 	
 	local lightbar1 = elsModel:FindFirstChild("lightbar1")
 	if lightbar1:FindFirstChild("on") == nil then
@@ -179,7 +158,7 @@ function module._getLights1ListenerFunc(elsModel)
 		onValue.Name = "on"
 		onValue.Parent = lightbar1
 	end
-	module.__turnOffAllLights(lightbar1)
+	lightbar1Component.LightsFuncs.TurnOffAllLights(lightbar1)
 	lightbar1.on.Value = false
 	local lightsOn = false
 	local listenerFunc = function(sender, data)
@@ -187,36 +166,39 @@ function module._getLights1ListenerFunc(elsModel)
 		lightsOn = not lightsOn
 
 		lightbar1.on.Value = lightsOn
-		local lightGroup1 = module.__getLightGroup(lightbar1, "G1")
-		local lightGroup2 = module.__getLightGroup(lightbar1, "G2")
+		local lightGroup1 = lightbar1Component.LightsFuncs.GetLightGroup(lightbar1, "G1")
+		local lightGroup2 = lightbar1Component.LightsFuncs.GetLightGroup(lightbar1, "G2")
 
 		if lightbar1.on.Value then
 			while lightbar1.on.Value do
-				for iter = 1, 2 do
-					if (lightbar1.on.Value) then
-						module.__executeFlashingPattern1(lightGroup1, lightGroup2)
-					end
-				end
 				for iter = 1, 4 do
 					if (lightbar1.on.Value) then
-						module.__executeFlashingPattern2(lightGroup1, lightGroup2)
+						lightbar1Component.LightsFuncs.ExecuteStrobeWigWagPattern(lightGroup1, lightGroup2)
 					end
 				end
 				for iter = 1, 2 do
 					if (lightbar1.on.Value) then
-						module.__executeFlashingPattern3(lightGroup1, lightGroup2)
+						lightbar1Component.LightsFuncs.ExecuteWigWagPattern(lightGroup1, lightGroup2)
 					end
 				end
 			end
 		end
-		module.__turnOffAllLights(lightbar1)
+		lightbar1Component.LightsFuncs.TurnOffAllLights(lightbar1)
 	end
 
 	return listenerFunc
+end
+function lightbar1Component:Execute(gameObject)
+	local elsModel = self.LightsFuncs.ElsFuncs.GetElsModelFromVehicle(gameObject)
 
+	self.LightsFuncs.ConnectLights(gameObject.EntityId.Value, "LIGHTS1", elsModel, self._getLights1ListenerFunc(elsModel))
 end
 
-function module._getLights2ListenerFunc(elsModel)
+
+local lightbar2Component = ComponentBase.new("Lightbar2", { "elshud", "lightbar2" })
+lightbar2Component.LightsFuncs = lightsFuncs
+
+function lightbar2Component._getLights2ListenerFunc(elsModel)
 	
 	local lightbar2 = elsModel:FindFirstChild("lightbar2")
 	if lightbar2:FindFirstChild("on") == nil then
@@ -225,7 +207,7 @@ function module._getLights2ListenerFunc(elsModel)
 		onValue.Name = "on"
 		onValue.Parent = lightbar2
 	end
-	module.__turnOffAllLights(lightbar2)
+	lightbar2Component.LightsFuncs.TurnOffAllLights(lightbar2)
 	lightbar2.on.Value = false
 	local lightsOn = false
 	local listenerFunc = function(sender, data)
@@ -233,94 +215,38 @@ function module._getLights2ListenerFunc(elsModel)
 		lightsOn = not lightsOn
 
 		lightbar2.on.Value = lightsOn
-		local lightGroup1 = module.__getLightGroup(lightbar2, "G1")
-		local lightGroup2 = module.__getLightGroup(lightbar2, "G2")
+		local lightGroup1 = lightbar2Component.LightsFuncs.GetLightGroup(lightbar2, "G1")
+		local lightGroup2 = lightbar2Component.LightsFuncs.GetLightGroup(lightbar2, "G2")
 
 		if lightbar2.on.Value then
 			while lightbar2.on.Value do
-				module.__turnOnLightGroup(lightGroup1)
+				lightbar2Component.LightsFuncs.TurnOnLightGroup(lightGroup1)
 				wait(0.5)
 			end
 		else
-			module.__turnOffAllLights(lightbar2)
+			lightbar2Component.LightsFuncs.TurnOffAllLights(lightbar2)
 		end
 	end
 
 	return listenerFunc
+end
+function lightbar2Component:Execute(gameObject)
+	local elsModel = self.LightsFuncs.ElsFuncs.GetElsModelFromVehicle(gameObject)
 
+	self.LightsFuncs.ConnectLights(gameObject.EntityId.Value, "LIGHTS2", elsModel, self._getLights2ListenerFunc(elsModel))
 end
 
-function module._getSiren1ListenerFunc(elsModel)
-	
-	local sirenPart = elsModel:FindFirstChild("Siren")
-	local sirenSound = sirenPart:FindFirstChild("Wail")
-	sirenSound.EmitterSize = 10
-	local siren1On = false
+local component = ComponentBase.new("ElsLights", {"elshud"})
 
-	local listenerFunc = function(sender, data)
-		module.__turnOffAllSirens(sirenPart)
+component.InnerComponents = {
+	lightbar1Component,
+	lightbar2Component
+}
 
-		siren1On = not siren1On
-
-		if siren1On == true then
-			module.__playSiren(sirenPart, "Wail")
-		else 
-			module.__stopSiren(sirenPart, "Wail")
-		end
+function component:Execute(gameObject)
+	for _, cmp in pairs(self.InnerComponents) do
+		cmp:TryExecute(gameObject)
 	end
-	return listenerFunc
 end
 
-function module._getSiren2ListenerFunc(elsModel)
-	
-	local sirenPart = elsModel:FindFirstChild("Siren")
-	local sirenSound = sirenPart:FindFirstChild("Yelp")
-	sirenSound.EmitterSize = 10
-	local siren2On = false
-	local listenerFunc = function(sender, data)
-		module.__turnOffAllSirens(sirenPart)
-
-		siren2On = not siren2On
-
-		if siren2On == true then
-			module.__playSiren(sirenPart, "Yelp")
-		else 
-			module.__stopSiren(sirenPart, "Yelp")
-		end
-	end
-	return listenerFunc
-end
-
-function module.ConnectLights(entityId, elsModel)
-	print("connecting lights... ")
-
-	local elsTopicLights1 = module.ConnectListenerFuncToElsTopic(entityId, "LIGHTS1", module._getLights1ListenerFunc(elsModel))
-	print(elsTopicLights1.Name .. " HAS RECEIVED A SERVER-SIDE LISTENER!@!!!!")
-	
-
-	local elsTopicLights2 = module.ConnectListenerFuncToElsTopic(entityId, "LIGHTS2", module._getLights2ListenerFunc(elsModel))
-	print(elsTopicLights2.Name .. " HAS RECEIVED A SERVER-SIDE LISTENER!@!!!!")
-
-	return true
-end
-
-function module.ConnectSirens(entityId, elsModel)
-	print("connecting sirens... ")
-
-	local elsTopicSiren1 = module.ConnectListenerFuncToElsTopic(entityId, "SIREN1", module._getSiren1ListenerFunc(elsModel))
-	print(elsTopicSiren1.Name .. " HAS RECEIVED A SERVER-SIDE LISTENER!@!!!!")
-	
-	local elsTopicSiren2 = module.ConnectListenerFuncToElsTopic(entityId, "SIREN2", module._getSiren2ListenerFunc(elsModel))
-	print(elsTopicSiren2.Name .. " HAS RECEIVED A SERVER-SIDE LISTENER!@!!!!")
-
-	return true
-end
-
-function module.ConnectEls(entityId, elsModel)
-
-	local connectLightsSuccess = module.ConnectLights(entityId, elsModel)
-	local connectSirensSuccess = module.ConnectSirens(entityId, elsModel)
-
-	return connectLightsSuccess and connectSirensSuccess
-end
-return module
+return component

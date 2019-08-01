@@ -1,7 +1,11 @@
-local libs = game:GetService("ReplicatedStorage"):WaitForChild("SharedLibs")
+local libs = game:GetService("ReplicatedStorage"):WaitForChild("Scripts", 5):WaitForChild("SharedLibs", 5)
 
-local rq = require(libs:WaitForChild("rquery"))
-local linq = require(libs:WaitForChild("rquery"))
+local rq = require(libs:FindFirstChild("rquery"))
+local linq = require(libs:FindFirstChild("linq"))
+
+for prop, val in pairs(linq) do
+    print(prop)
+end
 
 local component = {
     __type = "component"
@@ -16,9 +20,11 @@ end
 
 function component:TryExecute(gameObject)
     local components = rq.ComponentsFolderOrNil(gameObject)
+    print(components)
     if components ~= nil then
-        for _, value in self.Requires do
-            if linq(components):firstOrDefault(function(val) return val.Name == value end) == nil then
+        for _, value in pairs(self.Requires) do
+            local foundComponent = linq(components):firstOrDefault(function(val) return val.Name == value end)
+            if foundComponent == nil then
                 return false
             end
         end
@@ -35,3 +41,4 @@ function component.new(componentName, requiredComponentAttributes)
     return self
 end
 
+return component

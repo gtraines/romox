@@ -25,7 +25,6 @@ local module = {}
 ]]
 
 
-
 -- ExampleSetterFunction = exNihilo.MoveModelToCoordFrame(workspace:WaitForChild("Model"), CFrame.new(0,5,0))
 function module.MoveModelToCoordFrame( modelWithPrimaryPart, newCoordFrame )
     
@@ -47,8 +46,10 @@ function module.MoveModelToCoordFrame( modelWithPrimaryPart, newCoordFrame )
 end
 
 -- createdModelCallback takes the createdModel as its only parameter
-function module.CreateFromServerStorage( prototypeId, coordsForNewInstance, createdModelCallback )
-    local foundPrototype = linq(serverStorage:GetChildren()):first(function( itm )
+function module.CreateFromServerStorage( storageCategory, prototypeId, coordsForNewInstance, createdModelCallback )
+    local storageCategoryFolder = serverStorage:FindFirstChild(storageCategory)
+    print(storageCategoryFolder.Name)
+    local foundPrototype = linq(storageCategoryFolder:GetChildren()):first(function( itm )
         local itmPrototypeId = itm:FindFirstChild("PrototypeId")
         if (itmPrototypeId ~= nil) then
             return itmPrototypeId.Value == prototypeId
@@ -57,7 +58,7 @@ function module.CreateFromServerStorage( prototypeId, coordsForNewInstance, crea
     end)
 
     if foundPrototype == nil then
-        foundPrototype = linq(serverStorage:GetChildren()):first(function( itm )
+        foundPrototype = linq(storageCategoryFolder:GetChildren()):first(function( itm )
             return itm.Name == prototypeId
         end)
     end

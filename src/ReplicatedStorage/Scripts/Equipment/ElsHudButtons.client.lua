@@ -23,7 +23,7 @@ else
 end
 
 local function generateDelegate(entityId, button)
-    local topic = pubSubClient:GetOrCreateClientServerTopicInCategory("ELS", button.Text)
+    local topic = pubSubClient.GetOrCreateClientServerTopicInCategory("ELS", button.Text)
     print(topic.Name)
 	local activatedDelegate = function(sender)
         topic:FireServer(entityId)

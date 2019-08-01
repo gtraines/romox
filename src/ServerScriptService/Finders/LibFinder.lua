@@ -9,7 +9,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local replicatedLibs = require(
-    ReplicatedStorage:WaitForChild("Scripts"):WaitForChild("ScriptFinder"))
+    ReplicatedStorage:WaitForChild("Scripts", 5):WaitForChild("ScriptFinder", 5))
 local module = replicatedLibs
 
 return module
