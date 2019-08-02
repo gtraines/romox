@@ -49,7 +49,7 @@ end
 function module.CreateFromServerStorage( storageCategory, prototypeId, coordsForNewInstance, createdModelCallback )
     local storageCategoryFolder = serverStorage:FindFirstChild(storageCategory)
     print(storageCategoryFolder.Name)
-    local foundPrototype = linq(storageCategoryFolder:GetChildren()):first(function( itm )
+    local foundPrototype = linq(storageCategoryFolder:GetChildren()):firstOrDefault(function( itm )
         local itmPrototypeId = itm:FindFirstChild("PrototypeId")
         if (itmPrototypeId ~= nil) then
             return itmPrototypeId.Value == prototypeId
@@ -58,7 +58,7 @@ function module.CreateFromServerStorage( storageCategory, prototypeId, coordsFor
     end)
 
     if foundPrototype == nil then
-        foundPrototype = linq(storageCategoryFolder:GetChildren()):first(function( itm )
+        foundPrototype = linq(storageCategoryFolder:GetChildren()):firstOrDefault(function( itm )
             return itm.Name == prototypeId
         end)
     end
