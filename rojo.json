@@ -25,6 +25,10 @@
     "Components": {
       "path": "src/ServerScriptService/Components",
       "target": "ServerScriptService.Components"
+    },
+    "Agents": {
+      "path": "src/ServerScriptService/Agents",
+      "target": "ServerScriptService.Agents"
     }
   }
 }
