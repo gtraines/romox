@@ -34,6 +34,22 @@ function module.FindSiblingNamed( part, siblingName )
 
 	return nil
 end
+
+function module.DeepCopyTable(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
 function module.GetPlayerDrivingVehicle(vehicleModel)
     if vehicleModel ~= nil and
          vehicleModel:FindFirstChild("VehicleSeat") ~= nil and 
@@ -44,6 +60,14 @@ function module.GetPlayerDrivingVehicle(vehicleModel)
          end
 
     return nil
+end
+
+function module.PersonageTorsoOrEquivalent(personage)
+	local personageTorso = personage:FindFirstChild("Torso")
+	if personageTorso == nil then
+		personageTorso = personage:FindFirstChild("UpperTorso")
+	end
+	return personageTorso
 end
 
 function module.AttachedHumanoidOrNil(part)

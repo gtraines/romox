@@ -145,7 +145,6 @@ end
 function module.CreateVehicleFromServerStorage( prototypeId, creationLocation )
     
     local createdModelCallback = function(createdModel)
-        print(createdModel.Name .. " was created with EntityId: " .. createdModel.EntityId.Value)
         module.WireUpVehicleScripts(createdModel)
         print("Vehicle scripts wired up yo")
     end

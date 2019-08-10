@@ -1,3 +1,10 @@
+local ServerScriptService = game:GetService("ServerScriptService")
+
+local libFinder = require(ServerScriptService
+	:WaitForChild("Finders", 2):WaitForChild("LibFinder", 2))
+
+local rq = libFinder:FindLib("rquery")
+
 local stateProto = {
 	Name = nil,
 	NextStates = {},
@@ -19,7 +26,6 @@ local machineProto = {
 	CurrentState = nil,
 	States = {}
 }
-
 
 machineProto.Stop = function(stateToStop)
 	--print("Stopping " .. state.Name)
@@ -64,23 +70,22 @@ function machineProto:_tryTransition(data)
 	return false
 end
 
-machineProto.Run = function(state)
+function machineProto.Run(state)
 	state._isRunning = true
 	while state._isRunning do
-		
 		state.Action()
 		wait(state.WaitTime)
 	end
 end
 
-machineProto.Start = function(stateToStart)
+function machineProto.Start(stateToStart)
 	print("Starting " .. stateToStart.Name)
 	stateToStart.Init()
 	local thread = coroutine.create(stateProto.Run)
 	coroutine.resume(thread)
 end
 
-function machineProto:Update( date )
+function machineProto:Update( data )
 	self._tryTransition(data)
 	self.Run(self.CurrentState)
 end
@@ -90,14 +95,13 @@ local machineMachine = {
 	_stateProto - stateProto
 }
 
-machineMachine.NewStateMachine = function()
-		local machineInstance = machineMachine._machineProto:Clone()
-		return machineInstance
-	end
+function machineMachine.NewStateMachinefunction()
+	local machineInstance = rq.DeepCopyTable(machineMachine._machineProto)
+	return machineInstance
+end
 
-machineMachine.NewState = function ( newStateName )
-	-- body
-	local stateInstance = machineMachine._stateProto:Clone()
+function machineMachine.NewState( newStateName )
+	local stateInstance = rq.DeepCopyTable(machineMachine._stateProto)
 	stateInstance.Name = newStateName
 	return stateInstance
 end

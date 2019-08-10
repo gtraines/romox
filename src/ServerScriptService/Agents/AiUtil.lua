@@ -1,30 +1,10 @@
+local ServerScriptService = game:GetService("ServerScriptService")
+local libFinder = require(ServerScriptService:WaitForChild("Finders",2):WaitForChild("LibFinder",2))
+
+local rq = libFinder:FindLib("rquery")
+
 local utility = {}
 
-function utility:WideRayCast(start, target, offset, ignoreList)
-	local parts = {}
-	
-	local ray = Ray.new(start, target - start)
-	local part, point = game.Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
-	if part then table.insert(parts, part) end
-	
-	local offsetVector = offset * (target - start):Cross(Vector3.FromNormalId(Enum.NormalId.Top)).unit
-	local ray = Ray.new(start + offsetVector, target - start + offsetVector)
-	local part, point = game.Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
-	if part then table.insert(parts, part) end
-	
-	local ray = Ray.new(start - offsetVector, target - start - offsetVector)
-	local part, point = game.Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
-	if part then table.insert(parts, part) end
-	
-	return parts
-end
-
-function utility:FindNearestPathPoint(path, point, start, target, ignoreList)
-	local occludePoint = path:CheckOcclusionAsync(point)
-	if occludePoint > 0 then
-		utility:WideRayCast(start)
-	end
-end
 
 local maxForce = 75
 
@@ -52,19 +32,12 @@ function utility:GetClosestVisibleTarget(npcModel, characters, ignoreList, field
 	local closestTarget = nil
 	local closestDistance = math.huge
 	for _, character in pairs(characters) do
-		local toTarget = character.Torso.Position - npcModel.Torso.Position
+		local targetPart = rq.PersonageTorsoOrEquivalent(character)
+		local npcPart = rq.PersonageTorsoOrEquivalent(npcModel)
+		
+		local toTarget = targetPart.Position - npcPart.Position
 		local toTargetWedge = toTarget * Vector3.new(1,0,1)
-		local angle = math.acos(toTargetWedge:Dot(npcModel.Torso.CFrame.lookVector)/toTargetWedge.magnitude)
-		if math.deg(angle) < fieldOfView then
-			local targetRay = Ray.new(npcModel.Torso.Position, toTarget)
-			local part, position = game.Workspace:FindPartOnRayWithIgnoreList(targetRay, ignoreList)
-			if part and part.Parent == character then
-				if toTarget.magnitude < closestDistance then
-					closestTarget = character
-					closestDistance = toTarget.magnitude
-				end
-			end
-		end
+
 	end
 	return closestTarget
 end
