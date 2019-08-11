@@ -181,7 +181,7 @@ function soldatAi:new(soldat)
 	table.insert(IdleState.Conditions, CanSeeTarget)
 	table.insert(AttackState.Conditions, TargetDead)	
 	
-	StateMachine.SwitchState(IdleState)	
+	StateMachine.SwitchState(IdleState)
 	
 	soldatBrain.Stop = function()
 		StateMachine.SwitchState(nil)
