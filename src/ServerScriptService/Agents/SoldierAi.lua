@@ -5,11 +5,12 @@ local libFinder = require(ServerScriptService
 	:WaitForChild("LibFinder"))
 
 local rq = libFinder:FindLib("rquery")
+local StateMachineMachine = libFinder:FindLib("stateMachineMachine")
 local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 
 local aiUtils = require(agentsFolder:WaitForChild("AiUtil", 2))
 local HumanoidList = require(agentsFolder:WaitForChild("HumanoidFinder", 2))
-local StateMachineMachine = require(agentsFolder:WaitForChild("StateMachineMachine", 2))
+
 
 local soldatBrainProto = {
 	_configs = {},
@@ -47,10 +48,10 @@ function soldatAi:new(soldat)
 	soldatBrain:Init(soldat)
 
 	soldatBrain.CurrentTarget = game.Workspace:FindFirstChild("Zombie") -- ***<--- FIX THIS TO BE DYNAMIC
-		
+
 	local StateMachine = StateMachineMachine.NewStateMachine()
 
-	-- STATES		
+	-- STATES
 	local soldatTorso = rq.PersonageTorsoOrEquivalent(soldat)
 	local IdleState = aiUtils:GetIdleState(StateMachine)
 	local defaultFaceCFrame = soldatTorso.CFrame
