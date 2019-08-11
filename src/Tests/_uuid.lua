@@ -6,7 +6,6 @@ local ServerScriptService = _testMain.ServerScriptService
 
 -- load ServiceFinder within habitat?
 local libFinder = habitat:require(ServerScriptService.Finders.LibFinder)
-local svcFinder = habitat:require(ServerScriptService.Finders.ServiceFinder)
 
 local uuidMod = libFinder:FindLib("uuid")
 
