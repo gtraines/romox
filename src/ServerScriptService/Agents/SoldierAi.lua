@@ -35,9 +35,12 @@ function soldatBrainProto:LoadConfigsFromModel(soldatModel)
 	self:_loadConfig(configTable, "CanDamagePlayer", false)
 end
 
+-- {48bfcbf7-e9c5-488b-96ab-9158850d2055}
+-- Create metatable for this
 function soldatBrainProto:Init(soldatModel)
 	self:LoadConfigsFromModel(soldatModel)
 end
+
 
 local soldatAi = {
 	_soldatBrainProto = soldatBrainProto

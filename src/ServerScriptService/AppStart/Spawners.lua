@@ -2,12 +2,12 @@ local libFinder = require(game
     :GetService("ServerScriptService")
     :WaitForChild("Finders", 5)
     :WaitForChild("LibFinder", 2))
-print("Loaded Libfinder")
+
 local svcFinder = require(game
     :GetService("ServerScriptService")
     :WaitForChild("Finders", 5)
     :WaitForChild("ServiceFinder", 2))
-print("Loaded Service finder")
+
 local spieler = svcFinder:FindService("spieler")
 local carAndDriver = svcFinder:FindService("CarAndDriver")
 
@@ -15,19 +15,22 @@ local wraptor = libFinder:FindLib("Wraptor")
 local linq = libFinder:FindLib("linq")
 local rq = libFinder:FindLib("rquery")
 print("Loaded libraries")
-local function getSpawnerModels(categoryName)
-    local wsRoot = game:WaitForChild("Workspace", 5)
+
+local module = {}
+
+function module.GetSpawnerModels(categoryName)
+    local wsRoot = game:WaitForChild("Workspace", 1)
     -- Get Spawners
 
-    local spawnersFolder = wsRoot:WaitForChild("Spawners")
-    local vehicleSpawners = spawnersFolder:WaitForChild(categoryName)
+    local spawnersFolder = wsRoot:WaitForChild("Spawners", 1)
+    local vehicleSpawners = spawnersFolder:WaitForChild(categoryName, 1)
     local spawnerModels = linq(vehicleSpawners:GetChildren()):where(
         function (item) return item:FindFirstChild("Touchstone") ~= nil end)
 
     return spawnerModels.list()
 end
 
-local function touchedByAPlayerClosure(spawnerModel, touchedByPlayerDelegate)
+function module.TouchedByAPlayerClosure(spawnerModel, touchedByPlayerDelegate)
 
     local touchHandler = function(part)
         local playerFromPart = spieler:GetPlayerFromPart(part)
@@ -39,7 +42,7 @@ local function touchedByAPlayerClosure(spawnerModel, touchedByPlayerDelegate)
     return wraptor.WithCoolDown(5, touchHandler)
 end
 
-local function touchedDelegate(spawnerModel, playerFromPart)
+function module._vehicleSpawnerTouchedDelegate(spawnerModel, playerFromPart)
     print(
         "ALERT: " .. playerFromPart.Name .. " just touched me."
     )
@@ -49,7 +52,18 @@ local function touchedDelegate(spawnerModel, playerFromPart)
     return carAndDriver.CreateVehicleFromServerStorage(prototypeToSpawn, spawnLocation)
 end
 
-for spwnrMdl in getSpawnerModels("VehicleSpawners") do
-    print(spwnrMdl)
-    spwnrMdl:FindFirstChild("Touchstone").Touched:Connect(touchedByAPlayerClosure(spwnrMdl, touchedDelegate))
+function module.ConfigureVehicleSpawners()
+    
+    for spwnrMdl in module.GetSpawnerModels("VehicleSpawners") do
+        print(spwnrMdl)
+        spwnrMdl:FindFirstChild("Touchstone").Touched:Connect(
+            module.TouchedByAPlayerClosure(spwnrMdl, module._vehicleSpawnerTouchedDelegate)
+        )
+    end
 end
+
+function module.Init()
+    module.ConfigureVehicleSpawners()
+end
+
+return module

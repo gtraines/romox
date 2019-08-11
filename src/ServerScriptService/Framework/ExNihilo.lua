@@ -15,13 +15,18 @@ local module = {}
 --[[
     When working with collections and tags, it’s a good idea to use an object-oriented programming style. 
     In almost all situations, tagged objects have their own identity, state and behavior. 
-    The pattern goes like this: when a tag is found (CollectionService:GetTagged and CollectionService:GetInstanceAddedSignal), create a Lua object with the Roblox instance. 
-    When it is removed (CollectionService:GetInstanceRemovedSignal), call a cleanup/destroy method within the Lua object. 
+    The pattern goes like this: 
+        when a tag is found (CollectionService:GetTagged and CollectionService:GetInstanceAddedSignal), 
+           create a Lua object with the Roblox instance. 
+        When it is removed (CollectionService:GetInstanceRemovedSignal), 
+            call a cleanup/destroy method within the Lua object. 
     See the code samples for a better idea of how this can be done.
 
     When tags replicate, all tags on an object replicate at the same time. 
-    Therefore, if you set a tag on an object from the client then add/remove a different tag on the same object from the server, 
-        the client’s local tags on the object are overwritten.
+    Therefore, 
+        if you set a tag on an object from the client 
+        then add/remove a different tag on the same object from the server, 
+            the client’s local tags on the object are overwritten.
 ]]
 
 

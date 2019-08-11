@@ -33,4 +33,27 @@ function module:GetIntegerBtwn( start, finish )
     return math.random(start, finish)
 end
 
+
+function module:ShuffleList(listToShuffle)
+    self:Init()
+    local shuffledList = {}
+    -- The # operator may or may not actually return the correct value
+    -- so we will do it sort of randomly
+    local itemCount = 0
+    for _, val in pairs(listToShuffle) do
+        itemCount = itemCount + 1
+    end
+    local availableIndices = itemCount
+
+    for i=1,itemCount do
+        local selectedIndex = math.random(1, availableIndices)
+		local selectedItem = table.remove(listToShuffle, selectedIndex)
+        table.insert(shuffledList, selectedItem)
+        availableIndices = availableIndices - 1
+    end
+
+    return shuffledList
+end
+
+
 return module

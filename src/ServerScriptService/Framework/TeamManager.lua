@@ -1,8 +1,12 @@
 local TeamManager = {}
 
 -- ROBLOX services
-local Teams = game.Teams
-local Players = game.Players
+
+local Teams = game:GetService("Teams")
+local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
+local libFinder = require(ServerScriptService:WaitForChild("Finders", 1):WaitForChild("LibFinder", 1))
+local randumb = libFinder:FindLib("randumb")
 
 -- Game services
 local Configurations = require(game.ServerStorage.Configurations)
@@ -106,9 +110,8 @@ function TeamManager:ShuffleTeams()
 		TeamPlayers[team] = {}
 	end
 	local players = Players:GetPlayers()
-	while #players > 0 do
-		local rIndex = math.random(1, #players)
-		local player = table.remove(players, rIndex)
+	local shuffledPlayers = randumb:ShuffleList(players)
+	for _, player in pairs(shuffledPlayers) do 
 		TeamManager:AssignPlayerToTeam(player)
 	end
 end

@@ -5,7 +5,6 @@ local rq = libFinder:FindLib("rquery")
 
 local utility = {}
 
-
 local maxForce = 75
 
 function utility:GetRepulsionVector(unitPosition, otherUnitsPositions)
@@ -32,12 +31,22 @@ function utility:GetClosestVisibleTarget(npcModel, characters, ignoreList, field
 	local closestTarget = nil
 	local closestDistance = math.huge
 	for _, character in pairs(characters) do
-		local targetPart = rq.PersonageTorsoOrEquivalent(character)
-		local npcPart = rq.PersonageTorsoOrEquivalent(npcModel)
+		local targetTorso = rq.PersonageTorsoOrEquivalent(character)
+		local npcTorso = rq.PersonageTorsoOrEquivalent(npcModel)
 		
-		local toTarget = targetPart.Position - npcPart.Position
+		local toTarget = targetTorso.Position - npcTorso.Position
 		local toTargetWedge = toTarget * Vector3.new(1,0,1)
-
+		local angle = math.acos(toTargetWedge:Dot(npcTorso.CFrame.lookVector)/toTargetWedge.magnitude)
+		if math.deg(angle) < fieldOfView then
+			local targetRay = Ray.new(npcTorso.Position, toTarget)
+			local part, position = game.Workspace:FindPartOnRayWithIgnoreList(targetRay, ignoreList)
+			if part and part.Parent == character then
+				if toTarget.magnitude < closestDistance then
+					closestTarget = character
+					closestDistance = toTarget.magnitude
+				end
+			end
+		end
 	end
 	return closestTarget
 end
@@ -60,8 +69,8 @@ function utility:FindCloseEmptySpace(model)
 		if math.random() > .5 then
 			zoff = zoff * -1
 		end
-		
-		targetPos = Vector3.new(model.Torso.Position.X + xoff,model.Torso.Position.Y,model.Torso.Position.Z + zoff)
+		local modelTorso = rq.PersonageTorsoOrEquivalent(model)
+		targetPos = Vector3.new(modelTorso.Position.X + xoff,modelTorso.Position.Y,modelTorso.Position.Z + zoff)
 		if isSpaceEmpty(targetPos) then
 			return targetPos
 		else
