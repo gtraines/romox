@@ -137,6 +137,20 @@ function machineProto:Update( data )
 	--wait(self.CurrentState.WaitTime)
 end
 
+function machineProto:PrintStateGraph()
+	local function printNextStates(stateToPrint)
+		print(stateToPrint.Name)
+		for _, stuffs in pairs(stateToPrint.NextStates) do
+			print("    - Next State Name: " .. stuffs.Name)
+		end
+	end
+	
+	for _, st in pairs(self.States) do
+		printNextStates(st)
+		print("    -------------    ")
+	end
+end
+
 local machineMachine = {
 	_machineProto = machineProto,
 	_stateProto = stateProto

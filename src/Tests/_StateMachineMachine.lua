@@ -102,26 +102,10 @@ function thirdState:StateStoppedCallback()
     print("Third state stopped")
 end
 
-
 stateMachine:AddState(firstState)
 stateMachine:AddState(secondStateA)
 stateMachine:AddState(secondStateB)
 stateMachine:AddState(thirdState)
-
-
-local function printNextStates(stateToPrint)
-    print(stateToPrint.Name)
-    for _, stuffs in pairs(stateToPrint.NextStates) do
-        print("    - Next State Name: " .. stuffs.Name)
-    end
-end
-
-for _, st in pairs(stateMachine.States) do
-    printNextStates(st)
-    print("    -------------    ")
-end
-
-
 stateMachine.CurrentState = firstState
 
 local firstRunData = {}
@@ -138,4 +122,3 @@ stateMachine:Update({ ReadyForThirdState  = true})
 stateMachine:Update(internalSharedData)
 
 assert(stateMachine.CurrentState.Name == "ThirdState")
-
