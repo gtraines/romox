@@ -161,57 +161,6 @@ function GameManager:StartRound()
 	PlayerManager:SetGameRunning(true)
 	TimeManager:StartTimer(Configurations.ROUND_DURATION)
 
-
-	local ws = game.Workspace
-	local wsChildrens = game.Workspace:GetChildren()
-	local tRes = {}
-	
-	
-	for _, child in pairs(wsChildrens) do
-		print(child.Name)
-		if child.Name == "SpawnLocation" then 
-			--print("Yes")
-			table.insert(tRes, child)
-		end
-	end
-	randumb:Init()
-	print("Initialized randumb")
-
-	local spawnPunkt = randumb:GetOneAtRandom(tRes)
-
-	if spawnPunkt ~= nil then
-		local chosenSpawnPoint = spawnPunkt
-
-		local noidSpawnPunkt = CFrame.new(chosenSpawnPoint.Position) + Vector3.new(0, 10, 0)
-		local farmerPersonage = {}
-		exNihilo.CreateFromServerStorage( 
-			"Noids", "FarmerCurtis", 
-			noidSpawnPunkt, 
-			function(createdPersonage) 
-				print("Farmer spawned: " .. createdPersonage.Name) 
-				farmerPersonage = createdPersonage
-				farmerPersonage.Parent = game.Workspace
-				self.Personage = farmerPersonage
-						
-				local flagStandModel = {} 
-				local destinationCandidates = {}
-		
-				for _, item in pairs(game.Workspace:GetChildren()) do
-			
-					if item.Name == "FlagStand" then
-						table.insert(destinationCandidates, item)
-					end
-				end
-		
-				flagStandModel = randumb:GetOneAtRandom(destinationCandidates)
-				print("Found flag stand")
-		
-				self:_createPath(farmerPersonage, flagStandModel:FindFirstChild("FlagStand"))
-		
-			end)
-		--local farmerAgent = NpcAgent.new("FarmerCurtis", farmerPersonage)
-
-	end
 end
 
 

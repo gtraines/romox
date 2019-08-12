@@ -16,6 +16,7 @@ local stateProto = {
 	Wait = 0.2,
 	IsRunning = false
 }
+
 local stateMeta = { __index = stateProto }
 
 function stateProto.new(name)

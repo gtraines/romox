@@ -5,15 +5,16 @@ local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 local soldatAi = require(agentsFolder:WaitForChild("SoldierAi", 1))
 local DestroyService = require(agentsFolder:WaitForChild("DestroyService", 1))
 local soldierAgent = {
-    
+    SoldatBrain = nil    
 }
-
-
 
 function soldierAgent.new(soldierModel)
     -- MOVE THIS TO THE MODEL SPAWN PROCESS??
-    soldierModel.GunStorage.Gun.Parent = soldierModel
-
+    if soldierModel:FindFirstChild("Gun") == nil or 
+	    soldierModel:FindFirstChild("Gun") ~= nil and not soldierModel:FindFirstChild("Gun"):IsA("Tool") then
+	    soldierModel:WaitForChild("GunStorage"):WaitForChild("Gun").Parent = soldierModel
+    end
+    
     local soldatBrain = soldatAi.new(soldierModel)
     local function clearParts(parent)
         for _, part in pairs(parent:GetChildren()) do

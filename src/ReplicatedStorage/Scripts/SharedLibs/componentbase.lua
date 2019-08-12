@@ -22,7 +22,10 @@ function component:TryExecute(gameObject)
             local componentCount = #components
             if #componentCount == 0 then return false end
             if componentCount > 0 then
-                local foundComponent = linq(components):firstOrDefault(function(val) return val.Name == value end)
+                local foundComponent = linq(components):firstOrDefault(
+                    function(val)
+                        return val.Name == value
+                    end)
                 if foundComponent == nil then
                     return false
                 end
