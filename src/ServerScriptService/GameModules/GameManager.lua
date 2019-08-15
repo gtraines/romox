@@ -87,33 +87,7 @@ end
 function GameManager:GameReady()
 	return Players.NumPlayers >= Configurations.MIN_PLAYERS
 end
-function GameManager:getOnWaypointReachedDelegate()
-	local delegateHandler = function(reached)
-		local currentWaypointIndex = self["CurrentWaypointIndex"]
-		local waypoints = self["Waypoints"]
-		if waypoints ~= nil then
-			--print(self["CurrentWaypointIndex"])
-			local movingTo = self["CurrentWaypointIndex"]
-			for idx, value in pairs(waypoints) do
-				--print(tostring(waypoints[idx]))	
-			end
-			if waypoints[movingTo] ~= nil then
-				if waypoints[movingTo]["Position"] ~= nil then
-					--print("MOVING TO " .. tostring(waypoints[movingTo].Position))		
-					if reached and currentWaypointIndex < #waypoints then
-						
-						self["CurrentWaypointIndex"] = currentWaypointIndex + 1
-						self["Personage"]:FindFirstChild("Humanoid"):MoveTo(
-							waypoints[self["CurrentWaypointIndex"]].Position)
-					end
-				end
-			end
-			
-		end
 
-	end
-	return delegateHandler
-end
 function GameManager:_createPath(personage, destinationObject)
 	local pathParams = {
 			AgentRadius = 2,

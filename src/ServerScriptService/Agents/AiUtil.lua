@@ -5,9 +5,6 @@ local rq = libFinder:FindLib("rquery")
 
 local utility = {}
 
-
-
-
 function utility:GetIdleState(StateMachine)
 	local IdleState = StateMachine.NewState()
 	IdleState.Name = "Idle"
@@ -15,8 +12,5 @@ function utility:GetIdleState(StateMachine)
 	IdleState.Init = function() end
 	return IdleState
 end
-
-
-
 
 return utility

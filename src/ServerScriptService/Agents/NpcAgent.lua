@@ -11,21 +11,43 @@ local randumb = LibFinder:FindLib("randumb")
 local pathfinder = LibFinder:FindLib("pathfinder")
 local exNihilo = SvcFinder:FindService("exnihilo")
 
+local npcProto = {
+    Personage = nil,
+    Waypoints = {},
+    CurrentWaypointIndex = 0
+}
+
+local npcMeta = { __index = npcProto }
+function npcProto:_getOnWaypointReachedDelegate()
+	local delegateHandler = function(reached)
+		local currentWaypointIndex = self["CurrentWaypointIndex"]
+		local waypoints = self["Waypoints"]
+		if waypoints ~= nil then
+
+			local movingTo = self["CurrentWaypointIndex"]
+
+			if waypoints[movingTo] ~= nil then
+				if waypoints[movingTo]["Position"] ~= nil then
+					--print("MOVING TO " .. tostring(waypoints[movingTo].Position))		
+					if reached and currentWaypointIndex < #waypoints then
+						
+						self["CurrentWaypointIndex"] = currentWaypointIndex + 1
+						self["Personage"]:FindFirstChild("Humanoid"):MoveTo(
+							waypoints[self["CurrentWaypointIndex"]].Position)
+					end
+				end
+			end
+			
+		end
+
+	end
+	return delegateHandler
+end
+
 local agent = {
     ManagedEntities = {},
     MAX_FORCE = 75
 }
-
-function agent._getOrAddEntityIdToObj(object)
-    local entityIdObj = object:FindFirstChild("EntityId")
-    if entityIdObj == nil then
-        entityIdObj = Instance.new("StringValue")
-        entityIdObj.Name = "EntityId"
-        entityIdObj.Parent = object
-    end
-    entityIdObj.Value = uuid()
-    return entityIdObj.Value
-end
 
 function agent.GetRandomCFrameFromTableOfParts(candidatePartsTable)
 	randumb:Init()

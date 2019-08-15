@@ -25,7 +25,7 @@ function module.GetOrCreateClientServerTopicInCategory(categoryName, topicName)
 	local categoryFolder = module.GetOrCreateClientServerTopicCategory(categoryName)
 
 	local topic = categoryFolder:FindFirstChild(topicName)
-	if topic == nil then
+	if topic == nil or not topic:IsA("RemoteEvent") then
 		topic = Instance.new("RemoteEvent")
 		topic.Name = topicName
 		topic.Parent = categoryFolder

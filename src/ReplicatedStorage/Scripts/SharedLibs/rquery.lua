@@ -1,4 +1,8 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayersService = game:GetService("Players")
+
+local uuid = require(ReplicatedStorage:WaitForChild("Scripts", 1)
+	:WaitForChild("SharedLibs", 1):WaitForChild("uuid", 1))
 
 local module = {}
 
@@ -168,6 +172,15 @@ function module.GetOrAddItem( itemName, itemType, parent )
 		itemCandidate.Parent = parent
 	end
 	return itemCandidate
+end
+
+function module.GetOrAddEntityId(item)
+	local entityIdObj = module.GetOrAddItem( "EntityId", "StringValue", item )
+
+	if entityIdObj.Value == nil or entityIdObj.Value == "" then
+		entityIdObj.Value = uuid()
+	end
+    return entityIdObj.Value
 end
 
 function module.Assign( target, ... )
