@@ -4,25 +4,129 @@ local rq = require(ReplicatedStorage
 local PathfindingService = game:GetService("PathfindingService")
 PathfindingService.EmptyCutoff = .3
 
-local PathfindingUtility = {}
+local pathProgressProto = {
+	CurrentTargetPos = nil,
+	LastTargetPos = nil,
+	Waypoints = {},
+	CurrentWaypointIndex = 1
+}
 
-local TargetOffsetMax = 10--5
-local JumpThreshold = 1.5 --2.5
-local NextPointThreshold = 4
+local pathProgressMeta = { __index = pathProgressProto }
 
-function PathfindingUtility.new()
+local module = {
+	DefaultPersonageMovementParams = {
+		TargetOffsetMax = 10, --5
+		JumpThreshold = 1.5, --2.5
+		NextPointThreshold = 4,
+	},
+	DefaultPathParams = {
+		AgentRadius = 2,
+		AgentHeight = 5
+	}
+}
+
+
+function module.GetPathForPersonage(personage, destinationObject, pathParams)
+	if pathParams == nil then 
+		 pathParams = module.DefaultPathParams
+	end
+	
+	local path = PathfindingService:CreatePath(pathParams)
+
+	local personageRootPart = personage:FindFirstChild("HumanoidRootPart")
+	-- Compute and check the path
+	path:ComputeAsync(personageRootPart.Position, destinationObject.Position)
+
+	if path.Status == Enum.PathStatus.Success then
+		return path
+	else
+		warn("Unable to find path for " .. personage.Name .. " to " .. destinationObject.Name)
+		return nil
+	end
+end
+
+function module.ClearPathWaypoints( path )
+	local pointsFolder = rq.GetOrAddItem( "Points", "Folder", game.Workspace )
+	pointsFolder:ClearAllChildren()
+end
+
+function module.DisplayPathWaypoints(path)
+
+	local pointsFolder = rq.GetOrAddItem( "Points", "Folder", game.Workspace )
+	pointsFolder:ClearAllChildren()
+	local waypoints = path:GetWaypoints()
+
+	-- Loop through waypoints
+	for _, waypoint in pairs(waypoints) do
+		local part = Instance.new("Part")
+		part.Shape = "Ball"
+		part.Material = "Neon"
+		part.Size = Vector3.new(0.6, 0.6, 0.6)
+		part.Position = waypoint.Position
+		part.Anchored = true
+		part.CanCollide = false
+		part.Parent = pointsFolder
+	end
+end
+
+-- Adapted from zombie
+function module.MovePersonageOnPath(personage,
+	path,
+	onWaypointReachedDelegate,
+	pathProgressData, personageMovementParams)
+
+	if path == nil or path.Status ~= Enum.PathStatus.Success then
+		error("PATH NOT FOUND!!!")
+	end
+
+	if personageMovementParams == nil then
+		personageMovementParams = rq.DeepCopyTable(module.DefaultPersonageMovementParams)
+	end
+
+	if pathProgressData == nil then 
+		pathProgressData = setmetatable({}, pathProgressMeta)
+	end
+	
+ 	local humanoid = personage:FindFirstChild("Humanoid")
+	
+	pathProgressData.Waypoints = path:GetWaypoints()
+	local personageTorso = rq.PersonageTorsoOrEquivalent(personage)
+	
+	if pathProgressData.CurrentWaypointIndex < #pathProgressData.Waypoints then
+		local currentPoint = pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex]
+		local distance = (personageTorso.Position - currentPoint).magnitude
+		if distance < personageMovementParams.NextPointThreshold then
+			pathProgressData.CurrentWaypointIndex = pathProgressData.CurrentWaypointIndex + 1
+		end
+
+		humanoid:MoveTo(pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex])
+		if pathProgressData.Waypoints[pathProgressData.CurrentPointIndex].Y - 
+			personageTorso.Position.Y > personageMovementParams.JumpThreshold then
+			humanoid.Jump = true
+		end
+	end
+	humanoid:MoveTo(
+			pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex].Position)
+
+	humanoid.MoveToFinished:Connect(onWaypointReachedDelegate)
+
+	return pathProgressData
+end
+
+function module.new()
+
 	local this = {
 		CurrentTargetPos = nil,
 		LastTargetPos = nil,
 		Path = nil,
-		CurrentPointIndex = 1
+		CurrentWaypointIndex = 1
 	}
 
 	this.LastTargetPos = Vector3.new(math.huge, math.huge, math.huge)
 	this.Path = nil
 	this.CurrentPointIndex = 1
 
-	function this:MoveToTarget(character, target, showPath)
+	function this:MoveToTarget(personage, target, onTargetReachedDelegate, pathProgressData, personageMovementParams)
 		local targetOffset = (this.LastTargetPos - target).magnitude
 		--
 --		local targetOffsetVector = (lastTargetPos - target)
@@ -33,21 +137,25 @@ function PathfindingUtility.new()
 		if targetOffset > TargetOffsetMax then
 		--if targetOffsetVector.magnitude > TargetOffsetMax then
 			--print("moveto")
-			local startPoint = character.Torso.Position
-			local humanoidState = character.Humanoid:GetState()
+			local personageTorso = rq.PersonageTorsoOrEquivalent(personage)
+
+			local startPoint = personageTorso.Position
+			
+			local humanoidState = personage.Humanoid:GetState()
 			if humanoidState == Enum.HumanoidStateType.Jumping or 
 				humanoidState == Enum.HumanoidStateType.Freefall then
 				--print("this")				
-				local ray = Ray.new(character.Torso.Position, Vector3.new(0, -100, 0))
-				local hitPart, hitPoint = game.Workspace:FindPartOnRay(ray, character)
+				local ray = Ray.new(personageTorso.Position, Vector3.new(0, -100, 0))
+				local hitPart, hitPoint = game.Workspace:FindPartOnRay(ray, personageTorso)
 				if hitPart then
 					startPoint = hitPoint
 				end
 			end
-			--print("making new path")
+
 			local newTarget = target
 			local ray = Ray.new(target + Vector3.new(0,-3,0), Vector3.new(0, -100, 0))			
-			local hitPart, hitPoint = game.Workspace:FindPartOnRay(ray, character)
+			
+			local hitPart, hitPoint = game.Workspace:FindPartOnRay(ray, personage)
 			if hitPoint then
 				if (hitPoint - target).magnitude > 4 then
 					newTarget = newTarget * Vector3.new(1,0,1) + Vector3.new(0,3,0)
@@ -61,20 +169,7 @@ function PathfindingUtility.new()
 				--print(tostring(path.Status))
 			end
 			--path = PathfindingService:ComputeRawPathAsync(startPoint, target, 500)			
-			if showPath then
-				local pointsFolder = rq.GetOrAddItem( "Points", "Folder", game.Workspace )
 
-				pointsFolder:ClearAllChildren()
-				local ps = this.Path:GetPointCoordinates()
-				for _, point in pairs(ps) do
-					local part = Instance.new("Part", pointsFolder)
-					part.CanCollide = false
-					part.Anchored = true
-					part.FormFactor = Enum.FormFactor.Custom
-					part.Size = Vector3.new(1,1,1)
-					part.Position = point
-				end
-			end
 			this.CurrentPointIndex = 1
 			this.LastTargetPos = target
 		end
@@ -101,4 +196,5 @@ function PathfindingUtility.new()
 
 	return this
 end
-return PathfindingUtility
+
+return module

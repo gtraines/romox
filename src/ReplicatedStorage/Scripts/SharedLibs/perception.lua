@@ -12,25 +12,36 @@ function module.IsSpaceEmpty(position)
 	return game.Workspace:IsRegion3Empty(region)
 end
 
--- TODO: I can't vouch for the soundness or correctness of this logic
-function module.FindCloseEmptySpace(model)
+function module:GetRandomXZOffsetNear(targetVector3)
+	local xOffset = math.random(5,10)
+	if math.random() > .5 then
+		xOffset = xOffset * -1
+	end
+	local zOffset = math.random(5, 10)
+	if math.random() > .5 then
+		zOffset = zOffset * -1
+	end
+
+	local targetPos = Vector3.new(targetVector3.X + xOffset,
+		targetVector3.Y,
+		targetVector3.Z + zOffset)
+
+	return targetPos
+end
+
+function module.FindEmptySpaceCloseTo(targetVector3)
+
+	if targetVector3 == nil or not targetVector3:IsA("Vector3") then
+		error("Missing target vector")
+		return nil
+	end
+
 	local targetPos = Vector3.new(0,0,0)
 	local count = 0
 	math.randomseed(os.time())
 	repeat
-		local xoff = math.random(5,10)
-		if math.random() > .5 then
-			xoff = xoff * -1
-		end
-		local zoff = math.random(5, 10)
-		if math.random() > .5 then
-			zoff = zoff * -1
-		end
 
-		local modelTorso = rq.PersonageTorsoOrEquivalent(model)
-		targetPos = Vector3.new(modelTorso.Position.X + xoff,
-							modelTorso.Position.Y,
-							modelTorso.Position.Z + zoff)
+		targetPos = module.GetRandomXZOffsetNear(targetVector3)
 		if module.IsSpaceEmpty(targetPos) then
 			return targetPos
 		else
@@ -71,26 +82,47 @@ function module.FindNearestPathPoint(path, point, start, target, ignoreList)
 	end
 end
 
-function module.GetClosestVisibleTarget(npcModel, characters, ignoreList, fieldOfView)
+function module.ShootAzimuth(fromPosition, fromLookVector, toPosition)
+	local toTarget = toPosition - fromPosition
+	local toTargetWedge = toTarget * Vector3.new(1,0,1)
+
+	local angleRads = math.acos(toTargetWedge:Dot(fromLookVector)/toTargetWedge.magnitude)
+	return {
+		ToTargetOffsets = toTarget,
+		AzimuthDegrees = math.deg(angleRads)
+	}
+end
+
+function module.CanHunterSeeTarget(hunterTorso, hunterFieldOfViewDegrees, targetTorso, ignoreList)
+	local azimuthToTarget = module.ShootAzimuth(hunterTorso.Position, 
+		hunterTorso.CFrame.lookVector, 
+		targetTorso.Position)
+
+	if azimuthToTarget.AzimuthDegrees < hunterFieldOfViewDegrees then
+		local targetRay = Ray.new(hunterTorso.Position, azimuthToTarget.ToTargetOffsets)
+		local part, position = game.Workspace:FindPartOnRayWithIgnoreList(targetRay, ignoreList)
+		if part and part.Parent == targetTorso then
+			return true
+		end
+	end
+	return false
+end
+
+function module.GetClosestVisibleTarget(hunterPersonage, candidateTargets, ignoreList, fieldOfView)
 	local closestTarget = nil
 	local closestDistance = math.huge
-	for _, character in pairs(characters) do
-		local targetTorso = rq.PersonageTorsoOrEquivalent(character)
-		local npcTorso = rq.PersonageTorsoOrEquivalent(npcModel)
+	local hunterTorso = rq.PersonageTorsoOrEquivalent(hunterPersonage)
+	for _, candidateTarget in pairs(candidateTargets) do
+		local targetTorso = rq.PersonageTorsoOrEquivalent(candidateTarget)
 		
-		local toTarget = targetTorso.Position - npcTorso.Position
-		local toTargetWedge = toTarget * Vector3.new(1,0,1)
-		local angle = math.acos(toTargetWedge:Dot(npcTorso.CFrame.lookVector)/toTargetWedge.magnitude)
-		if math.deg(angle) < fieldOfView then
-			local targetRay = Ray.new(npcTorso.Position, toTarget)
-			local part, position = game.Workspace:FindPartOnRayWithIgnoreList(targetRay, ignoreList)
-			if part and part.Parent == character then
-				if toTarget.magnitude < closestDistance then
-					closestTarget = character
-					closestDistance = toTarget.magnitude
-				end
+		if module.CanHunterSeeTarget(hunterTorso, fieldOfView, targetTorso, ignoreList) then 
+			local toTargetOffsets = hunterTorso.Position - targetTorso.Position
+			if toTargetOffsets.magnitude < closestDistance then
+				closestTarget = targetTorso
+				closestDistance = toTargetOffsets.magnitude
 			end
 		end
+
 	end
 	return closestTarget
 end

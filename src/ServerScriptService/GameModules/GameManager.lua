@@ -88,42 +88,8 @@ function GameManager:GameReady()
 	return Players.NumPlayers >= Configurations.MIN_PLAYERS
 end
 
-function GameManager:_createPath(personage, destinationObject)
-	local pathParams = {
-			AgentRadius = 2,
-			AgentHeight = 5
-	}
-	
-	local path = PathfindingService:CreatePath(pathParams)
 
-	local noidRootPart = personage:FindFirstChild("HumanoidRootPart")
-	-- Compute and check the path
-	path:ComputeAsync(noidRootPart.Position, destinationObject.Position)
-	-- Empty waypoints table after each new path computation
-	self.CurrentWaypointIndex = 2
-	self.Personage = personage
- 	local humanoid = personage:FindFirstChild("Humanoid")
 	
-	if path.Status == Enum.PathStatus.Success then
-		-- Get the path waypoints and start zombie walking
-		
-		self.Waypoints = path:GetWaypoints()
-		self["Personage"]:FindFirstChild("Humanoid"):MoveTo(
-				self.Waypoints[self["CurrentWaypointIndex"]].Position)
-		for _, waypunkt in pairs(self.Waypoints) do
-			--print(waypunkt.Position)
-		end
-		humanoid.MoveToFinished:Connect(GameManager:getOnWaypointReachedDelegate())
-
-		
-	else
-		-- Error (path not found); stop humanoid
-		print("PATH NOT FOUND!!!")
-		humanoid:MoveTo(noidRootPart.Position)
-	end
-end
-	
-
 function GameManager:StartRound()
 	TeamManager:ClearTeamScores()
 	PlayerManager:ClearPlayerScores()

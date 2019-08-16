@@ -5,7 +5,7 @@ local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 local soldatAi = require(agentsFolder:WaitForChild("SoldierAi", 1))
 local DestroyService = require(agentsFolder:WaitForChild("DestroyService", 1))
 local soldierAgent = {
-    SoldatBrain = nil    
+    SoldatBrain = nil
 }
 
 function soldierAgent.new(soldierModel)

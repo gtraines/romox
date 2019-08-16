@@ -5,66 +5,39 @@ local libFinder = require(ServerScriptService
 	:WaitForChild("LibFinder"))
 
 local rq = libFinder:FindLib("rquery")
+local perception = libFinder:FindLib("perception")
+
 local StateMachineMachine = libFinder:FindLib("stateMachineMachine")
 local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 
-local aiUtils = require(agentsFolder:WaitForChild("AiUtil", 2))
+local aiBase = require(agentsFolder:WaitForChild("NpcAiBase", 2))
 local HumanoidList = require(agentsFolder:WaitForChild("HumanoidFinder", 2))
 
 
 local soldatBrainProto = {
 	_configs = {},
+	CurrentTarget = nil,
 	StateMachine = nil,
-	CurrentTarget = nil
+	SoldatModel = nil,
+	SoldatTorso = nil,
+	
 }
 
-function soldatBrainProto:_loadConfig(configSource, configName, defaultValue)
-	if configSource:FindFirstChild(configName) then
-		self._configs[configName] = configSource:FindFirstChild(configName).Value
-	else
-		self._configs[configName] = defaultValue
-	end
-end
+local soldatBrainMeta = { __index = soldatBrainProto }
 
-function soldatBrainProto:LoadConfigsFromModel(soldatModel)
-	local configTable = soldatModel:FindFirstChild("Configurations")
-	self:_loadConfig(configTable, "AggroRange", 100)
-	self:_loadConfig(configTable, "FieldOfView", 180)
-	self:_loadConfig(configTable, "Damage", 50)
-	self:_loadConfig(configTable, "AttackCooldown", 1)
-	self:_loadConfig(configTable, "CanDamagePlayer", false)
-end
+function soldatBrainProto:PushStates(stateMachine)
+	
 
--- ***************************************
--- ***************************************
--- {48bfcbf7-e9c5-488b-96ab-9158850d2055}
--- Create metatable for this
--- ***************************************
--- ***************************************
-function soldatBrainProto:Init(soldatModel)
-	self:LoadConfigsFromModel(soldatModel)
-end
-
-local soldatAi = {
-	_soldatBrainProto = soldatBrainProto
-}
-
-function soldatAi:new(soldat)
-	local soldatBrain = rq.DeepCopyTable(self._soldatBrainProto)
-	soldatBrain:Init(soldat)
-
-	soldatBrain.CurrentTarget = game.Workspace:FindFirstChild("Zombie") -- ***<--- FIX THIS TO BE DYNAMIC
-
-	local StateMachine = StateMachineMachine.NewStateMachine()
-
-	-- STATES
-	local soldatTorso = rq.PersonageTorsoOrEquivalent(soldat)
-	local IdleState = aiUtils:GetIdleState(StateMachine)
-	local defaultFaceCFrame = soldatTorso.CFrame
+	local IdleState = self:GetIdleState(self.StateMachine)
+	local defaultFaceCFrame = self.SoldatTorso.CFrame
 	local desiredFaceAngle = 0
 	local lastTurned = 0
-	local turningGyro = soldatTorso.BodyGyro
+	local turningGyro = self.SoldatTorso.BodyGyro
 	local turnWait = math.random(5,10)
+
+	self.CurrentTarget = game.Workspace:FindFirstChild("Zombie") -- ***<--- FIX THIS TO BE DYNAMIC
+
+	local IdleState = self:GetIdleState()
 	IdleState.Action = function()
 		local now = os.time()
 		if now - lastTurned > turnWait then
@@ -165,7 +138,13 @@ function soldatAi:new(soldat)
 			end
 		end
 		
-		local target = aiUtils:GetClosestVisibleTarget(soldat, enemies, soldiers, soldatBrain._cofigs["FieldOfView"])
+		local modelTorso = rq.PersonageTorsoOrEquivalent(soldat)
+
+		local targetPos = Vector3.new(modelTorso.Position.X, 
+			modelTorso.Position.Y,
+			modelTorso.Position.Z)
+
+		local target = perception:GetClosestVisibleTarget(soldat, enemies, soldiers, soldatBrain._configs["FieldOfView"])
 		if target then
 			soldatBrain.CurrentTarget = target
 			return true
@@ -194,7 +173,48 @@ function soldatAi:new(soldat)
 		StateMachine.SwitchState(nil)
 	end
 	
-	return soldatBrain
 end
 
-return soldatAi
+function soldatBrainProto:_loadConfig(configSource, configName, defaultValue)
+	if configSource:FindFirstChild(configName) then
+		self._configs[configName] = configSource:FindFirstChild(configName).Value
+	else
+		self._configs[configName] = defaultValue
+	end
+end
+
+function soldatBrainProto:LoadConfigsFromModel(soldatModel)
+	local configTable = soldatModel:FindFirstChild("Configurations")
+	self:_loadConfig(configTable, "AggroRange", 100)
+	self:_loadConfig(configTable, "FieldOfView", 180)
+	self:_loadConfig(configTable, "Damage", 50)
+	self:_loadConfig(configTable, "AttackCooldown", 1)
+	self:_loadConfig(configTable, "CanDamagePlayer", false)
+end
+
+-- ***************************************
+-- ***************************************
+-- {48bfcbf7-e9c5-488b-96ab-9158850d2055}
+-- Create metatable for this
+-- ***************************************
+-- ***************************************
+function soldatBrainProto:Init(soldatModel)
+	self:LoadConfigsFromModel(soldatModel)
+	self.SoldatModel = soldatModel
+	self.SoldatTorso = rq.PersonageTorsoOrEquivalent(self.SoldatModel)
+	self.StateMachine = StateMachineMachine.NewStateMachine()
+	self:PushStates(self.StateMachine)
+end
+
+local soldatAiModule = {}
+
+function soldatAiModule.new(soldatModel, targetNames)
+	local aiInstanceMeta = setmetatable({}, soldatBrainMeta)
+	local aiInstance = setmetatable(aiInstanceMeta, aiBase.new())
+
+	aiInstance:Init(soldatModel)
+
+	return aiInstance
+end
+
+return soldatAiModule

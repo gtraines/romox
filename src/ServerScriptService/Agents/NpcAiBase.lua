@@ -3,9 +3,11 @@ local libFinder = require(ServerScriptService:WaitForChild("Finders",2):WaitForC
 
 local rq = libFinder:FindLib("rquery")
 
-local utility = {}
+local npcAiProto = {}
 
-function utility:GetIdleState(StateMachine)
+local npcAiMeta = { __index = npcAiProto }
+
+function npcAiProto.GetIdleState(StateMachine)
 	local IdleState = StateMachine.NewState()
 	IdleState.Name = "Idle"
 	IdleState.Action = function() end
@@ -13,4 +15,11 @@ function utility:GetIdleState(StateMachine)
 	return IdleState
 end
 
-return utility
+local aiBaseModule = {}
+
+function aiBaseModule.new()
+    local npcAiInstance = setmetatable({}, npcAiMeta)
+    return npcAiInstance
+end
+
+return aiBaseModule
