@@ -90,13 +90,13 @@ function module.MovePersonageOnPath(personage,
 	
 	if pathProgressData.CurrentWaypointIndex < #pathProgressData.Waypoints then
 		local currentPoint = pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex]
-		local distance = (personageTorso.Position - currentPoint).magnitude
+		local distance = (personageTorso.Position - currentPoint.Position).magnitude
 		if distance < personageMovementParams.NextPointThreshold then
 			pathProgressData.CurrentWaypointIndex = pathProgressData.CurrentWaypointIndex + 1
 		end
 
-		humanoid:MoveTo(pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex])
-		if pathProgressData.Waypoints[pathProgressData.CurrentPointIndex].Y - 
+		humanoid:MoveTo(pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex].Position)
+		if pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex].Position.Y - 
 			personageTorso.Position.Y > personageMovementParams.JumpThreshold then
 			humanoid.Jump = true
 		end

@@ -10,49 +10,8 @@ local uuid = LibFinder:FindLib("uuid")
 local randumb = LibFinder:FindLib("randumb")
 local exNihilo = SvcFinder:FindService("exnihilo")
 
-local npcAgentProto = {
-    Personage = nil,
-    Waypoints = {},
-    CurrentWaypointIndex = 0
-}
-
-local npcAgentMeta = { __index = npcAgentProto }
-
-function npcAgentMeta:_createPath(personage, destinationObject)
-	local pathParams = {
-			AgentRadius = 2,
-			AgentHeight = 5
-	}
-	
-	local path = PathfindingService:CreatePath(pathParams)
-
-	local personageRootPart = personage:FindFirstChild("HumanoidRootPart")
-	-- Compute and check the path
-	path:ComputeAsync(personageRootPart.Position, destinationObject.Position)
-	-- Empty waypoints table after each new path computation
-	self.CurrentWaypointIndex = 2
-	self.Personage = personage
- 	local humanoid = personage:FindFirstChild("Humanoid")
-	
-	if path.Status == Enum.PathStatus.Success then
-		-- Get the path waypoints and start zombie walking
-		
-		self.Waypoints = path:GetWaypoints()
-		self["Personage"]:FindFirstChild("Humanoid"):MoveTo(
-				self.Waypoints[self["CurrentWaypointIndex"]].Position)
-		for _, waypunkt in pairs(self.Waypoints) do
-			--print(waypunkt.Position)
-		end
-		humanoid.MoveToFinished:Connect(GameManager:getOnWaypointReachedDelegate())
-
-		
-	else
-		-- Error (path not found); stop humanoid
-		print("PATH NOT FOUND!!!")
-		humanoid:MoveTo(noidRootPart.Position)
-	end
-end
-
+local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
+local pathfindingAi = require(agentsFolder:WaitForChild("PathfindingAiBase"))
 
 local agent = {
     ManagedEntities = {},
@@ -83,10 +42,14 @@ function agent.ChooseRandomSpawnLocation()
 		end
 	end
 
-    return CFrame.new(agent.GetRandomCFrameFromTableOfParts(spawnLocations)) + Vector3.new(0, 10, 0)
+    return agent.GetRandomCFrameFromTableOfParts(spawnLocations) + Vector3.new(0, 10, 0)
 end
 
-function agent.SpawnPersonageAsAgent(storageFolder, personagePrototypeId, spawnLocation, personageAi, onSpawnCompleteCallback)
+function agent.SpawnPersonageAsAgent(storageFolder, 
+	personagePrototypeId, 
+	spawnLocation, 
+	personageAi, 
+	onSpawnCompleteCallback)
 
     local spawnedPersonage = Instance.new("Model")
 
@@ -100,6 +63,24 @@ function agent.SpawnPersonageAsAgent(storageFolder, personagePrototypeId, spawnL
             agent.ManagedEntities[rq.StringValueOrNil("EntityId", spawnedPersonage)] = spawnedPersonage
             onSpawnCompleteCallback(createdPersonage)
         end)
+end
+
+function agent.CreateFarmerCurtis()
+	local storageFolder = "Noids"
+	local personagePrototypeId = "FarmerCurtis"
+	local spawnLocation = agent.ChooseRandomSpawnLocation()
+	
+	local destination = game.Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
+	local onSpawnCompleteCallback = function (createdPersonage)
+		local pathfindingAi = pathfindingAi.new(createdPersonage)
+		local goGoGo = pathfindingAi:MoveTo(destination , true)
+	end
+
+	agent.SpawnPersonageAsAgent(storageFolder,
+		personagePrototypeId,
+		spawnLocation, 
+		pathfindingAi, 
+		onSpawnCompleteCallback)
 end
 
 return agent

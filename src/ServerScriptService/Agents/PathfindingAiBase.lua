@@ -9,32 +9,32 @@ local pathfindingAiProto = {
 	_configs = {},
 	StateMachine = nil,
 	MAX_FORCE =  75,
+	Personage = nil
 }
 
 local pathfindingAiMeta = { __index = pathfindingAiProto }
 
-function pathfindingAiProto:GetOnWaypointReachedDelegate()
+function pathfindingAiProto:GetOnWaypointReachedDelegate(pathProgressData)
 	local delegateHandler = function(reached)
-		local currentWaypointIndex = self["CurrentWaypointIndex"]
-		local waypoints = self["Waypoints"]
+		print("Reached? " .. tostring(reached))
+		local currentWaypointIndex = pathProgressData.CurrentWaypointIndex
+		local waypoints = pathProgressData.Waypoints
 		if waypoints ~= nil then
 
-			local movingTo = self["CurrentWaypointIndex"]
+			local movingTo = waypoints[currentWaypointIndex]
 
-			if waypoints[movingTo] ~= nil then
-				if waypoints[movingTo]["Position"] ~= nil then
+			if movingTo ~= nil then
+				if movingTo["Position"] ~= nil then
 					--print("MOVING TO " .. tostring(waypoints[movingTo].Position))		
 					if reached and currentWaypointIndex < #waypoints then
 						
-						self["CurrentWaypointIndex"] = currentWaypointIndex + 1
-						self["Personage"]:FindFirstChild("Humanoid"):MoveTo(
-							waypoints[self["CurrentWaypointIndex"]].Position)
+						pathProgressData.CurrentWaypointIndex = currentWaypointIndex + 1
+						self.Personage:FindFirstChild("Humanoid"):MoveTo(
+							movingTo.Position)
 					end
 				end
 			end
-			
 		end
-
 	end
 	return delegateHandler
 end
@@ -48,7 +48,7 @@ function pathfindingAiProto:MoveTo( destinationPart, displayWaypointMarkers)
 		end
 		pathProgressData = pathfinder.MovePersonageOnPath(self.Personage,
 			pathProgressData,
-			self:GetOnWaypointReachedDelegate())
+			self:GetOnWaypointReachedDelegate(pathProgressData))
 	end
 	return pathProgressData
 end
@@ -100,9 +100,10 @@ end
 
 local aiBaseModule = {}
 
-function aiBaseModule.new()
+function aiBaseModule.new(personage)
 	local npcAiInstance = setmetatable({}, pathfindingAiMeta)
 	npcAiInstance.StateMachine = StateMachineMachine.NewStateMachine()
+	npcAiInstance.Personage = personage
     return npcAiInstance
 end
 

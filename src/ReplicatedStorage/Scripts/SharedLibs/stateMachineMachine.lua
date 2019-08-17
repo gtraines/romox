@@ -22,7 +22,6 @@ local stateMeta = { __index = stateProto }
 function stateProto.new(name)
 	local self = setmetatable({}, stateMeta)
 	self.Name = name or "UNNAMED_STATE"
-	uuid.seed()
 	self.StateId = uuid()
 	return self
 end
@@ -165,7 +164,6 @@ local machineMachine = {
 
 function machineMachine.NewStateMachine()
 	local machineInstance = rq.DeepCopyTable(machineMachine._machineProto.new())
-	uuid.seed()
 	machineInstance.MachineId = uuid()
 	return machineInstance
 end

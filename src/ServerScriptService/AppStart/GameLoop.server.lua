@@ -5,6 +5,7 @@ local GameManager = require(gameModulesFolder:WaitForChild("GameManager", 1))
 
 local appStartFolder = ServerScriptService:WaitForChild("AppStart", 1)
 local Spawners = require(appStartFolder:WaitForChild("Spawners", 1))
+local npcAgent = require(ServerScriptService:WaitForChild("Agents"):WaitForChild("NpcAgent"))
 
 --- Main injection point for the game
 -- @script ServerMain
@@ -23,7 +24,8 @@ function RunForever()
         until GameManager:GameReady()
         
         GameManager:StopIntermission()
-        GameManager:StartRound()	
+        GameManager:StartRound()
+        npcAgent.CreateFarmerCurtis()
         
         repeat
             GameManager:Update()
