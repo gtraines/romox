@@ -59,7 +59,10 @@ end
 local machineProto = {
 	MachineId = "nil",
 	CurrentState = {},
-	States = {}
+	States = {},
+	Context = {
+		Items = {}
+	}
 }
 local machineMeta = { __index = machineProto }
 
@@ -69,7 +72,7 @@ function machineProto.new()
 	return self
 end
 
-function machineProto.NewState(stateName)
+function machineProto:NewState(stateName)
 	local stateInstance = rq.DeepCopyTable(stateProto.new(stateName))
 	return stateInstance
 end
@@ -77,7 +80,7 @@ end
 function machineProto:Stop(stateToStop)
 	--print("Stopping " .. state.Name)
 	stateToStop.IsRunning = false
-	stateToStop:StateStoppedCallback()
+	stateToStop:StateStoppedCallback(self.Context)
 end
 
 function machineProto:AddState(state)
@@ -97,13 +100,20 @@ function machineProto:AddState(state)
 	end
 end
 
+function machineProto:ClearContextItems()
+	for _, item in pairs(self.Context.Items) do
+		item = nil
+	end
+	self.Context.Items = nil
+	self.Context.Items = {}
+end
+
 function machineProto:TryTransition(data)
-	local stateMemo = self.CurrentState
+
 	for _, nextState in pairs(self.CurrentState.NextStates) do
-		if nextState:CanTransitionFrom(self.CurrentState, data) then
-			self:Stop(stateMemo)
-			self.CurrentState = nextState
-			self:Start(self.CurrentState)
+		if nextState:CanTransitionFrom(self.CurrentState, self.Context, data) then
+			self:Stop(data)
+			self:Start(nextState, data)
 			return true
 		end
 	end
@@ -119,9 +129,17 @@ function machineProto:Next(data)
 	--wait(state.WaitTime)
 end
 
-function machineProto:Start()
-	print("Starting " .. self.CurrentState.Name)
-	self.CurrentState:Init()
+function machineProto:Start(startingState, data)
+	if startingState == nil then
+		startingState = self.CurrentState
+		if startingState == nil then
+			error("No state passed and no state set as CurrentState")
+			return nil
+		end
+	end
+	self.CurrentState = startingState
+
+	self.CurrentState:Init(self.Context, data)
 	local runDelegate = function()
 		self:Next()
 	end
@@ -131,6 +149,7 @@ function machineProto:Start()
 		self.CurrentState.IsRunning = true
 	else
 		error(errorMsg)
+		return nil
 	end
 end
 
