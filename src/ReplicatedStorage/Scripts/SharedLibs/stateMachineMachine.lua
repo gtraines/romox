@@ -35,6 +35,7 @@ function stateProto:PrintInternalDataTable()
     end
     print("------------------------------------")
 end
+
 function stateProto:CanTransitionFrom(previousState, data)
 	error("No transition func specified")
 end
@@ -67,6 +68,11 @@ function machineProto.new()
 	local self = setmetatable({}, machineMeta)
 	self.MachineId = uuid()
 	return self
+end
+
+function machineProto.NewState(stateName)
+	local stateInstance = rq.DeepCopyTable(stateProto.new(stateName))
+	return stateInstance
 end
 
 function machineProto:Stop(stateToStop)

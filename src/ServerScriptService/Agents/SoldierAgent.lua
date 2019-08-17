@@ -4,6 +4,7 @@ local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 
 local soldatAi = require(agentsFolder:WaitForChild("SoldierAi", 1))
 local DestroyService = require(agentsFolder:WaitForChild("DestroyService", 1))
+
 local soldierAgent = {
     SoldatBrain = nil
 }
@@ -33,8 +34,9 @@ function soldierAgent.new(soldierModel)
         soldatBrain.Stop()
         math.randomseed(tick())
         clearParts(soldierModel)
-        
     end)
+
+    
 end
 
 return soldierAgent

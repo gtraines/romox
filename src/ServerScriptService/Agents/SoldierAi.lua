@@ -14,21 +14,19 @@ local aiBase = require(agentsFolder:WaitForChild("NpcAiBase", 2))
 local HumanoidList = require(agentsFolder:WaitForChild("HumanoidFinder", 2))
 
 
-local soldatBrainProto = {
+local soldatAiProto = {
 	_configs = {},
 	CurrentTarget = nil,
-	StateMachine = nil,
 	SoldatModel = nil,
-	SoldatTorso = nil,
-	
+	SoldatTorso = nil
 }
 
-local soldatBrainMeta = { __index = soldatBrainProto }
+local soldatBrainMeta = { __index = soldatAiProto }
 
-function soldatBrainProto:PushStates(stateMachine)
-	
+function soldatAiProto:PushStates()
 
-	local IdleState = self:GetIdleState(self.StateMachine)
+	local IdleState = self:GetIdleState()
+
 	local defaultFaceCFrame = self.SoldatTorso.CFrame
 	local desiredFaceAngle = 0
 	local lastTurned = 0
@@ -45,7 +43,7 @@ function soldatBrainProto:PushStates(stateMachine)
 			lastTurned = now
 			turnWait = math.random(5,10)
 		end
-		local currentFaceDirection = soldatTorso.CFrame.lookVector
+		local currentFaceDirection = self.SoldatTorso.CFrame.lookVector
 		local angle = math.acos(currentFaceDirection:Dot(defaultFaceCFrame.lookVector))
 		turningGyro.cframe = defaultFaceCFrame * CFrame.fromEulerAnglesXYZ(0, math.rad(desiredFaceAngle),0)
 	end
@@ -54,12 +52,11 @@ function soldatBrainProto:PushStates(stateMachine)
 	end
 	
 	local lastAttack = 0
-	local AttackState = StateMachine.NewState()
-	local AimTrack = soldat.Humanoid:LoadAnimation(soldat.Animations.Aim)
+	local AttackState = self.StateMachine.NewState("Attack")
+	local AimTrack = self.SoldatModel.Humanoid:LoadAnimation(self.SoldatModel.Animations.Aim)
 	local aiming = false
-	AttackState.Name = "Attack"
 	AttackState.Action = function()
-		if soldatBrain.CurrentTarget then
+		if self.CurrentTarget then
 			-- go into aiming animation
 			if not aiming then
 				aiming = true
@@ -67,35 +64,39 @@ function soldatBrainProto:PushStates(stateMachine)
 			end
 			
 			-- face the target
-			local currentTargetTorso = rq.PersonageTorsoOrEquivalent(soldatBrain.CurrentTarget)
-			soldat:SetPrimaryPartCFrame(CFrame.new(soldatTorso.Position,
-				Vector3.new(currentTargetTorso.Position.X, soldatTorso.Position.Y, currentTargetTorso.Position.Z))*CFrame.Angles(0,-math.pi/3,0))
+			local currentTargetTorso = rq.PersonageTorsoOrEquivalent(self.CurrentTarget)
+			self.SoldatModel:SetPrimaryPartCFrame(CFrame.new(
+				self.SoldatTorso.Position,
+				Vector3.new(currentTargetTorso.Position.X, 
+					self.SoldatTorso.Position.Y, 
+					currentTargetTorso.Position.Z))*CFrame.Angles(0,-math.pi/3,0))
+
 			local now = os.time()
-			if now - lastAttack > soldatBrain._configs["AttackCooldown"] then
+			if now - lastAttack > self:GetConfigValue("AttackCooldown") then
 				lastAttack = now
 				
 				-- render shot
-				local toTarget = currentTargetTorso.Position - soldatTorso.Position
-				local hit = -toTarget.magnitude/soldatBrain._configs["AggroRange"] + 1
+				local toTarget = currentTargetTorso.Position - self.SoldatTorso.Position
+				local hit = -toTarget.magnitude/self:GetConfigValue("AggroRange") + 1
 				if math.random() < hit then
-					soldatBrain.CurrentTarget.Humanoid.Health = 
-						soldatBrain.CurrentTarget.Humanoid.Health - soldatBrain._configs["Damage"]
+					self.CurrentTarget.Humanoid.Health = 
+						self.CurrentTarget.Humanoid.Health - self:GetConfigValue("Damage")
 				else
 					-- missed!
 					local hOffset = toTarget:Cross(Vector3.new(0,1,0)).unit * 5 * math.random(-1, 1)
 					toTarget = toTarget + hOffset
-					local missRay = Ray.new(soldatTorso.Position, toTarget.unit * 1000)
+					local missRay = Ray.new(self.SoldatTorso.Position, toTarget.unit * 1000)
 					local ignoreList = {}
-					table.insert(ignoreList, soldat)
+					table.insert(ignoreList, self.SoldatModel)
 					local part, position = game.Workspace:FindPartOnRayWithIgnoreList(missRay, ignoreList)
 					if part then
 						if part and part.Parent and part.Parent:FindFirstChild("Humanoid") and 
 								part.Parent ~= "Soldier" then
-							if game.Players:GetPlayerFromCharacter(part.Parent) and not soldatBrain._configs["CanDamagePlayer"] then 
+							if game.Players:GetPlayerFromCharacter(part.Parent) and not self:GetConfigValue("CanDamagePlayer") then 
 								return
 							end
 							local otherHumanoid = part.Parent:FindFirstChild("Humanoid")
-							otherHumanoid.Health = otherHumanoid.Health - soldatBrain._configs["Damage"]
+							otherHumanoid.Health = otherHumanoid.Health - self:GetConfigValue("Damage")
 						end
 					end
 				end	
@@ -106,7 +107,7 @@ function soldatBrainProto:PushStates(stateMachine)
 				shot.Anchored = true
 				shot.CanCollide = false
 				--shot.Position = soldier.Torso.Position + toTarget / 2
-				shot.CFrame = CFrame.new(soldatTorso.Position + toTarget / 2, soldatTorso.Position)
+				shot.CFrame = CFrame.new(self.SoldatTorso.Position + toTarget / 2, self.SoldatTorso.Position)
 				shot.BrickColor = BrickColor.Yellow()
 				game.Debris:AddItem(shot, .1)
 			end
@@ -117,18 +118,20 @@ function soldatBrainProto:PushStates(stateMachine)
 	end
 	
 	-- CONDITIONS	
-	local CanSeeTarget = StateMachine.NewCondition()
+	local CanSeeTarget = self.StateMachine.NewCondition()
 	CanSeeTarget.Name = "CanSeeTarget"
 	CanSeeTarget.Evaluate = function()
 		local humanoids = HumanoidList:GetCurrent()
 		local soldiers = {}
 		local enemies = {}
 		for _, object in pairs(humanoids) do
-			if object and object.Parent and not game.Players:GetPlayerFromCharacter(object.Parent) and object.Health > 0
+			if object 
+				and object.Parent 
+				and not game.Players:GetPlayerFromCharacter(object.Parent) and object.Health > 0
 					and object.WalkSpeed > 0 and object.Parent:FindFirstChild("Torso") then
 				local torso = rq.PersonageTorsoOrEquivalent(object.Parent)
-				local distance = (soldatTorso.Position - torso.Position).magnitude
-				if distance <= soldatBrain._configs["AggroRange"] then
+				local distance = (self.SoldatTorso.Position - torso.Position).magnitude
+				if distance <= self.GetConfigValue("AggroRange") then
 					if object.Parent.Name == "Soldier" then
 						table.insert(soldiers, object.Parent)
 					else
@@ -138,26 +141,21 @@ function soldatBrainProto:PushStates(stateMachine)
 			end
 		end
 		
-		local modelTorso = rq.PersonageTorsoOrEquivalent(soldat)
-
-		local targetPos = Vector3.new(modelTorso.Position.X, 
-			modelTorso.Position.Y,
-			modelTorso.Position.Z)
-
-		local target = perception:GetClosestVisibleTarget(soldat, enemies, soldiers, soldatBrain._configs["FieldOfView"])
+		local target = perception:GetClosestVisibleTarget(
+			self.SoldatModel, enemies, soldiers, self:GetConfigValue("FieldOfView"))
 		if target then
-			soldatBrain.CurrentTarget = target
+			self.CurrentTarget = target
 			return true
 		end
 		return false
 	end
 	CanSeeTarget.TransitionState = AttackState
 	
-	local TargetDead = StateMachine.NewCondition()
+	local TargetDead = self.StateMachine.NewCondition()
 	TargetDead.Name = "TargetDead"
 	TargetDead.Evaluate = function()
-		if soldatBrain.CurrentTarget and soldatBrain.CurrentTarget:FindFirstChild("Humanoid") then
-			return soldatBrain.CurrentTarget.Humanoid.Health <= 0
+		if self.CurrentTarget and self.CurrentTarget:FindFirstChild("Humanoid") then
+			return self.CurrentTarget.Humanoid.Health <= 0
 		end
 		return true
 	end
@@ -167,29 +165,21 @@ function soldatBrainProto:PushStates(stateMachine)
 	table.insert(IdleState.Conditions, CanSeeTarget)
 	table.insert(AttackState.Conditions, TargetDead)	
 	
-	StateMachine.SwitchState(IdleState)
+	self.StateMachine.SwitchState(IdleState)
 	
-	soldatBrain.Stop = function()
-		StateMachine.SwitchState(nil)
+	self.Stop = function()
+		self.StateMachine.SwitchState(nil)
 	end
 	
 end
 
-function soldatBrainProto:_loadConfig(configSource, configName, defaultValue)
-	if configSource:FindFirstChild(configName) then
-		self._configs[configName] = configSource:FindFirstChild(configName).Value
-	else
-		self._configs[configName] = defaultValue
-	end
-end
-
-function soldatBrainProto:LoadConfigsFromModel(soldatModel)
+function soldatAiProto:LoadConfigsFromModel(soldatModel)
 	local configTable = soldatModel:FindFirstChild("Configurations")
-	self:_loadConfig(configTable, "AggroRange", 100)
-	self:_loadConfig(configTable, "FieldOfView", 180)
-	self:_loadConfig(configTable, "Damage", 50)
-	self:_loadConfig(configTable, "AttackCooldown", 1)
-	self:_loadConfig(configTable, "CanDamagePlayer", false)
+	self:LoadConfig(configTable, "AggroRange", 100)
+	self:LoadConfig(configTable, "FieldOfView", 180)
+	self:LoadConfig(configTable, "Damage", 50)
+	self:LoadConfig(configTable, "AttackCooldown", 1)
+	self:LoadConfig(configTable, "CanDamagePlayer", false)
 end
 
 -- ***************************************
@@ -198,13 +188,14 @@ end
 -- Create metatable for this
 -- ***************************************
 -- ***************************************
-function soldatBrainProto:Init(soldatModel)
+function soldatAiProto:Init(soldatModel)
 	self:LoadConfigsFromModel(soldatModel)
 	self.SoldatModel = soldatModel
 	self.SoldatTorso = rq.PersonageTorsoOrEquivalent(self.SoldatModel)
 	self.StateMachine = StateMachineMachine.NewStateMachine()
-	self:PushStates(self.StateMachine)
+	self:PushStates()
 end
+
 
 local soldatAiModule = {}
 

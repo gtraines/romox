@@ -5,7 +5,7 @@ local findersFolders = ServerScriptService:WaitForChild("Finders", 2)
 local LibFinder = require(findersFolders:WaitForChild("LibFinder", 2))
 local SvcFinder = require(findersFolders:WaitForChild("ServiceFinder", 2))
 
-local rq = LibFinder:FindLib("rq")
+local rq = LibFinder:FindLib("rquery")
 local uuid = LibFinder:FindLib("uuid")
 local randumb = LibFinder:FindLib("randumb")
 local pathfinder = LibFinder:FindLib("pathfinder")
@@ -18,7 +18,8 @@ local npcProto = {
 }
 
 local npcMeta = { __index = npcProto }
-function GameManager:_createPath(personage, destinationObject)
+
+function npcProto:_createPath(personage, destinationObject)
 	local pathParams = {
 			AgentRadius = 2,
 			AgentHeight = 5
@@ -26,9 +27,9 @@ function GameManager:_createPath(personage, destinationObject)
 	
 	local path = PathfindingService:CreatePath(pathParams)
 
-	local noidRootPart = personage:FindFirstChild("HumanoidRootPart")
+	local personageRootPart = personage:FindFirstChild("HumanoidRootPart")
 	-- Compute and check the path
-	path:ComputeAsync(noidRootPart.Position, destinationObject.Position)
+	path:ComputeAsync(personageRootPart.Position, destinationObject.Position)
 	-- Empty waypoints table after each new path computation
 	self.CurrentWaypointIndex = 2
 	self.Personage = personage

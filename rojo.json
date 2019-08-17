@@ -29,6 +29,50 @@
     "Agents": {
       "path": "src/ServerScriptService/Agents",
       "target": "ServerScriptService.Agents"
+    },
+    "Framework (2)": {
+      "path": "src/StarterPlayer/StarterPlayerScripts/Framework",
+      "target": "StarterPlayer.StarterPlayerScripts.Framework"
+    },
+    "Aero": {
+      "path": "src/ServerStorage/Aero",
+      "target": "ServerStorage.Aero"
+    },
+    "Personages": {
+      "path": "src/ServerStorage/Personages",
+      "target": "ServerStorage.Personages"
+    },
+    "Aero (2)": {
+      "path": "src/ServerScriptService/Aero",
+      "target": "ServerScriptService.Aero"
+    },
+    "Agents (2)": {
+      "path": "src/ServerScriptService/Agents",
+      "target": "ServerScriptService.Agents"
+    },
+    "Aero (3)": {
+      "path": "src/ReplicatedStorage/Aero",
+      "target": "ReplicatedStorage.Aero"
+    },
+    "Aero (4)": {
+      "path": "src/ReplicatedFirst/Aero",
+      "target": "ReplicatedFirst.Aero"
+    },
+    "Nevermore": {
+      "path": "src/ReplicatedStorage/Nevermore",
+      "target": "ReplicatedStorage.Nevermore"
+    },
+    "Roact": {
+      "path": "src/ReplicatedStorage/Roact",
+      "target": "ReplicatedStorage.Roact"
+    },
+    "Rodux": {
+      "path": "src/ReplicatedStorage/Rodux",
+      "target": "ReplicatedStorage.Rodux"
+    },
+    "Nevermore (2)": {
+      "path": "src/ServerScriptService/Nevermore",
+      "target": "ServerScriptService.Nevermore"
     }
   }
 }
