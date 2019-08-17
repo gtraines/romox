@@ -8,18 +8,17 @@ local SvcFinder = require(findersFolders:WaitForChild("ServiceFinder", 2))
 local rq = LibFinder:FindLib("rquery")
 local uuid = LibFinder:FindLib("uuid")
 local randumb = LibFinder:FindLib("randumb")
-local pathfinder = LibFinder:FindLib("pathfinder")
 local exNihilo = SvcFinder:FindService("exnihilo")
 
-local npcProto = {
+local npcAgentProto = {
     Personage = nil,
     Waypoints = {},
     CurrentWaypointIndex = 0
 }
 
-local npcMeta = { __index = npcProto }
+local npcAgentMeta = { __index = npcAgentProto }
 
-function npcProto:_createPath(personage, destinationObject)
+function npcAgentMeta:_createPath(personage, destinationObject)
 	local pathParams = {
 			AgentRadius = 2,
 			AgentHeight = 5
@@ -54,35 +53,10 @@ function npcProto:_createPath(personage, destinationObject)
 	end
 end
 
-function npcProto:_getOnWaypointReachedDelegate()
-	local delegateHandler = function(reached)
-		local currentWaypointIndex = self["CurrentWaypointIndex"]
-		local waypoints = self["Waypoints"]
-		if waypoints ~= nil then
-
-			local movingTo = self["CurrentWaypointIndex"]
-
-			if waypoints[movingTo] ~= nil then
-				if waypoints[movingTo]["Position"] ~= nil then
-					--print("MOVING TO " .. tostring(waypoints[movingTo].Position))		
-					if reached and currentWaypointIndex < #waypoints then
-						
-						self["CurrentWaypointIndex"] = currentWaypointIndex + 1
-						self["Personage"]:FindFirstChild("Humanoid"):MoveTo(
-							waypoints[self["CurrentWaypointIndex"]].Position)
-					end
-				end
-			end
-			
-		end
-
-	end
-	return delegateHandler
-end
 
 local agent = {
     ManagedEntities = {},
-    MAX_FORCE = 75
+    
 }
 
 function agent.GetRandomCFrameFromTableOfParts(candidatePartsTable)
@@ -112,7 +86,7 @@ function agent.ChooseRandomSpawnLocation()
     return CFrame.new(agent.GetRandomCFrameFromTableOfParts(spawnLocations)) + Vector3.new(0, 10, 0)
 end
 
-function agent.SpawnPersonageAsAgent(storageFolder, personagePrototypeId, spawnLocation, onSpawnCompleteCallback)
+function agent.SpawnPersonageAsAgent(storageFolder, personagePrototypeId, spawnLocation, personageAi, onSpawnCompleteCallback)
 
     local spawnedPersonage = Instance.new("Model")
 
@@ -126,22 +100,6 @@ function agent.SpawnPersonageAsAgent(storageFolder, personagePrototypeId, spawnL
             agent.ManagedEntities[rq.StringValueOrNil("EntityId", spawnedPersonage)] = spawnedPersonage
             onSpawnCompleteCallback(createdPersonage)
         end)
-end
-
-function agent.GetRepulsionVector(unitPosition, otherUnitsPositions, maxForce)
-    if maxForce == nil or maxForce == 0 then
-        maxForce = agent.MAX_FORCE
-    end
-
-    local repulsionVector = Vector3.new(0,0,0)
-	local count = 0
-	for _, other in pairs(otherUnitsPositions) do
-		local fromOther = unitPosition - other 
-		--fromOther = fromOther.unit * ((-maxForce / 5) * math.pow(fromOther.magnitude,2) + maxForce)
-		fromOther = fromOther.unit * 1000 / math.pow((fromOther.magnitude + 1), 2)
-		repulsionVector = repulsionVector + fromOther
-	end
-	return repulsionVector * maxForce
 end
 
 return agent

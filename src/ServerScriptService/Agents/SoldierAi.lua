@@ -10,9 +10,8 @@ local perception = libFinder:FindLib("perception")
 local StateMachineMachine = libFinder:FindLib("stateMachineMachine")
 local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 
-local aiBase = require(agentsFolder:WaitForChild("NpcAiBase", 2))
+local aiBase = require(agentsFolder:WaitForChild("PathfindingAiBase", 2))
 local HumanoidList = require(agentsFolder:WaitForChild("HumanoidFinder", 2))
-
 
 local soldatAiProto = {
 	_configs = {},

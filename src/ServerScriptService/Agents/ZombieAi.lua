@@ -76,12 +76,12 @@ ZombieAI.new = function(zombieModel)
 	local searchTarget = nil
 	SearchState.Action = function()
 		-- move to random spot nearby
-		if model then
+		if zombieModel then
 			local now = os.time()
 			if now - lastmoved > 2 then
 				lastmoved = now
 				
-				local testtarg = PerceptionLib:FindCloseEmptySpace(model)
+				local testtarg = PerceptionLib:FindCloseEmptySpace(zombieModel)
 				--if testtarg then print(testtarg) else print("could not find") end
 				--local target = Vector3.new(model.Torso.Position.X + xoff,model.Torso.Position.Y,model.Torso.Position.Z + zoff)
 				--model.Humanoid:MoveTo(target)

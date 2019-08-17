@@ -12,7 +12,7 @@ local SnackbarManager = {}
 
 function SnackbarManager:Init(screenGui)
 	self._currentSnackbar = nil
-	self:WithScreenGui(screenGui)
+	return self:WithScreenGui(screenGui)
 end
 
 --- Sets the screenGui to use

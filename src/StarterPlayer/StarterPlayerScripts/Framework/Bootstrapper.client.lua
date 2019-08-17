@@ -7,9 +7,10 @@ local Players = game:GetService("Players")
 
 local localPlayer = Players.LocalPlayer
 local playerGui = localPlayer:WaitForChild("PlayerGui")
+local screenGui = playerGui:WaitForChild("ScreenGui")
+local snackbarManager = require("SnackbarManager"):Init(screenGui)
 
-local snackbarManager = require("SnackbarManager").new()
-	:WithPlayerGui(playerGui)
+	--:WithPlayerGui()
 
-snackbarManager:ShowSnackbar("Client loaded")
+snackbarManager:MakeSnackbar("Client loaded")
 print("Client loaded")

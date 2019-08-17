@@ -6,6 +6,11 @@ local GameManager = require(gameModulesFolder:WaitForChild("GameManager", 1))
 local appStartFolder = ServerScriptService:WaitForChild("AppStart", 1)
 local Spawners = require(appStartFolder:WaitForChild("Spawners", 1))
 
+--- Main injection point for the game
+-- @script ServerMain
+
+local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Nevermore"))
+
 function OneTimeSetup()
     Spawners.Init()
     GameManager:Initialize()

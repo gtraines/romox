@@ -16,5 +16,6 @@ module["PubSub"] = require(script.Parent:WaitForChild("pubsub", 2))
 module["gooey"] = require(script.Parent:WaitForChild("gooey", 2))
 module["randumb"] = require(script.Parent:WaitForChild("randumb", 2))
 module["componentbase"] = require(script.Parent:WaitForChild("componentbase", 2))
+module["pathfinder"] = require(script.Parent:WaitForChild("pathfinder", 2))
 module["stateMachineMachine"] = require(script.Parent:WaitForChild("stateMachineMachine", 2))
 return module
