@@ -18,4 +18,5 @@ module["randumb"] = require(script.Parent:WaitForChild("randumb", 2))
 module["componentbase"] = require(script.Parent:WaitForChild("componentbase", 2))
 module["pathfinder"] = require(script.Parent:WaitForChild("pathfinder", 2))
 module["stateMachineMachine"] = require(script.Parent:WaitForChild("stateMachineMachine", 2))
+module["sugar"] = require(script.Parent:WaitForChild("sugar", 2))
 return module
