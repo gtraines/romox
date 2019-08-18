@@ -16,7 +16,7 @@ local pathfindingAiMeta = { __index = pathfindingAiProto }
 
 function pathfindingAiProto:GetOnWaypointReachedDelegate(pathProgressData)
 	local delegateHandler = function(reached)
-		print("Reached? " .. tostring(reached))
+		
 		local currentWaypointIndex = pathProgressData.CurrentWaypointIndex
 		local waypoints = pathProgressData.Waypoints
 		if waypoints ~= nil then
@@ -39,9 +39,30 @@ function pathfindingAiProto:GetOnWaypointReachedDelegate(pathProgressData)
 	return delegateHandler
 end
 
-function pathfindingAiProto:MoveTo( destinationPart, displayWaypointMarkers)
-	local pathProgressData = pathfinder.GetPathForPersonage(self.Personage, destinationPart)
-	
+function pathfindingAiProto:GetOnPathBlockedDelegate(pathProgressData, destinationPart, displayWaypointMarkers)
+	local delegateHandler = function (blockedWaypointIndex)
+		if blockedWaypointIndex > pathProgressData.CurrentWaypointIndex then
+			pathProgressData.BlockedWaypointEventConnection:Disconnect()
+			pathProgressData.Path:destroy()
+			wait(0.5)
+			self.MoveTo( destinationPart, displayWaypointMarkers )
+		end
+	end
+
+	return delegateHandler
+end
+
+function pathfindingAiProto:MoveTo( destinationPart, displayWaypointMarkers )
+	local pathProgressData = pathfinder.GetPathForPersonage(
+		self.Personage, destinationPart)
+	local pathBlockedEventConnection = pathProgressData.Path.Blocked:Connect(
+			self.GetOnPathBlockedDelegate(
+				pathProgressData,
+				destinationPart, 
+				displayWaypointMarkers)
+			)
+	pathProgressData.PathBlockedEventConnection = pathBlockedEventConnection
+
 	if pathProgressData ~= nil then
 		if displayWaypointMarkers then
 			pathfinder.DisplayPathWaypoints(pathProgressData)

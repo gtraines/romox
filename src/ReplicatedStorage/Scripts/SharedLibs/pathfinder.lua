@@ -9,7 +9,11 @@ local pathProgressProto = {
 	LastTargetPos = nil,
 	Waypoints = {},
 	Path = nil,
-	CurrentWaypointIndex = 1
+	CurrentWaypointIndex = 1,
+	PathBlockedEventConnection = nil,
+	WaypointReachedEventConnection = nil,
+	PathCalculationAttempts = 0,
+	MAX_PATH_CALCULATION_ATTEMPTS = 20
 }
 
 local pathProgressMeta = { __index = pathProgressProto }
@@ -26,24 +30,32 @@ local module = {
 	}
 }
 
-function module.GetPathForPersonage(personage, destinationObject, pathParams)
+function module.GetPathForPersonage(
+	personage,
+	destinationObject,
+	pathParams)
+
 	if pathParams == nil then 
 		 pathParams = module.DefaultPathParams
 	end
 	
-	local pathProgress = setmetatable({}, pathProgressMeta)
+	local pathProgressData = setmetatable({}, pathProgressMeta)
 
-	pathProgress.Path = PathfindingService:CreatePath(pathParams)
-
+	pathProgressData.Path = PathfindingService:CreatePath(pathParams)
+	
 	local personageRootPart = personage:FindFirstChild("HumanoidRootPart")
 	-- Compute and check the path
-	pathProgress.Path:ComputeAsync(personageRootPart.Position, destinationObject.Position)
-
-	if pathProgress.Path.Status == Enum.PathStatus.Success then
-		return pathProgress
+	pathProgressData.Path:ComputeAsync(personageRootPart.Position, destinationObject.Position)
+	pathProgressData.PathCalculationAttempts = pathProgressData.PathCalculationAttempts + 1
+	
+	if pathProgressData.Path.Status == Enum.PathStatus.Success then
+		return pathProgressData
 	else
 		warn("Unable to find path for " .. personage.Name .. " to " .. destinationObject.Name)
+		local humanoid = personage:FindFirstChild("Humanoid")
+		humanoid:MoveTo(personageRootPart.Position)
 		return nil
+
 	end
 end
 
@@ -104,8 +116,9 @@ function module.MovePersonageOnPath(personage,
 	humanoid:MoveTo(
 			pathProgressData.Waypoints[pathProgressData.CurrentWaypointIndex].Position)
 
-	humanoid.MoveToFinished:Connect(onWaypointReachedDelegate)
-
+	pathProgressData.WaypointReachedEventConnection = humanoid.MoveToFinished:Connect(
+		onWaypointReachedDelegate
+	)
 	return pathProgressData
 end
 
