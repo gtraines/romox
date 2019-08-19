@@ -1,7 +1,7 @@
-local libs = game:GetService("ReplicatedStorage"):WaitForChild("Scripts", 5):WaitForChild("SharedLibs", 5)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local rq = require(libs:FindFirstChild("rquery"))
-local linq = require(libs:FindFirstChild("linq"))
+local rq = require(ReplicatedStorage:FindFirstChild("Shared"):FindFirstChild("rquery"))
+local std = require(ReplicatedStorage:WaitForChild("Std").Namespace)
 
 local component = {
     __type = "component"
@@ -22,7 +22,7 @@ function component:TryExecute(gameObject)
             local componentCount = #components
             if #componentCount == 0 then return false end
             if componentCount > 0 then
-                local foundComponent = linq(components):firstOrDefault(
+                local foundComponent = std.linq(components):firstOrDefault(
                     function(val)
                         return val.Name == value
                     end)

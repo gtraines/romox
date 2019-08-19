@@ -2,8 +2,6 @@
 -- @author Quenty
 -- Last Modified February 3rd, 2014
 
-local Type = require(script.Parent:WaitForChild("rotype"))
-
 local lib = {}
 
 local function Modify(Instance, Values)
@@ -139,7 +137,7 @@ local function MakeEasyConfiguration(Configuration)
 					if Object and AcceptableTypes[Object.ClassName] then
 						return Object.Value
 					else
-						error("[EasyConfiguration] - " .. (Object and "Object '"..value.."' was a "..Type.getType(Object).." value, and not acceptable, so no return was given" or "Could not find Object '"..value.."' in the configuration"), 2)
+						error("[EasyConfiguration] - " .. (Object and "Object '"..value.."' was a "..type(Object).." value, and not acceptable, so no return was given" or "Could not find Object '"..value.."' in the configuration"), 2)
 					end
 				end
 			end;

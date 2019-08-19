@@ -2,8 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local rq = require(ReplicatedStorage
-	:WaitForChild("Scripts", 1)
-	:WaitForChild("SharedLibs", 1)
+	:WaitForChild("Shared", 1)
 	:WaitForChild("rquery", 1))
 
 local module = {}
@@ -46,7 +45,7 @@ end
 
 function module.IsSpaceEmpty(position)
 	local region = Region3.new(position - Vector3.new(2,2,2), position + Vector3.new(2,2,2))
-	return game.Workspace:IsRegion3Empty(region)
+	return Workspace:IsRegion3Empty(region)
 end
 
 function module:GetRandomXZOffsetNear(targetVector3)
@@ -97,16 +96,16 @@ function module.WideRayCast(start, target, offset, ignoreList)
 	local parts = {}
 	
 	local ray = Ray.new(start, target - start)
-	local part, point = game.Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
+	local part, point = Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
 	if part then table.insert(parts, part) end
 	
 	local offsetVector = offset * (target - start):Cross(Vector3.FromNormalId(Enum.NormalId.Top)).unit
 	local ray = Ray.new(start + offsetVector, target - start + offsetVector)
-	local part, point = game.Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
+	local part, point = Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
 	if part then table.insert(parts, part) end
 	
 	local ray = Ray.new(start - offsetVector, target - start - offsetVector)
-	local part, point = game.Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
+	local part, point = Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
 	if part then table.insert(parts, part) end
 	
 	return parts
@@ -137,7 +136,7 @@ function module.CanHunterSeeTarget(hunterTorso, hunterFieldOfViewDegrees, target
 
 	if azimuthToTarget.AzimuthDegrees < hunterFieldOfViewDegrees then
 		local targetRay = Ray.new(hunterTorso.Position, azimuthToTarget.ToTargetOffsets)
-		local part, position = game.Workspace:FindPartOnRayWithIgnoreList(targetRay, ignoreList)
+		local part, position = Workspace:FindPartOnRayWithIgnoreList(targetRay, ignoreList)
 		if part and part.Parent == targetTorso then
 			return true
 		end

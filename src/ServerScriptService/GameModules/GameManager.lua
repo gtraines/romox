@@ -3,28 +3,18 @@ local GameManager = {}
 -- ROBLOX services
 local Players = game:GetService("Players")
 local ServerStorage = game:GetService("ServerStorage")
-local PathfindingService = game:GetService("PathfindingService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local findersFolder = ServerScriptService:WaitForChild("Finders")
-local SvcFinder = require(findersFolder:WaitForChild("ServiceFinder"))
-local LibFinder = require(findersFolder:WaitForChild("LibFinder", 2))
+local DomainFinder = require(findersFolder:WaitForChild("DomainFinder", 2))
 
 -- Game services
 local Configurations = require(ServerStorage:WaitForChild("Configurations", 1))
-local TeamManager = SvcFinder:FindService("TeamManager")
-local PlayerManager = SvcFinder:FindService("PlayerManager")
-local MapManager = SvcFinder:FindService("MapManager")
-local TimeManager = SvcFinder:FindService("TimeManager")
-local DisplayManager = SvcFinder:FindService("DisplayManager")
+local TeamManager = DomainFinder:FindDomain("TeamManager")
+local PlayerManager = DomainFinder:FindDomain("PlayerManager")
+local MapManager = DomainFinder:FindDomain("MapManager")
+local TimeManager = DomainFinder:FindDomain("TimeManager")
+local DisplayManager = DomainFinder:FindDomain("DisplayManager")
 
---local linq = LibFinder:FindLib("linq")
-local exNihilo = SvcFinder:FindService("ExNihilo")
-local randumb = LibFinder:FindLib("randumb")
-
-
-local NpcAgent = require(
-	ServerScriptService
-		:WaitForChild("Agents", 2):WaitForChild("NpcAgent", 2))
 
 local GameManager = {
 	Waypoints = {},

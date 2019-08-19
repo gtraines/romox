@@ -1,5 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local stdFolder = ReplicatedStorage:WaitForChild("Scripts"):WaitForChild("Std")
+local stdFolder = ReplicatedStorage:WaitForChild("Std")
 local t = require(stdFolder:WaitForChild("t"))
 
 local module = {

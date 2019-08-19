@@ -1,8 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayersService = game:GetService("Players")
 
-local sharedLibs = ReplicatedStorage:FindFirstChild("Scripts"):FindFirstChild("SharedLibs")
-
+local sharedLibs = ReplicatedStorage:FindFirstChild("Shared")
 local rq = require(sharedLibs:FindFirstChild("rquery"))
 
 local module = {}
@@ -69,6 +68,7 @@ function module.ConnectEntityListenerFuncToTopic(entityId, categoryName, topic, 
 		end
 		return wrapperFunc
 	end
+	
 	local subscribedTopic = module.SubscribeServerToTopicEvent(categoryName, 
 		topic,
 		gatekeeperClosure(entityId, listenerFunc))

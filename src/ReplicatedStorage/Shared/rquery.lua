@@ -2,8 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayersService = game:GetService("Players")
 --local t = require(script.Parent.Parent.lib.t)
 
-local uuid = require(ReplicatedStorage:WaitForChild("Scripts", 1)
-	:WaitForChild("SharedLibs", 1):WaitForChild("uuid", 1))
+local uuid = require(ReplicatedStorage:WaitForChild("Std", 1):WaitForChild("uuid", 1))
 
 local module = {}
 

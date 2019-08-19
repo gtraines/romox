@@ -1,21 +1,19 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
-local findersFolders = ServerScriptService:WaitForChild("Finders", 2)
-local LibFinder = require(findersFolders:WaitForChild("LibFinder", 2))
-local SvcFinder = require(findersFolders:WaitForChild("ServiceFinder", 2))
+local findersFolder = ServerScriptService:WaitForChild("Finders", 2)
+local LibFinder = require(findersFolder:WaitForChild("LibFinder", 2))
+local DomainFinder = require(findersFolder:WaitForChild("DomainFinder", 2))
 
 local rq = LibFinder:FindLib("rquery")
-local uuid = LibFinder:FindLib("uuid")
 local randumb = LibFinder:FindLib("randumb")
-local exNihilo = SvcFinder:FindService("exnihilo")
+local exNihilo = DomainFinder:FindDomain("exnihilo")
 
 local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 local pathfindingAi = require(agentsFolder:WaitForChild("PathfindingAiBase"))
 
 local agent = {
-    ManagedEntities = {},
-    
+    ManagedEntities = {}
 }
 
 function agent.GetRandomCFrameFromTableOfParts(candidatePartsTable)
@@ -70,7 +68,7 @@ function agent.CreateFarmerCurtis()
 	local personagePrototypeId = "FarmerCurtis"
 	local spawnLocation = agent.ChooseRandomSpawnLocation()
 	
-	local destination = game.Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
+	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
 	local onSpawnCompleteCallback = function (createdPersonage)
 		local pathfindingAi = pathfindingAi.new(createdPersonage)
 		local goGoGo = pathfindingAi:MoveTo(destination , true)

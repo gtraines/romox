@@ -1,16 +1,16 @@
 --[[
     Usage example: 
-    	local svcFinder = require(game
+    	local DomainFinder = require(game
 	:GetService("ServerScriptService")
 	:WaitForChild("Finders")
-	:WaitForChild("ServiceFinder"))
+	:WaitForChild("DomainFinder"))
     local pointsSvc = svcFinder:FindService("points")
 ]]
 
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local allChildFolders = ServerScriptService:GetChildren()
-print("Generating ServiceFinder module")
+print("Generating DomainFinder module")
 local dedupedModules = {}
 
 
@@ -30,7 +30,7 @@ end
 local module = {}
 module["RegisteredServices"] = dedupedModules
 
-function module:FindService(serviceName)
+function module:FindDomain(serviceName)
     if self.RegisteredServices ~= nil then
         -- First try
         local foundService = self.RegisteredServices[serviceName]
@@ -51,7 +51,7 @@ function module:FindService(serviceName)
             end
         end
 
-        error("Service " .. serviceName .. " not found")
+        error("Domain " .. serviceName .. " not found")
         return nil
     end
 end
