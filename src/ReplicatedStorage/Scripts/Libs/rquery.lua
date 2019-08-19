@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayersService = game:GetService("Players")
+--local t = require(script.Parent.Parent.lib.t)
 
 local uuid = require(ReplicatedStorage:WaitForChild("Scripts", 1)
 	:WaitForChild("SharedLibs", 1):WaitForChild("uuid", 1))
@@ -11,22 +12,6 @@ function module.CreateFolder( folderName, parentObjectInstance )
 	folderInst.Name = folderName
 	folderInst.Parent = parentObjectInstance
 	return folderInst
-end
-
-function module.BreadthFirst(entity, levelsRemaining, funcToRunOnEachEntity)
-    -- @param [Instance] entity entity to start search
-	-- @param [Number] levelsRemaining Levels of entities deep to continue searching
-	-- @param [function] The function to run on each entity
-	if (levelsRemaining <= 0 or entity == nil) then
-		return
-	end
-	
-	local entityChilds = entity:GetChildren()
-	
-	for _, entitiesChild in pairs(entityChilds) do
-		funcToRunOnEachEntity(entitiesChild)
-		module.BreadthFirst(entitiesChild, levelsRemaining - 1, funcToRunOnEachEntity)
-    end
 end
 
 function module.FindSiblingNamed( part, siblingName )
@@ -89,7 +74,7 @@ function module.AttachedHumanoidOrNil(part)
 end
 
 function module.AttachedCharacterOrNil( part )
-	-- body
+
 	local attachedHumanoid = module.AttachedHumanoidOrNil(part)
 	if attachedHumanoid ~= nil then
 		local character = attachedHumanoid.Parent
@@ -99,6 +84,42 @@ function module.AttachedCharacterOrNil( part )
 	end
 
 	return nil
+end
+
+function module.GetUserIdString(player)
+	--assert(getUserIdCheck(player))
+	return tostring(player.UserId)
+end
+--local getCharacterFromUserIdCheck = t.instanceOf("Model")
+function module.GetUserIdFromCharacter(character)
+	--assert(getCharacterFromUserIdCheck(character))
+	local player = PlayersService:GetPlayerFromCharacter(character)
+
+	if player then
+		return  module.GetUserIdString(player)
+	end
+end
+--local getPlayerFromUserCheck = t.string
+function module.GetPlayerFromUserId(userId)
+	--assert(getPlayerFromUserCheck(userId))
+
+	for _, player in pairs(PlayersService:GetPlayers()) do
+		if player.UserId == tonumber(userId) then
+			return player
+		end
+	end
+end
+
+--[[
+	Gets a character from their player's UserId.
+]]
+--local getCharacterFromUserIdCheck = t.string
+function module.GetCharacterFromUserId(userId)
+	--assert(getCharacterFromUserIdCheck(userId))
+	local player = module.GetPlayerFromUserId(userId)
+	if player then
+		return player.Character
+	end
 end
 
 function module.FolderContentsOrNil( folderName, parent )

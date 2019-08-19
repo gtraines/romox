@@ -33,12 +33,12 @@ function module:GetIntegerBtwn( start, finish )
     return math.random(start, finish)
 end
 
-
 function module:ShuffleList(listToShuffle)
     self:Init()
     local shuffledList = {}
     -- The # operator may or may not actually return the correct value
-    -- so we will do it sort of randomly
+    -- so we will do it sort of manually
+
     local itemCount = 0
     for _, val in pairs(listToShuffle) do
         itemCount = itemCount + 1

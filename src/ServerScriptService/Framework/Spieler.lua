@@ -17,19 +17,19 @@ local spieler = {
 --- AddOnJoinedHandler adds a handler to the list of funcs fired on a successful join by a player
 -- @param handlerFunc a function which receives the player as an arg when the event fires
 function spieler:AddOnJoinedHandler(handlerFunc)
-    self.__playersSvc.PlayerAdded:Connect(handlerFunc)
-    return
+    return self.__playersSvc.PlayerAdded:Connect(handlerFunc)
+    
 end
 
 --- AddOnDisconnectingHandler adds a handler to the list of funcs fired when the player begins to disconnect
 -- @param [function] handlerFunc a function which receives the [Instance] player as an arg when the event fires
 function spieler:AddOnDisconnectingHandler(handlerFunc)
-    self.__playersSvc.PlayerDisconnecting:Connect(handlerFunc)
+    return self.__playersSvc.PlayerDisconnecting:Connect(handlerFunc)
 end
 
 -- @param [function] handlerFunc a function which receives the player as an arg when the event fires
 function spieler:AddOnLeavingGameHandler(handlerFunc)
-    self.__playersSvc.PlayerRemoving:Connect(handlerFunc)
+    return self.__playersSvc.PlayerRemoving:Connect(handlerFunc)
 end
 
 -- Note that the Humanoid and its body parts (head, torso and limbs) will exist when this event fires, 
@@ -37,7 +37,7 @@ end
 -- (connect Instance.ChildAdded on the added character to detect these).
 -- @param [function] handlerFunc a function which receives the CHARACTER as an arg when the event fires
 function spieler:AddOnCharacterHandler( playerInstance, handlerFunc )
-    playerInstance.CharacterAdded:Connect(handlerFunc)
+    return playerInstance.CharacterAdded:Connect(handlerFunc)
 end
 
 -- Note that the Humanoid and its body parts (head, torso and limbs) will exist when this event fires, 
@@ -45,7 +45,7 @@ end
 -- (connect Instance.ChildAdded on the added character to detect these).
 -- @param [function] handlerFunc a function which receives the CHARACTER as an arg when the event fires
 function spieler:AddOnCharacterDiedHandler( playerInstance, handlerFunc )
-    playerInstance.CharacterRemoving:Connect(handlerFunc)
+    return playerInstance.CharacterRemoving:Connect(handlerFunc)
 end
 
 function spieler:GetPlayerFromPart( part )

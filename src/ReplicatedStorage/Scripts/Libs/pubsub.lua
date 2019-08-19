@@ -1,10 +1,26 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local PlayersService = game:GetService("Players")
+
 local sharedLibs = ReplicatedStorage:FindFirstChild("Scripts"):FindFirstChild("SharedLibs")
 
 local rq = require(sharedLibs:FindFirstChild("rquery"))
 
 local module = {}
 
+-- local fireExceptToCheck = t.tuple(
+-- 	t.instanceOf("Player"),
+-- 	t.instanceOf("RemoteEvent")
+--)
+
+function module.FireExceptTo(player, event, ...)
+	--assert(fireExceptToCheck(player, event))
+
+	for _, other in pairs(PlayersService:GetPlayers()) do
+		if other ~= player then
+			event:FireClient(other, ...)
+		end
+	end
+end
 -- Create topic folder
 function module.GetOrCreateClientServerTopicCategory( categoryName )
 	local eventTopicFolder = ReplicatedStorage:FindFirstChild("EventTopics")

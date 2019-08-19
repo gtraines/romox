@@ -1,5 +1,5 @@
 --expects a folder in ServerStorage titled PlayerStorage
-local PlayerStorage = game:GetService("ServerStorage").PlayerStorage
+local PlayerStorage = game:GetService("ServerStorage")
 
 return function(player)
 	local playerStorage = player:WaitForChild("PlayerGui"):FindFirstChild("PlayerStorage")

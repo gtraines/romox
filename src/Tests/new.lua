@@ -18,7 +18,6 @@
 		})
 ]]
 
-local t = require(script.Parent.Parent.lib.t)
 
 local newCheck = t.tuple(t.optional(t.table), t.optional(t.table))
 local function new(props, children)
