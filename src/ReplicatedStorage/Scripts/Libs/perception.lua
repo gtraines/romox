@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
 
 local rq = require(ReplicatedStorage
 	:WaitForChild("Scripts", 1)
@@ -6,6 +7,42 @@ local rq = require(ReplicatedStorage
 	:WaitForChild("rquery", 1))
 
 local module = {}
+
+function module.Raycast(ray, blacklist, partToCheck)
+	blacklist = blacklist or {}
+	local results = {}
+	
+	while true do
+		results = {Workspace:FindPartOnRayWithIgnoreList(ray, blacklist)}
+		
+		local hit = results[1]
+		
+		if not hit then
+			break
+		else
+			local canCollideWith = partToCheck and partToCheck:CanCollideWith(hit) or hit.CanCollide
+			
+			if canCollideWith then
+				break
+			else
+				table.insert(blacklist, hit)
+			end
+		end
+	end
+	
+	return unpack(results)
+end
+
+--Checks if given a range, if origin has line of sight with character.
+function module.GetIsInLiveOfSight(origin, character, range, blacklist)
+	if typeof(origin) == "Instance" then
+		origin = origin.Position
+	end
+	
+	local hit, point = module.Raycast(Ray.new(origin, (origin - character.HumanoidRootPart.Position).Unit * -range), blacklist)
+	
+	return hit and hit:IsDescendantOf(character), point
+end
 
 function module.IsSpaceEmpty(position)
 	local region = Region3.new(position - Vector3.new(2,2,2), position + Vector3.new(2,2,2))
