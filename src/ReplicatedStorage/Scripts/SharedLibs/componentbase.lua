@@ -20,7 +20,7 @@ function component:TryExecute(gameObject)
     if components ~= nil and #components > 0 then
         for _, value in pairs(self.Requires) do
             local componentCount = #components
-            if #componentCount == 0 then return false end
+            if componentCount == 0 then return false end
             if componentCount > 0 then
                 local foundComponent = linq(components):firstOrDefault(function(val) return val.Name == value end)
                 if foundComponent == nil then
