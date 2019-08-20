@@ -1,15 +1,26 @@
 local GameManager = {}
 
 -- ROBLOX services
-local Players = game.Players
+local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+local findersFolder = ServerScriptService:WaitForChild("Finders")
+local DomainFinder = require(findersFolder:WaitForChild("DomainFinder", 2))
 
 -- Game services
-local Configurations = require(game.ServerStorage.Configurations)
-local TeamManager = require(script.TeamManager)
-local PlayerManager = require(script.PlayerManager)
-local MapManager = require(script.MapManager)
-local TimeManager = require(script.TimeManager)
-local DisplayManager = require(script.DisplayManager)
+local Configurations = require(ServerStorage:WaitForChild("Configurations", 1))
+local TeamManager = DomainFinder:FindDomain("TeamManager")
+local PlayerManager = DomainFinder:FindDomain("PlayerManager")
+local MapManager = DomainFinder:FindDomain("MapManager")
+local TimeManager = DomainFinder:FindDomain("TimeManager")
+local DisplayManager = DomainFinder:FindDomain("DisplayManager")
+
+
+local GameManager = {
+	Waypoints = {},
+	CurrentWaypointIndex = 2,
+	Personage = nil
+	}
 
 -- Local Variables
 local IntermissionRunning = false
@@ -67,6 +78,8 @@ function GameManager:GameReady()
 	return Players.NumPlayers >= Configurations.MIN_PLAYERS
 end
 
+
+	
 function GameManager:StartRound()
 	TeamManager:ClearTeamScores()
 	PlayerManager:ClearPlayerScores()
@@ -77,10 +90,13 @@ function GameManager:StartRound()
 	GameRunning = true
 	PlayerManager:SetGameRunning(true)
 	TimeManager:StartTimer(Configurations.ROUND_DURATION)
+
 end
+
 
 function GameManager:Update()
 	--TODO: Add custom custom game code here
+
 end
 
 function GameManager:RoundOver()

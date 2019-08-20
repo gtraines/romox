@@ -5,7 +5,7 @@ local libFinder = require(ServerScriptService
 	:WaitForChild("LibFinder"))
 
 local rq = libFinder:FindLib("RQuery")
-local pubSub = require(ServerScriptService:WaitForChild("Framework", 2):WaitForChild("PubSub", 2))
+local pubSub = libFinder:FindLib("PubSub")
 local ComponentBase = libFinder:FindLib("componentbase")
 
 local elsFuncs = {}

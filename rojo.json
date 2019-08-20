@@ -10,17 +10,9 @@
       "path": "src/ServerScriptService/Finders",
       "target": "ServerScriptService.Finders"
     },
-    "Framework": {
-      "path": "src/ServerScriptService/Framework",
-      "target": "ServerScriptService.Framework"
-    },
     "GameModules": {
       "path": "src/ServerScriptService/GameModules",
       "target": "ServerScriptService.GameModules"
-    },
-    "Scripts": {
-      "path": "src/ReplicatedStorage/Scripts",
-      "target": "ReplicatedStorage.Scripts"
     },
     "Components": {
       "path": "src/ServerScriptService/Components",
@@ -29,6 +21,62 @@
     "Agents": {
       "path": "src/ServerScriptService/Agents",
       "target": "ServerScriptService.Agents"
+    },
+    "Aero": {
+      "path": "src/ServerStorage/Aero",
+      "target": "ServerStorage.Aero"
+    },
+    "Personages": {
+      "path": "src/ServerStorage/Personages",
+      "target": "ServerStorage.Personages"
+    },
+    "Aero (2)": {
+      "path": "src/ServerScriptService/Aero",
+      "target": "ServerScriptService.Aero"
+    },
+    "Aero (3)": {
+      "path": "src/ReplicatedStorage/Aero",
+      "target": "ReplicatedStorage.Aero"
+    },
+    "Aero (4)": {
+      "path": "src/ReplicatedFirst/Aero",
+      "target": "ReplicatedFirst.Aero"
+    },
+    "Nevermore": {
+      "path": "src/ReplicatedStorage/Nevermore",
+      "target": "ReplicatedStorage.Nevermore"
+    },
+    "Roact": {
+      "path": "src/ReplicatedStorage/Roact",
+      "target": "ReplicatedStorage.Roact"
+    },
+    "Rodux": {
+      "path": "src/ReplicatedStorage/Rodux",
+      "target": "ReplicatedStorage.Rodux"
+    },
+    "Nevermore (2)": {
+      "path": "src/ServerScriptService/Nevermore",
+      "target": "ServerScriptService.Nevermore"
+    },
+    "ScriptFinder": {
+      "path": "src/ReplicatedStorage/LibFinder.lua",
+      "target": "ReplicatedStorage.LibFinder"
+    },
+    "FunctionalDomains": {
+      "path": "src/ServerScriptService/FunctionalDomains",
+      "target": "ServerScriptService.FunctionalDomains"
+    },
+    "Std": {
+      "path": "src/ReplicatedStorage/Std",
+      "target": "ReplicatedStorage.Std"
+    },
+    "Shared": {
+      "path": "src/ReplicatedStorage/Shared",
+      "target": "ReplicatedStorage.Shared"
+    },
+    "Equipment": {
+      "path": "src/ReplicatedStorage/Equipment",
+      "target": "ReplicatedStorage.Equipment"
     }
   }
 }

@@ -1,12 +1,19 @@
-local dataStoreService = game:GetService("DataStoreService")
-local userVocationDataStore = dataStoreService:GetDataStore("UserVocation")
+local DataStoreService = game:GetService("DataStoreService")
+local Teams = game:GetService("Teams")
+local UserVocationDataStore = DataStoreService:GetDataStore("UserVocation")
+local LibFinder = require(game:GetService("ServerScriptService")
+    :WaitForChild("Finders", 1)
+    :WaitForChild("LibFinder", 1))
+
+local PubSub = LibFinder:FindLib("pubsub")
+local rq = LibFinder:FindLib("rquery")
 
 -- Regen UserId
 -- 419193235
 -- If you are not editing a place through the Roblox website (for example a local .rbxl file), 
 -- you will need to call SetPlaceId() in the Command Bar before an in-Studio game can access a data store.
 
-local vocationIds = {
+local VocationIdentifiers = {
     Mayor = 8675309, -- Regen
     CityManager = 9999, -- Me
     
@@ -32,13 +39,13 @@ local vocationIds = {
 }
 
 local module = {
-    UserVocationDataStore = userVocationDataStore,
-    VocationIdentifiers = vocationIds
+    VocationTopicCategory = nil,
+    VocationChangedTopic = nil
 }
 
-function module:GetUserVocation(userId)
+function module.GetUserVocation(userId)
     local success, currentVocation = pcall(function ()
-        return self.UserVocationDataStore:GetAsync(userId)
+        return UserVocationDataStore:GetAsync(userId)
     end)
 
     if success then
@@ -49,6 +56,24 @@ function module:GetUserVocation(userId)
     -- Otherwise, add them as undeclared?
 end
 
+function module.Init( )
+    module.VocationTopicCategory = 
+        PubSub.GetOrCreateClientServerTopicCategory( "UserVocation" )
+    module.VocationChangedTopic = 
+        PubSub.GetOrCreateClientServerTopicInCategory( "UserVocation", "VocationChanged" )
+end
+
+
+function module.ChangeTeam( userId, currentTeam, newTeam )
+
+    module.VocationChangedTopic.OnServerEvent:Connect(function(userId, newTeam, currentTeam)
+        if newTeam ~= currentTeam then
+            Player.Team = Teams[newTeam]
+            Player:LoadCharacter()
+        end
+    end)
+end
+
 function module:SetUserVocation(userId, vocationId)
 
     local success, err = pcall(function()
@@ -57,6 +82,7 @@ function module:SetUserVocation(userId, vocationId)
 
     if success then
         print("Set vocation for UserId: " .. userId)
+
     end
 end
 
