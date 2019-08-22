@@ -8,7 +8,7 @@ local ServerScriptService = _testMain.ServerScriptService
 -- load ServiceFinder within habitat?
 local libFinder = habitat:require(ServerScriptService:FindFirstChild("Finders"):FindFirstChild("LibFinder"))
 assert(libFinder ~= nil, "Didn't load libFinder")
-local svcFinder = habitat:require(ServerScriptService.Finders.ServiceFinder)
+local DomainFinder = habitat:require(ServerScriptService.Finders.DomainFinder)
 
 local StateMachineMachine = libFinder:FindLib("statemachinemachine")
 local internalSharedData = {
