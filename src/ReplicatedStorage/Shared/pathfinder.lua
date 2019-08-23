@@ -66,7 +66,6 @@ end
 
 function module.DisplayPathWaypoints(pathProgressData)
 	local pointsFolder = rq.GetOrAddItem( "Points", "Folder", game.Workspace )
-	pointsFolder:ClearAllChildren()
 	local waypoints = pathProgressData.Path:GetWaypoints()
 
 	-- Loop through waypoints

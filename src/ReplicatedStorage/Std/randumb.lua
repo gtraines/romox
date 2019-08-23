@@ -12,16 +12,41 @@ if math == nil then
 end
 
 local module = {
-    __seed = nil
+    __initialized = false,
+    __currentSeed = 0,
+    __previousSeed = 0,
+    __twoSeedsAgo = 0
 }
 
-function module:Init()
-    self.__seed = os.time()
-    math.randomseed(self.__seed)
+function module:Init(sortOfSeed)
+    
+    if sortOfSeed == nil or sortOfSeed == 0 then
+        sortOfSeed = math.pi ^ 2
+    end
+
+    local intermediateSeed = ((os.time() + sortOfSeed) / 11130013)
+ 
+    if math.abs(intermediateSeed - self.__twoSeedsAgo) < 3 then
+        intermediateSeed = intermediateSeed * os.time()/ 11130013
+    end
+
+    if math.abs(intermediateSeed - self.__previousSeed) < 3 then
+        intermediateSeed = intermediateSeed + math.log( os.time() )
+    end
+    
+    if math.abs(intermediateSeed - self.__currentSeed) < 3 then
+        intermediateSeed = math.fmod( intermediateSeed, 13 )
+    end
+
+    self.__twoSeedsAgo = self.__previousSeed
+    self.__previousSeed = self.__currentSeed
+    self.__currentSeed = intermediateSeed
+    print("Random seed: " .. tostring(self.__currentSeed))
+    math.randomseed(self.__currentSeed)
+    self.__initialized = true
 end
 
 function module:GetOneAtRandom( collection )
-    self:Init()
     local collectionLength = #collection
 
     local selectedIndex = self:GetIntegerBtwn(1, collectionLength)
@@ -29,7 +54,6 @@ function module:GetOneAtRandom( collection )
 end
 
 function module:CoinFlip(choiceA, choiceB)
-    self:Init()
     local selectedValue = self:GetIntegerBtwn(1, 10)
     if selectedValue <= 5 then
         return choiceA
@@ -39,7 +63,7 @@ function module:CoinFlip(choiceA, choiceB)
 end
 
 function module:GetIntegerBtwn( start, finish )
-    self:Init()
+    self:Init(11)
     return math.random(start, finish)
 end
 

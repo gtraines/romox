@@ -18,8 +18,6 @@ local agent = {
 }
 
 function agent.GetRandomCFrameFromTableOfParts(candidatePartsTable)
-	randumb:Init()
-	print("Initialized randumb")
 
 	local chosenPart = randumb:GetOneAtRandom(candidatePartsTable)
 
@@ -40,8 +38,11 @@ function agent.ChooseRandomSpawnLocation()
 			table.insert(spawnLocations, child)
 		end
 	end
-
-    return agent.GetRandomCFrameFromTableOfParts(spawnLocations) + Vector3.new(0, 10, 0)
+	
+	local foundLocation = agent.GetRandomCFrameFromTableOfParts(spawnLocations) + Vector3.new(0, 10, 0)
+	print("Found a location: " .. tostring(foundLocation))
+	
+	return foundLocation
 end
 
 function agent.SpawnPersonageAsAgent(storageFolder, 
@@ -73,8 +74,8 @@ function agent.SpawnMaleHumanoidAsAgent(
 
     agent.SpawnPersonageAsAgent(storageFolder,
 		personagePrototypeId,
-		personageAi,
 		spawnLocation,
+		personageAi,
 		onSpawnCompleteCallback
 	)
 end
@@ -96,7 +97,7 @@ function agent.SpawnFemaleHumanoidAsAgent(
 end
 
 function agent.CreateFemaleRunner()
-	local personagePrototypeId = "GenericFemale"
+	local personagePrototypeId = "GenericFemale2"
 	local spawnLocation = agent.ChooseRandomSpawnLocation()
 	
 	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
