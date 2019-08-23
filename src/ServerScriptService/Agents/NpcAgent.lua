@@ -11,6 +11,7 @@ local exNihilo = DomainFinder:FindDomain("exnihilo")
 
 local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 local pathfindingAi = require(agentsFolder:WaitForChild("PathfindingAiBase"))
+local npcNames = require(agentsFolder:WaitForChild("NpcNames"))
 
 local agent = {
     ManagedEntities = {}
@@ -54,8 +55,7 @@ function agent.SpawnPersonageAsAgent(storageFolder,
     exNihilo.CreateFromServerStorage(storageFolder, 
         personagePrototypeId,
         spawnLocation, 
-        function(createdPersonage) 
-            print("Personage spawned: " .. createdPersonage.Name)
+        function(createdPersonage)
             spawnedPersonage = createdPersonage
             spawnedPersonage.Parent = Workspace
             agent.ManagedEntities[rq.StringValueOrNil("EntityId", spawnedPersonage)] = spawnedPersonage
@@ -63,18 +63,73 @@ function agent.SpawnPersonageAsAgent(storageFolder,
         end)
 end
 
-function agent.CreateFarmerCurtis()
-	local storageFolder = "Noids"
-	local personagePrototypeId = "FarmerCurtis"
+function agent.SpawnMaleHumanoidAsAgent(
+	personagePrototypeId, 
+	spawnLocation, 
+	personageAi, 
+	onSpawnCompleteCallback)
+
+	local storageFolder = "MaleHumanoids"
+
+    agent.SpawnPersonageAsAgent(storageFolder,
+		personagePrototypeId,
+		personageAi,
+		spawnLocation,
+		onSpawnCompleteCallback
+	)
+end
+
+function agent.SpawnFemaleHumanoidAsAgent(
+	personagePrototypeId, 
+	spawnLocation, 
+	personageAi, 
+	onSpawnCompleteCallback)
+
+	local storageFolder = "FemaleHumanoids"
+	
+    agent.SpawnPersonageAsAgent(storageFolder,
+        personagePrototypeId,
+		spawnLocation,
+		personageAi,
+		onSpawnCompleteCallback
+	)
+end
+
+function agent.CreateFemaleRunner()
+	local personagePrototypeId = "GenericFemale"
 	local spawnLocation = agent.ChooseRandomSpawnLocation()
 	
 	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
+
 	local onSpawnCompleteCallback = function (createdPersonage)
 		local pathfindingAi = pathfindingAi.new(createdPersonage)
+		createdPersonage.Name = npcNames.GetFemaleName().FullName
+		print("Personage spawned: " .. createdPersonage.Name)
 		local goGoGo = pathfindingAi:MoveTo(destination , true)
 	end
 
-	agent.SpawnPersonageAsAgent(storageFolder,
+	agent.SpawnFemaleHumanoidAsAgent(
+		personagePrototypeId,
+		spawnLocation, 
+		pathfindingAi, 
+		onSpawnCompleteCallback)
+end
+
+function agent.CreateMaleRunner()
+	
+	local personagePrototypeId = "GenericMale"
+	local spawnLocation = agent.ChooseRandomSpawnLocation()
+	
+	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
+
+	local onSpawnCompleteCallback = function (createdPersonage)
+		local pathfindingAi = pathfindingAi.new(createdPersonage)
+		createdPersonage.Name = npcNames.GetMaleName().FullName
+		print("Personage spawned: " .. createdPersonage.Name)
+		local goGoGo = pathfindingAi:MoveTo(destination , true)
+	end
+
+	agent.SpawnMaleHumanoidAsAgent(
 		personagePrototypeId,
 		spawnLocation, 
 		pathfindingAi, 

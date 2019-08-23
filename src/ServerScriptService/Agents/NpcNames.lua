@@ -1,3 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local std = require(ReplicatedStorage:WaitForChild("Std", 2).Namespace)
+local randumb = std.randumb
 
 local module = {
     LastNames = {
@@ -9,6 +13,7 @@ local module = {
         "Anderssen",
         "Andreason",
         "Andrade",
+        "Baker",
         "Baldurson",
         "Barber",
         "Bennet",
@@ -103,8 +108,223 @@ local module = {
         "III",
         "Sr."
     },
+    FemaleFirstNames = {
+        "Abby",
+        "Aleena",
+        "Alice",
+        "Amanda",
+        "Anne",
+        "Anna",
+        "Ashley",
+        "Beth",
+        "Bethany",
+        "Brittney",
+        "Bryn",
+        "Candice",
+        "Carissa",
+        "Catherine",
+        "Caitlyn",
+        "Clarissa",
+        "Clarice",
+        "Chandra",
+        "Christina",
+        "Courtney",
+        "Darla",
+        "Deidra",
+        "Diana",
+        "Diane",
+        "DeeAnn",
+        "Destiny",
+        "Edna",
+        "Edie",
+        "Ella",
+        "Ellen",
+        "Emma",
+        "Emily",
+        "Elaine",
+        "Erin",
+        "Esther",
+        "Fatima",
+        "Frankie",
+        "Grace",
+        "Ingrid",
+        "Izzie",
+        "Irene",
+        "Jane",
+        "Janet",
+        "Jessica",
+        "Jennifer",
+        "Jenna",
+        "Jordan",
+        "Kami",
+        "Kara",
+        "Karissa",
+        "Karen",
+        "Katie",
+        "Kat",
+        "Katherine",
+        "Kathryn",
+        "Katrina",
+        "Kelly",
+        "Kendra",
+        "Krista",
+        "Kristin",
+        "Kim",
+        "Kimberly",
+        "Leigh",
+        "Linda",
+        "Lindsay",
+        "Lynn",
+        "Maddie",
+        "Madison",
+        "Mary",
+        "Melanie",
+        "Milena",
+        "Michelle",
+        "Monica",
+        "Morgan",
+        "Nora",
+        "Noelle",
+        "Rayann",
+        "Rachel",
+        "Sarah",
+        "Stephanie",
+        "Tammy",
+        "Tara",
+        "Taylor",
+        "Teri",
+        "Tiffany",
+        "Trina",
+        "Tabitha",
+        "Victoria"
+    },
+    MaleFirstNames = {
+        "Aaron",
+        "Adam",
+        "Allen",
+        "Albert",
+        "Andrew",
+        "Anthony",
+        "Arthur",
+        "Asher",
+        "Barry",
+        "Ben",
+        "Benjamin",
+        "Blaine",
+        "Blake",
+        "Brad",
+        "Bradley",
+        "Brady",
+        "Brock",
+        "Brian",
+        "Bruce",
+        "Chris",
+        "Christopher",
+        "Craig",
+        "Daniel",
+        "David",
+        "Dan",
+        "Don",
+        "Drew",
+        "Dwayne",
+        "Dwight",
+        "Ed",
+        "Edward",
+        "Eric",
+        "Francis",
+        "Frank",
+        "Franklin",
+        "Geoff",
+        "Geoffrey",
+        "George",
+        "Glen",
+        "Gordon",
+        "Greg",
+        "Hank",
+        "Henry",
+        "Howard",
+        "Howie",
+        "Jack",
+        "James",
+        "Jared",
+        "Jason",
+        "Jeff",
+        "Jeffrey",
+        "John",
+        "Johnathan",
+        "Joseph",
+        "Joe",
+        "Josh",
+        "Joshua",
+        "Kevin",
+        "Luke",
+        "Lester",
+        "Manuel",
+        "Mark",
+        "Matt",
+        "Matthew",
+        "Micah",
+        "Michael",
+        "Mike",
+        "Mitch",
+        "Nate",
+        "Nathan",
+        "Neil",
+        "Omar",
+        "Oswald",
+        "Ron",
+        "Ronald",
+        "Russell",
+        "Samuel",
+        "Sean",
+        "Sidney",
+        "Silas",
+        "Stephen",
+        "Steven",
+        "Thomas",
+        "Tim",
+        "Timothy",
+        "Thomas",
+        "Tony",
+        "Terry",
+        "Wayne",
+        "William"
+    }
     
 }
+
+function module.GetMaleName()
+    local firstName = randumb:GetOneAtRandom(module.MaleFirstNames)
+    local lastName = randumb:GetOneAtRandom(module.LastNames)
+
+    return {
+        Gender = "M",
+        FirstName = firstName,
+        LastName = lastName,
+        FullName = firstName .. " " .. lastName
+    }
+end
+
+function module.GetFemaleName()
+    local firstName = randumb:GetOneAtRandom(module.FemaleFirstNames)
+    local lastName = randumb:GetOneAtRandom(module.LastNames)
+
+    return {
+        Gender = "F",
+        FirstName = firstName,
+        LastName = lastName,
+        FullName = firstName .. " " .. lastName
+    }
+end
+
+function module.GetRandomNpcIdentity()
+    local gender = randumb:CoinFlip("M", "F")
+    if gender == "M" then
+        return module.GetMaleName()
+    else
+        return module.GetFemaleName()
+    end
+end
 
 
 return module

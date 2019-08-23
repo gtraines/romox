@@ -25,8 +25,8 @@ function RunForever()
         
         GameManager:StopIntermission()
         GameManager:StartRound()
-        npcAgent.CreateFarmerCurtis()
-        
+        npcAgent.CreateMaleRunner()
+        npcAgent.CreateFemaleRunner()
         repeat
             GameManager:Update()
             wait(0.1)

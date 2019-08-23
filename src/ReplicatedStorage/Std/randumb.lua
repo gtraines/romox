@@ -28,6 +28,16 @@ function module:GetOneAtRandom( collection )
     return collection[selectedIndex]
 end
 
+function module:CoinFlip(choiceA, choiceB)
+    self:Init()
+    local selectedValue = self:GetIntegerBtwn(1, 10)
+    if selectedValue <= 5 then
+        return choiceA
+    else
+        return choiceB
+    end
+end
+
 function module:GetIntegerBtwn( start, finish )
     self:Init()
     return math.random(start, finish)
