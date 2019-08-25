@@ -31,17 +31,17 @@ end
 function agent.ChooseRandomSpawnLocation()
     local wsChildren = Workspace:GetChildren()
 	local spawnLocations = {}
-		
+
 	for _, child in pairs(wsChildren) do
 		if child.Name == "SpawnLocation" then 
 			--print("Yes")
 			table.insert(spawnLocations, child)
 		end
 	end
-	
+
 	local foundLocation = agent.GetRandomCFrameFromTableOfParts(spawnLocations) + Vector3.new(0, 10, 0)
 	print("Found a location: " .. tostring(foundLocation))
-	
+
 	return foundLocation
 end
 
@@ -99,41 +99,41 @@ end
 function agent.CreateFemaleRunner()
 	local personagePrototypeId = "GenericFemale2"
 	local spawnLocation = agent.ChooseRandomSpawnLocation()
-	
+
 	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
 
 	local onSpawnCompleteCallback = function (createdPersonage)
-		local pathfindingAi = pathfindingAi.new(createdPersonage)
+		local aiInstance = pathfindingAi.new(createdPersonage)
 		createdPersonage.Name = npcNames.GetFemaleName().FullName
 		print("Personage spawned: " .. createdPersonage.Name)
-		local goGoGo = pathfindingAi:MoveTo(destination , true)
+		local goGoGo = aiInstance:MoveTo(destination , true)
 	end
 
 	agent.SpawnFemaleHumanoidAsAgent(
 		personagePrototypeId,
-		spawnLocation, 
-		pathfindingAi, 
+		spawnLocation,
+		nil,
 		onSpawnCompleteCallback)
 end
 
 function agent.CreateMaleRunner()
-	
+
 	local personagePrototypeId = "GenericMale"
 	local spawnLocation = agent.ChooseRandomSpawnLocation()
-	
+
 	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
 
 	local onSpawnCompleteCallback = function (createdPersonage)
-		local pathfindingAi = pathfindingAi.new(createdPersonage)
+		local aiInstance = pathfindingAi.new(createdPersonage)
 		createdPersonage.Name = npcNames.GetMaleName().FullName
 		print("Personage spawned: " .. createdPersonage.Name)
-		local goGoGo = pathfindingAi:MoveTo(destination , true)
+		local goGoGo = aiInstance:MoveTo(destination , true)
 	end
 
 	agent.SpawnMaleHumanoidAsAgent(
 		personagePrototypeId,
-		spawnLocation, 
-		pathfindingAi, 
+		spawnLocation,
+		nil,
 		onSpawnCompleteCallback)
 end
 
