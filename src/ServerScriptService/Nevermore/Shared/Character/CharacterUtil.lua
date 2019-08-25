@@ -68,4 +68,28 @@ function CharacterUtil.GetPlayerFromCharacter(descendant)
 	return player
 end
 
+function CharacterUtil.GetPersonageFromPart(part)
+	if part.Parent == nil then return end
+	
+	for _, value in pairs(game:GetService("Players"):GetPlayers()) do
+		if value.Character then
+			if part:IsDescendantOf(value.Character) then
+				return value.Character
+			end
+		end
+	end
+	
+	--ok so this might be an npc
+	local par = part
+	
+	repeat
+		par = par.Parent
+		
+		if par:FindFirstChild("Humanoid") then
+			return par
+		end
+	until par:IsA("Model") or par:IsA("Workspace") --workspace is a model but whatever jic they make it not a model idk
+end
+
+
 return CharacterUtil

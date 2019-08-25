@@ -9,3 +9,12 @@
 -- tools + ability
 
 -- set health
+
+
+local animModule = {}
+
+function animModule.AddDefaultR6( personage )
+    local humanoid = personage:FindFirstDescendant()
+end
+
+return animModule
