@@ -12,12 +12,12 @@ local npcAgent = require(ServerScriptService:WaitForChild("Agents"):WaitForChild
 
 local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Nevermore"))
 
-function OneTimeSetup()
+local function OneTimeSetup()
     Spawners.Init()
     GameManager:Initialize()
 end
 
-function RunForever()
+local function RunForever()
     while true do
         repeat
             GameManager:RunIntermission()

@@ -1,8 +1,10 @@
 --[[
 	A collection of useful utility functions and building blocks for functional programming styles.
 ]]
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LibFinder = require(ReplicatedStorage.LibFinder)
+local t = LibFinder:FindLib("std").t
 local Tables = require(script.Parent.Tables)
-local t = require(script.Parent.Parent.t)
 
 local Functions = {}
 

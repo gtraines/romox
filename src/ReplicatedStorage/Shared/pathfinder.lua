@@ -44,6 +44,9 @@ function module.GetPathForPersonage(
 	pathProgressData.Path = PathfindingService:CreatePath(pathParams)
 	
 	local personageRootPart = personage:FindFirstChild("HumanoidRootPart")
+	if personageRootPart == nil then
+		personageRootPart = personage.PrimaryPart or personage.FindFirstChild("Torso")
+	end
 	-- Compute and check the path
 	pathProgressData.Path:ComputeAsync(personageRootPart.Position, destinationObject.Position)
 	pathProgressData.PathCalculationAttempts = pathProgressData.PathCalculationAttempts + 1

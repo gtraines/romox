@@ -42,10 +42,10 @@ end
 function pathfindingAiProto:GetOnPathBlockedDelegate(pathProgressData, destinationPart, displayWaypointMarkers)
 	local delegateHandler = function (blockedWaypointIndex)
 		if blockedWaypointIndex > pathProgressData.CurrentWaypointIndex then
-			pathProgressData.BlockedWaypointEventConnection:Disconnect()
+			pathProgressData.PathBlockedEventConnection:Disconnect()
 			pathProgressData.Path:destroy()
 			wait(0.5)
-			self.MoveTo( destinationPart, displayWaypointMarkers )
+			self:MoveTo( destinationPart, displayWaypointMarkers )
 		end
 	end
 
@@ -56,7 +56,7 @@ function pathfindingAiProto:MoveTo( destinationPart, displayWaypointMarkers )
 	local pathProgressData = pathfinder.GetPathForPersonage(
 		self.Personage, destinationPart)
 	local pathBlockedEventConnection = pathProgressData.Path.Blocked:Connect(
-			self.GetOnPathBlockedDelegate(
+			self:GetOnPathBlockedDelegate(
 				pathProgressData,
 				destinationPart, 
 				displayWaypointMarkers)

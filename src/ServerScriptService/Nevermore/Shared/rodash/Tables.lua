@@ -12,7 +12,9 @@
 
 	Right?
 ]]
-local t = require(script.Parent.Parent.t)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LibFinder = require(ReplicatedStorage.LibFinder)
+local t = LibFinder:FindLib("std").t
 
 local Tables = {}
 

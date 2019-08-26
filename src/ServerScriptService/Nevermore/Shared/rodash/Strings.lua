@@ -1,7 +1,10 @@
 --[[
 	Useful functions to manipulate strings, based on similar implementations in other standard libraries.
 ]]
-local t = require(script.Parent.Parent.t)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LibFinder = require(ReplicatedStorage.LibFinder)
+local t = LibFinder:FindLib("std").t
+
 local Functions = require(script.Parent.Functions)
 local Tables = require(script.Parent.Tables)
 local Strings = {}

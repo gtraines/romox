@@ -13,6 +13,9 @@ local agentsFolder = ServerScriptService:WaitForChild("Agents", 2)
 local pathfindingAi = require(agentsFolder:WaitForChild("PathfindingAiBase"))
 local npcNames = require(agentsFolder:WaitForChild("NpcNames"))
 
+local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Nevermore"))
+local _ = require("rodash")
+
 local agent = {
     ManagedEntities = {}
 }
@@ -33,7 +36,7 @@ function agent.ChooseRandomSpawnLocation()
 	local spawnLocations = {}
 
 	for _, child in pairs(wsChildren) do
-		if child.Name == "SpawnLocation" then 
+		if child.Name == "SpawnLocation" then
 			--print("Yes")
 			table.insert(spawnLocations, child)
 		end
@@ -45,29 +48,29 @@ function agent.ChooseRandomSpawnLocation()
 	return foundLocation
 end
 
-function agent.SpawnPersonageAsAgent(storageFolder, 
-	personagePrototypeId, 
-	spawnLocation, 
-	personageAi, 
+function agent.SpawnPersonageAsAgent(storageFolder,
+	personagePrototypeId,
+	spawnLocation,
+	personageAi,
 	onSpawnCompleteCallback)
 
     local spawnedPersonage = Instance.new("Model")
 
-    exNihilo.CreateFromServerStorage(storageFolder, 
+    exNihilo.CreateFromServerStorage(storageFolder,
         personagePrototypeId,
-        spawnLocation, 
+        spawnLocation,
         function(createdPersonage)
             spawnedPersonage = createdPersonage
             spawnedPersonage.Parent = Workspace
-            agent.ManagedEntities[rq.StringValueOrNil("EntityId", spawnedPersonage)] = spawnedPersonage
+            agent.ManagedEntities[rq.GetOrAddEntityId(spawnedPersonage)] = spawnedPersonage
             onSpawnCompleteCallback(createdPersonage)
         end)
 end
 
 function agent.SpawnMaleHumanoidAsAgent(
-	personagePrototypeId, 
-	spawnLocation, 
-	personageAi, 
+	personagePrototypeId,
+	spawnLocation,
+	personageAi,
 	onSpawnCompleteCallback)
 
 	local storageFolder = "MaleHumanoids"
@@ -81,13 +84,13 @@ function agent.SpawnMaleHumanoidAsAgent(
 end
 
 function agent.SpawnFemaleHumanoidAsAgent(
-	personagePrototypeId, 
-	spawnLocation, 
-	personageAi, 
+	personagePrototypeId,
+	spawnLocation,
+	personageAi,
 	onSpawnCompleteCallback)
 
 	local storageFolder = "FemaleHumanoids"
-	
+
     agent.SpawnPersonageAsAgent(storageFolder,
         personagePrototypeId,
 		spawnLocation,
@@ -97,10 +100,15 @@ function agent.SpawnFemaleHumanoidAsAgent(
 end
 
 function agent.CreateFemaleRunner()
-	local personagePrototypeId = "GenericFemale2"
+	local personagePrototypeId = "GenericFemale3"
 	local spawnLocation = agent.ChooseRandomSpawnLocation()
+	local npcFolderContents = Workspace:WaitForChild("Npcs"):GetChildren()
+	local zombies = _.filter(npcFolderContents, function ( entry )
+		return _.endsWith(entry.Name, "Zombie")
+	end)
 
-	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
+	local selectedZombie = randumb:GetOneAtRandom(zombies)
+	local destination =  selectedZombie:WaitForChild("HumanoidRootPart")
 
 	local onSpawnCompleteCallback = function (createdPersonage)
 		local aiInstance = pathfindingAi.new(createdPersonage)
@@ -120,8 +128,13 @@ function agent.CreateMaleRunner()
 
 	local personagePrototypeId = "GenericMale"
 	local spawnLocation = agent.ChooseRandomSpawnLocation()
+	local npcFolderContents = Workspace:WaitForChild("Npcs"):GetChildren()
+	local zombies = _.filter(npcFolderContents, function ( entry )
+		return _.endsWith(entry.Name, "Zombie")
+	end)
 
-	local destination = Workspace:FindFirstChild("Drooling Zombie"):WaitForChild("HumanoidRootPart")
+	local selectedZombie = randumb:GetOneAtRandom(zombies)
+	local destination = selectedZombie:WaitForChild("HumanoidRootPart")
 
 	local onSpawnCompleteCallback = function (createdPersonage)
 		local aiInstance = pathfindingAi.new(createdPersonage)
