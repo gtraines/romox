@@ -51,7 +51,7 @@ function module.MoveModelToCoordFrame( modelWithPrimaryPart, newCoordFrame )
 end
 
 -- createdModelCallback takes the createdModel as its only parameter
-function module.CreateFromServerStorage( storageCategory, prototypeId, coordsForNewInstance, createdModelCallback )
+function module.CreateFromServerStorage( storageCategory, prototypeId, coordsForNewInstance, createdModelCallback, targetParent )
     local storageCategoryFolder = serverStorage:FindFirstChild(storageCategory)
     
     local foundPrototype = linq(storageCategoryFolder:GetChildren()):firstOrDefault(function( itm )
@@ -84,7 +84,7 @@ function module.CreateFromServerStorage( storageCategory, prototypeId, coordsFor
             entityIdObj.Parent = createdItem
         end
         entityIdObj.Value = uuid()
-        createdItem.Parent = game:GetService("Workspace")
+        createdItem.Parent = targetParent or game:GetService("Workspace")
         
         module.MoveModelToCoordFrame(createdItem, coordsForNewInstance)
         if createdModelCallback ~= nil then
