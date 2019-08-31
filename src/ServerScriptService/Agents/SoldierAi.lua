@@ -24,8 +24,6 @@ local soldatBrainMeta = { __index = soldatAiProto }
 
 function soldatAiProto:PushStates()
 
-	local IdleState = self:GetIdleState()
-
 	local defaultFaceCFrame = self.SoldatTorso.CFrame
 	local desiredFaceAngle = 0
 	local lastTurned = 0
